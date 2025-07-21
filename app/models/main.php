@@ -90,20 +90,24 @@ public static function findBy($column, $value){
     public function update($id){
         $id = self::$db->real_escape_string($id);
         $query = "UPDATE " . static::$table . " SET ";
+        $updates = [];
+        
         foreach (static::$columnDB as $column) {
-            if (property_exists($this, $column)) {
+            // Excluir siempre el campo 'id' en las actualizaciones
+            if ($column !== 'id' && property_exists($this, $column)) {
                 $value = self::$db->real_escape_string($this->$column);
-                $query .= "`$column` = '$value', ";
+                $updates[] = "`$column` = '$value'";
             }
         }
-        $query = rtrim($query, " ") . " WHERE id = {$this->id}";
+        
+        $query .= implode(', ', $updates) . " WHERE id = '$id'";
         $result = self::$db->query($query);
         return $result;
     }
 
     public function delete(){
-        $id = self::$db->real_escape_string($id);
-        $query = "DELETE FROM " . static::$table . " WHERE id = {$this->id}";
+        $id = self::$db->real_escape_string($this->id);
+        $query = "DELETE FROM " . static::$table . " WHERE id = '$id'";
         $result = self::$db->query($query);
         return $result;
     }
@@ -122,28 +126,32 @@ public static function findBy($column, $value){
         return $array;
     }
 
-    public function save($arg=[]){
-        $this->validate();
-        if(empty(static::$errors)){
 
+    public function save($arg=[]){
+            $columns = [];
+            $values = [];
+            
             foreach (static::$columnDB as $column) {
-                if (property_exists($this, $column)) {
+                // Excluir siempre el campo 'id'
+                if ($column !== 'id' && property_exists($this, $column)) {
                     $value = self::$db->real_escape_string($this->$column);
                     $columns[] = "`$column`";
                     $values[] = "'$value'";
                 }
             }
-            $query = "INSERT INTO " . static::$table . " () VALUES ('{}')";
+            
+            $columnsStr = implode(', ', $columns);
+            $valuesStr = implode(', ', $values);
+            
+            $query = "INSERT INTO " . static::$table . " ($columnsStr) VALUES ($valuesStr)";
             $result = self::$db->query($query);
             return $result;
-        }else{
-            return false;
-        }
     }
+    
 
-      private function img($img,$carpeta){ 
+      private function img($img,$carpeta,$tipo){ 
 
-        $nombre_img=md5(uniqid(rand(),true )).".png";
+        $nombre_img=md5(uniqid(rand(),true )).$tipo;
         //echo $nombre_img; exit;
        $manager = new ImageManager(new Driver());
        $imagen=$manager->read($img['tmp_name'])->cover(900,900);
