@@ -19,6 +19,7 @@ Para utilizar esta plantilla, asegúrese de agregar las siguientes dependencias 
 "psr-4": {
             "models\\":"./app/models",
             "MVC\\":"./router",
+            "controllers/API\\":"./app/controllers/API",
             "controllers\\":"./app/controllers"
         }
 ```

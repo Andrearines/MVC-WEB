@@ -54,6 +54,7 @@ if(!isset($inicio)){
         echo "<script src='build/js/{$script}.js'></script>";
     }
     ?>
+    <script src="/build/js/modernizr.js"></script>
     </body>
     </html>
 

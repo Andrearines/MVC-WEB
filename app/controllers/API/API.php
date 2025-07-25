@@ -1,5 +1,5 @@
 <?php
-namespace controllers;
+namespace controllers\API;
 use MVC\Router;
 class API{
     public static function servicios(Router $r){

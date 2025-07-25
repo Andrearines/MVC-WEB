@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__. '/../config/app.php';
 use controllers\paginas;
-use controllers\API;
+use controllers\API\API;
 use MVC\Router;
 $r=new Router;
 $r->get("/",[paginas::class,'index']);
