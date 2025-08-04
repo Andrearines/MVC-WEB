@@ -10,11 +10,18 @@ class main
     static $columnDB = [];
     
     public static $errors = [];
+    
+    // Cache simple para mejorar rendimiento
+    private static $cache = [];
+    private static $cacheEnabled = true;
 
+    public $id;
+    
     public function __construct($data = [])
     {
        
     }
+    
     public static function setDb($database)
     {
         self::$db = $database;
@@ -40,9 +47,21 @@ class main
             }
         }
     }
+
+    public static function SQL($query){
+        $result = self::$db->query($query);
+        $array = [];
+
+        while ($row = $result->fetch_assoc()) {
+            $array[] = static::create($row);
+        }
+        return $array;   
+    }
  
-    public static function all(){
-        $query = "SELECT * FROM " . static::$table;
+    public static function all($columns = ['*']){
+        // Optimización: permitir seleccionar columnas específicas
+        $columnsStr = is_array($columns) ? implode(', ', $columns) : $columns;
+        $query = "SELECT $columnsStr FROM " . static::$table;
         $result = self::$db->query($query);
         $array = [];
 
@@ -55,26 +74,46 @@ class main
     
 
     public static function find($id){
-    $id = self::$db->real_escape_string($id); 
-    $query = "SELECT * FROM " . static::$table . " WHERE id = $id LIMIT 1";
-    $result = self::$db->query($query);
+        // Cache para consultas frecuentes
+        if (self::$cacheEnabled) {
+            $cacheKey = static::$table . '_find_' . $id;
+            if (isset(self::$cache[$cacheKey])) {
+                return self::$cache[$cacheKey];
+            }
+        }
+        
+        $id = self::$db->real_escape_string($id); 
+        $query = "SELECT * FROM " . static::$table . " WHERE id = $id LIMIT 1";
+        $result = self::$db->query($query);
 
-    if ($row = $result->fetch_assoc()) {
-        return static::create($row);
+        if ($row = $result->fetch_assoc()) {
+            $object = static::create($row);
+            
+            // Guardar en cache
+            if (self::$cacheEnabled) {
+                self::$cache[$cacheKey] = $object;
+            }
+            
+            return $object;
+        }
+        return null;
     }
-    return null;
-}
 
-public static function findBy($column, $value){
-    $value = self::$db->real_escape_string($value);
-    $query = "SELECT * FROM " . static::$table . " WHERE $column = '$value' LIMIT 1";
-    $result = self::$db->query($query);
+    public static function findBy($column, $value){
+        // Validación básica de columnas para seguridad
+        if (!in_array($column, static::$columnDB) && $column !== 'id') {
+            return null;
+        }
+        
+        $value = self::$db->real_escape_string($value);
+        $query = "SELECT * FROM " . static::$table . " WHERE $column = '$value' LIMIT 1";
+        $result = self::$db->query($query);
 
-    if ($row = $result->fetch_assoc()) {
-        return static::create($row);
+        if ($row = $result->fetch_assoc()) {
+            return static::create($row);
+        }
+        return null;
     }
-    return null;
-}
 
     public static function create($data){
         $object = new static;
@@ -102,6 +141,13 @@ public static function findBy($column, $value){
         
         $query .= implode(', ', $updates) . " WHERE id = '$id'";
         $result = self::$db->query($query);
+        
+        // Limpiar cache después de actualizar
+        if (self::$cacheEnabled) {
+            $cacheKey = static::$table . '_find_' . $id;
+            unset(self::$cache[$cacheKey]);
+        }
+        
         return $result;
     }
 
@@ -109,14 +155,27 @@ public static function findBy($column, $value){
         $id = self::$db->real_escape_string($this->id);
         $query = "DELETE FROM " . static::$table . " WHERE id = '$id'";
         $result = self::$db->query($query);
+        
+        // Limpiar cache después de eliminar
+        if (self::$cacheEnabled) {
+            $cacheKey = static::$table . '_find_' . $id;
+            unset(self::$cache[$cacheKey]);
+        }
+        
         return $result;
     }
 
    
-    public static function findAllBy($column, $value){
+    public static function findAllBy($column, $value, $columns = ['*']){
+        // Validación básica de columnas para seguridad
+        if (!in_array($column, static::$columnDB) && $column !== 'id') {
+            return [];
+        }
+        
         $value = self::$db->real_escape_string($value);
+        $columnsStr = is_array($columns) ? implode(', ', $columns) : $columns;
 
-        $query = "SELECT * FROM " . static::$table . " WHERE $column = '$value'";
+        $query = "SELECT $columnsStr FROM " . static::$table . " WHERE $column = '$value'";
         $result = self::$db->query($query);
         $array = [];
 
@@ -145,25 +204,59 @@ public static function findBy($column, $value){
             
             $query = "INSERT INTO " . static::$table . " ($columnsStr) VALUES ($valuesStr)";
             $result = self::$db->query($query);
+            
+            // Limpiar cache después de insertar
+            if (self::$cacheEnabled && $result) {
+                self::clearCache();
+            }
+            
             return $result;
     }
     
 
-      private function img($img,$carpeta,$tipo){ 
-
+    private function img($img,$carpeta,$tipo){ 
         $nombre_img=md5(uniqid(rand(),true )).$tipo;
-        //echo $nombre_img; exit;
-       $manager = new ImageManager(new Driver());
-       $imagen=$manager->read($img['tmp_name'])->cover(900,900);
-       $imagen->save(__DIR__ . '/../public/imagenes/'.$carpeta."/".$nombre_img);
-       return  $nombre_img;
+        
+        $manager = new ImageManager(new Driver());
+        $imagen = $manager->read($img['tmp_name']);
+        
+        // Optimización: solo redimensionar si es necesario
+        $originalSize = $imagen->size();
+        if ($originalSize->width() > 900 || $originalSize->height() > 900) {
+            $imagen = $imagen->cover(900, 900);
+        }
+        
+        $imagen->save(__DIR__ . '/../public/imagenes/'.$carpeta."/".$nombre_img);
+        return  $nombre_img;
     }
 
     public function getErrors($type = null){
         if($type){
             return static::$errors[$type] ?? null;
         }
-        return static::$errors;}
+        return static::$errors;
+    }
+    
+    // Métodos para gestionar el cache
+    public static function clearCache() {
+        self::$cache = [];
+    }
+    
+    public static function disableCache() {
+        self::$cacheEnabled = false;
+    }
+    
+    public static function enableCache() {
+        self::$cacheEnabled = true;
+    }
+    
+    public static function getCacheStats() {
+        return [
+            'enabled' => self::$cacheEnabled,
+            'items' => count(self::$cache),
+            'keys' => array_keys(self::$cache)
+        ];
+    }
 }
 
   

@@ -4,12 +4,16 @@ if(!isset($_SESSION)){
 session_start();
 }
 $auth = $_SESSION['admin'] ?? null;
+if(!isset($barra_frotante)){
+    $barra_frotante=false;
+}
 if(!isset($inicio)){
 
     $inicio=false;
 
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,16 +24,19 @@ if(!isset($inicio)){
 </head>
 <body>
 
-    <header class="header <?php echo $inicio ?"inicio":"" ?>">
-        <div class="contenedor contenido-header">
+    <header class="header 
+    <?php echo $inicio ?"inicio":"" ?>
+    <?php echo $barra_frotante ?"barra-frotante":"" ?>
+    ">
+        <div class="contenido-header">
 
             <div class="barra">
-                <a href="/">
-                    <img src="" alt="logo">
-                </a>
+                
            </div> <!--barra-->
 
-            <h1> </h1><!--titulo-->
+           <?php if($inicio){ ?>
+           <h1> </h1><!--titulo-->
+           <?php }?>
         </div>
     </header>
 
@@ -55,7 +62,10 @@ if(!isset($inicio)){
     }
     ?>
     <script src="/build/js/modernizr.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/build/js/sweetalert-config.js"></script>
     </body>
     </html>
+
 
     
