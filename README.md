@@ -14,7 +14,7 @@ Esta plantilla proporciona la estructura base para la interfaz de usuario de un 
 - **Consultas optimizadas** con selección de columnas específicas.
 - **Validación de seguridad** mejorada para prevenir inyecciones SQL.
 
-## 🚀 Novedades de Rendimiento (v2.0)
+## 🚀 Novedades de Rendimiento (v3.0)
 
 ### Sistema de Caché Inteligente
 - **Cache automático** para consultas `find()` frecuentes
@@ -134,7 +134,21 @@ Las contribuciones son bienvenidas. Por favor, abre un issue o pull request para
 
 ## 📄 Licencia
 
-Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
+Este proyecto está bajo la **Licencia MIT**. 
+
+### ¿Qué permite la licencia MIT?
+
+✅ **Uso libre** para proyectos personales y comerciales  
+✅ **Modificación** del código según tus necesidades  
+✅ **Distribución** y venta del software  
+✅ **Sin restricciones** de uso  
+
+### Requisitos:
+- Mantener el aviso de copyright original
+- Incluir la licencia MIT en las distribuciones
+
+**Ver el archivo [LICENSE](LICENSE) para el texto completo de la licencia.**  
+**Ver [LICENSE_DETAILED.md](LICENSE_DETAILED.md) para información detallada.**
 
 ---
 
