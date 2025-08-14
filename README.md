@@ -14,8 +14,10 @@ Esta plantilla proporciona la estructura base para la interfaz de usuario de un 
 - **Consultas optimizadas** con selección de columnas específicas.
 - **Validación de seguridad** mejorada para prevenir inyecciones SQL.
 
-## 🚀 Novedades de Rendimiento (v3.0)
+## 🚀 Novedades de guardado de imagenes (v3.1)
+- **mejora del procesamiento de imgs**  se añadio valiraciones
 
+## 🚀 Novedades de Rendimiento (v3.1)
 ### Sistema de Caché Inteligente
 - **Cache automático** para consultas `find()` frecuentes
 - **Limpieza automática** del cache en operaciones CRUD

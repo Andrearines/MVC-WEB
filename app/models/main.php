@@ -16,6 +16,7 @@ class main
     private static $cacheEnabled = true;
 
     public $id;
+    public $img;
     
     public function __construct($data = [])
     {
@@ -186,14 +187,30 @@ class main
     }
 
 
-    public function save($arg=[]){
+    
+    public function save($img){
+        try {
+           
+            if($img == true){
+                // Procesar imagen con manejo de memoria
+                $processedImage = $this->processImage($this->img,"users",".png");
+                if ($processedImage === false) {
+                    throw new \Exception("Error al procesar la imagen");
+                }
+                $this->img = $processedImage;
+                
+                // Liberar memoria después del procesamiento
+                gc_collect_cycles();
+            }
+            if(empty(self::$errors)){
             $columns = [];
             $values = [];
             
             foreach (static::$columnDB as $column) {
                 // Excluir siempre el campo 'id'
                 if ($column !== 'id' && property_exists($this, $column)) {
-                    $value = self::$db->real_escape_string($this->$column);
+                    $value = $this->$column;
+                    $value = self::$db->real_escape_string($value);
                     $columns[] = "`$column`";
                     $values[] = "'$value'";
                 }
@@ -210,31 +227,88 @@ class main
                 self::clearCache();
             }
             
-            return $result;
-    }
-    
-
-    private function img($img,$carpeta,$tipo){ 
-        $nombre_img=md5(uniqid(rand(),true )).$tipo;
-        
-        $manager = new ImageManager(new Driver());
-        $imagen = $manager->read($img['tmp_name']);
-        
-        // Optimización: solo redimensionar si es necesario
-        $originalSize = $imagen->size();
-        if ($originalSize->width() > 900 || $originalSize->height() > 900) {
-            $imagen = $imagen->cover(900, 900);
+            return true;
+        }else{
+            
+            return self::$errors;
         }
-        
-        $imagen->save(__DIR__ . '/../public/imagenes/'.$carpeta."/".$nombre_img);
-        return  $nombre_img;
+            
+        } catch (\Exception $e) {
+            error_log("Error en save: " . $e->getMessage());
+            return false;
+        }
     }
 
-    public function getErrors($type = null){
-        if($type){
-            return static::$errors[$type] ?? null;
+    private function processImage($img, $carpeta, $tipo){ 
+        try {
+            self::$errors=[];
+            // Verificar que el archivo existe y es válido
+            if (!isset($img['tmp_name']) || !file_exists($img['tmp_name'])) {
+                throw new \Exception("Archivo de imagen no válido");
+                self::$errors["error"][]="Archivo de imagen no válido";
+            }
+            
+            // Verificar el tamaño del archivo (máximo 3MB para evitar problemas de memoria)
+            if ($img['size'] > 3 * 1024 * 1024) {
+                throw new \Exception("El archivo es demasiado grande (máximo 1MB)");
+                self::$errors["error"][]="Archivo es demasiado";
+            }
+            
+            // Verificar el tipo de archivo
+            $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+            if (!in_array($img['type'], $allowedTypes)) {
+                throw new \Exception("Tipo de archivo no permitido");
+                self::$errors["error"][]="Archivo de imagen no válido";
+            }
+            
+            // Verificar que el archivo es realmente una imagen válida
+            $imageInfo = @getimagesize($img['tmp_name']);
+            if ($imageInfo === false) {
+                throw new \Exception("El archivo no es una imagen válida");
+                self::$errors["error"][]="Archivo de imagen no válido";
+            }
+            
+            // Verificar dimensiones máximas (máximo 2000x2000 para evitar problemas de memoria)
+            if ($imageInfo[0] > 2000 || $imageInfo[1] > 2000) {
+                throw new \Exception("La imagen es demasiado grande (máximo 2000x2000 píxeles)");
+                self::$errors["error"][]="es demasiado grande (maximo 2000x2000)";
+            }
+            
+            $nombre_img = md5(uniqid(rand(), true)) . $tipo;
+            $uploadDir = __DIR__ . '/../../public/imagenes/' . $carpeta . '/';
+            
+            // Crear directorio si no existe
+            if (!is_dir($uploadDir)) {
+                if (!mkdir($uploadDir, 0755, true)) {
+                    throw new \Exception("No se pudo crear el directorio de destino");
+                    
+                }
+            }
+            
+            // Verificar permisos de escritura
+            if (!is_writable($uploadDir)) {
+                throw new \Exception("No hay permisos de escritura en el directorio");
+            }
+            
+            // Simplemente copiar el archivo sin procesar para evitar problemas de memoria
+            $filePath = $uploadDir . $nombre_img;
+            
+            if (!copy($img['tmp_name'], $filePath)) {
+                throw new \Exception("No se pudo copiar la imagen");
+            }
+            
+            // Verificar que el archivo se copió correctamente
+            if (!file_exists($filePath)) {
+                throw new \Exception("No se pudo guardar la imagen");
+                self::$errors["error"][]="error con el guardado de la imagen";
+            }
+            
+            return [$nombre_img];
+            
+        } catch (\Exception $e) {
+            error_log("Error procesando imagen: " . $e->getMessage());
+            return false;
         }
-        return static::$errors;
     }
     
     // Métodos para gestionar el cache
