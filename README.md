@@ -14,10 +14,10 @@ Esta plantilla proporciona la estructura base para la interfaz de usuario de un 
 - **Consultas optimizadas** con selección de columnas específicas.
 - **Validación de seguridad** mejorada para prevenir inyecciones SQL.
 
-## 🚀 Novedades de guardado de imagenes (v3.1)
-- **mejora del procesamiento de imgs**  se añadio valiraciones
 
-## 🚀 Novedades de Rendimiento (v3.1)
+- **mejora del procesamiento de imgs**  se añadio valiraciones
+- **mejora del procesamiento de archivos**  se añadio valiraciones y validaciones de seguridad avanzadas
+
 ### Sistema de Caché Inteligente
 - **Cache automático** para consultas `find()` frecuentes
 - **Limpieza automática** del cache en operaciones CRUD
@@ -95,8 +95,8 @@ Para utilizar esta plantilla, asegúrese de agregar las siguientes dependencias 
     }
     
     //para autenticaion dinamica
-    use Firebase\JWT\JWT;
-    composer require firebase/php-jwt
+    "use Firebase\JWT\JWT;
+    composer require firebase/php-jwt"
 }
 ```
 
@@ -122,11 +122,9 @@ Para utilizar esta plantilla, asegúrese de agregar las siguientes dependencias 
 
 ## 🎯 Próximas Mejoras Planificadas
 
-- [ ] **Prepared statements** para máxima seguridad
 - [ ] **Sistema de paginación** para listas grandes
 - [ ] **Logging avanzado** para monitoreo de rendimiento
-- [ ] **Compresión automática** de imágenes
-- [ ] **Cache distribuido** con Redis/Memcached
+- 
 
 ## 🤝 Contribuciones
 
@@ -154,7 +152,6 @@ Este proyecto está bajo la **Licencia MIT**.
 
 ---
 
-**Desarrollado con ❤️ para la comunidad de desarrolladores PHP** 
 
 
 

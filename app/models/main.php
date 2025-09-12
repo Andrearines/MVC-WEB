@@ -3,6 +3,7 @@
 namespace models;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
+
 class main
 {
     public static $table;
@@ -11,7 +12,7 @@ class main
     
     public static $errors = [];
     
-    // Cache simple para mejorar rendimiento
+    // Cache simple
     private static $cache = [];
     private static $cacheEnabled = true;
 
@@ -20,7 +21,6 @@ class main
     
     public function __construct($data = [])
     {
-       
     }
     
     public static function setDb($database)
@@ -30,10 +30,8 @@ class main
 
     public function validate()
     {
-       static::$errors = [];
-
+        static::$errors = [];
         return static::$errors;
-       
     }
 
     public function createError($type, $msg){
@@ -43,287 +41,259 @@ class main
     public function sicronizar($data){
         foreach ($data as $key => $value) {
             if (property_exists($this, $key)) {
-                $cleanValue = self::$db->real_escape_string($value);
-                $this->$key = $cleanValue;
+                $this->$key = $value;
             }
         }
     }
 
-    public static function SQL($query){
-        $result = self::$db->query($query);
+    /* ===================== SQL GENÉRICO ===================== */
+
+    // Ejecución de query seguro (SELECT multiple)
+    public static function SQL($query, $params = [], $types = ""){
+        $stmt = self::$db->prepare($query);
+        if (!$stmt) throw new \Exception("Error en prepare: " . self::$db->error);
+
+        if (!empty($params)) {
+            $stmt->bind_param($types, ...$params);
+        }
+
+        $stmt->execute();
+        $result = $stmt->get_result();
         $array = [];
 
         while ($row = $result->fetch_assoc()) {
             $array[] = static::create($row);
         }
-        return $array;   
-    }
- 
-    public static function all($columns = ['*']){
-        // Optimización: permitir seleccionar columnas específicas
-        $columnsStr = is_array($columns) ? implode(', ', $columns) : $columns;
-        $query = "SELECT $columnsStr FROM " . static::$table;
-        $result = self::$db->query($query);
-        $array = [];
 
-        while ($row = $result->fetch_assoc()) {
-            $array[] = static::create($row);
-        }
+        $stmt->close();
         return $array;
     }
 
-    
+    // Ejecución directa (INSERT, UPDATE, DELETE genéricos)
+    public function exec($query, $params = [], $types = ""){
+        $stmt = self::$db->prepare($query);
+        if (!$stmt) throw new \Exception("Error en prepare: " . self::$db->error);
+
+        if (!empty($params)) {
+            $stmt->bind_param($types, ...$params);
+        }
+
+        $res = $stmt->execute();
+        $stmt->close();
+        return $res;
+    }
+
+    /* ===================== CRUD ===================== */
+
+    public static function all($columns = ['*']){
+        $columnsStr = is_array($columns) ? implode(', ', $columns) : $columns;
+        $query = "SELECT $columnsStr FROM " . static::$table;
+        return self::SQL($query);
+    }
 
     public static function find($id){
-        // Cache para consultas frecuentes
         if (self::$cacheEnabled) {
             $cacheKey = static::$table . '_find_' . $id;
             if (isset(self::$cache[$cacheKey])) {
                 return self::$cache[$cacheKey];
             }
         }
-        
-        $id = self::$db->real_escape_string($id); 
-        $query = "SELECT * FROM " . static::$table . " WHERE id = $id LIMIT 1";
-        $result = self::$db->query($query);
 
-        if ($row = $result->fetch_assoc()) {
-            $object = static::create($row);
-            
-            // Guardar en cache
+        $query = "SELECT * FROM " . static::$table . " WHERE id = ? LIMIT 1";
+        $result = self::SQL($query, [$id], "i");
+
+        if ($result) {
+            $object = $result[0];
             if (self::$cacheEnabled) {
                 self::$cache[$cacheKey] = $object;
             }
-            
             return $object;
         }
         return null;
     }
 
     public static function findBy($column, $value){
-        // Validación básica de columnas para seguridad
         if (!in_array($column, static::$columnDB) && $column !== 'id') {
             return null;
         }
-        
-        $value = self::$db->real_escape_string($value);
-        $query = "SELECT * FROM " . static::$table . " WHERE $column = '$value' LIMIT 1";
-        $result = self::$db->query($query);
 
-        if ($row = $result->fetch_assoc()) {
-            return static::create($row);
+        $query = "SELECT * FROM " . static::$table . " WHERE $column = ? LIMIT 1";
+        $result = self::SQL($query, [$value], "s");
+        return $result ? $result[0] : null;
+    }
+
+    public static function findAllBy($column, $value, $columns = ['*']){
+        if (!in_array($column, static::$columnDB) && $column !== 'id') {
+            return [];
         }
-        return null;
+
+        $columnsStr = is_array($columns) ? implode(', ', $columns) : $columns;
+        $query = "SELECT $columnsStr FROM " . static::$table . " WHERE $column = ?";
+        return self::SQL($query, [$value], "s");
     }
 
     public static function create($data){
         $object = new static;
         foreach ($data as $key => $value) {
             if (property_exists($object, $key)) {
-                $cleanValue = self::$db->real_escape_string($value);
-                $object->$key = $cleanValue;
+                $object->$key = $value;
             }
         }
         return $object;
     }
 
-    public function update($id){
-        $id = self::$db->real_escape_string($id);
-        $query = "UPDATE " . static::$table . " SET ";
-        $updates = [];
-        
-        foreach (static::$columnDB as $column) {
-            // Excluir siempre el campo 'id' en las actualizaciones
-            if ($column !== 'id' && property_exists($this, $column)) {
-                $value = self::$db->real_escape_string($this->$column);
-                $updates[] = "`$column` = '$value'";
-            }
-        }
-        
-        $query .= implode(', ', $updates) . " WHERE id = '$id'";
-        $result = self::$db->query($query);
-        
-        // Limpiar cache después de actualizar
-        if (self::$cacheEnabled) {
-            $cacheKey = static::$table . '_find_' . $id;
-            unset(self::$cache[$cacheKey]);
-        }
-        
-        return $result;
-    }
-
-    public function delete(){
-        $id = self::$db->real_escape_string($this->id);
-        $query = "DELETE FROM " . static::$table . " WHERE id = '$id'";
-        $result = self::$db->query($query);
-        
-        // Limpiar cache después de eliminar
-        if (self::$cacheEnabled) {
-            $cacheKey = static::$table . '_find_' . $id;
-            unset(self::$cache[$cacheKey]);
-        }
-        
-        return $result;
-    }
-
-   
-    public static function findAllBy($column, $value, $columns = ['*']){
-        // Validación básica de columnas para seguridad
-        if (!in_array($column, static::$columnDB) && $column !== 'id') {
-            return [];
-        }
-        
-        $value = self::$db->real_escape_string($value);
-        $columnsStr = is_array($columns) ? implode(', ', $columns) : $columns;
-
-        $query = "SELECT $columnsStr FROM " . static::$table . " WHERE $column = '$value'";
-        $result = self::$db->query($query);
-        $array = [];
-
-        while ($row = $result->fetch_assoc()) {
-            $array[] = static::create($row);
-        }
-        return $array;
-    }
-
-
-    
-    public function save($img){
+    public function save($exclude = []) {
         try {
-           
-            if($img == true){
-                // Procesar imagen con manejo de memoria
-                $processedImage = $this->processImage($this->img,"users",".png");
-                if ($processedImage === false) {
-                    throw new \Exception("Error al procesar la imagen");
-                }
-                $this->img = $processedImage;
-                
-                // Liberar memoria después del procesamiento
-                gc_collect_cycles();
+            if (!empty(self::$errors)) {
+                return self::$errors;
             }
-            if(empty(self::$errors)){
+
             $columns = [];
+            $placeholders = [];
             $values = [];
-            
+
             foreach (static::$columnDB as $column) {
-                // Excluir siempre el campo 'id'
-                if ($column !== 'id' && property_exists($this, $column)) {
-                    $value = $this->$column;
-                    $value = self::$db->real_escape_string($value);
+                if ($column !== 'id' && property_exists($this, $column) && !in_array($column, $exclude)) {
                     $columns[] = "`$column`";
-                    $values[] = "'$value'";
+                    $placeholders[] = "?";
+                    $values[] = $this->$column;
                 }
             }
-            
-            $columnsStr = implode(', ', $columns);
-            $valuesStr = implode(', ', $values);
-            
-            $query = "INSERT INTO " . static::$table . " ($columnsStr) VALUES ($valuesStr)";
-            $result = self::$db->query($query);
-            
-            // Limpiar cache después de insertar
-            if (self::$cacheEnabled && $result) {
-                self::clearCache();
+
+            $columnsStr = implode(", ", $columns);
+            $placeholdersStr = implode(", ", $placeholders);
+
+            $query = "INSERT INTO " . static::$table . " ($columnsStr) VALUES ($placeholdersStr)";
+            $stmt = self::$db->prepare($query);
+
+            if (!$stmt) {
+                throw new \Exception("Error en prepare: " . self::$db->error);
             }
-            
-            return true;
-        }else{
-            
-            return self::$errors;
-        }
-            
+
+            $types = "";
+            foreach ($values as $value) {
+                if (is_int($value)) $types .= "i";
+                elseif (is_float($value)) $types .= "d";
+                elseif (is_null($value)) $types .= "s";
+                else $types .= "s";
+            }
+
+            $stmt->bind_param($types, ...$values);
+            $result = $stmt->execute();
+
+            if ($result) {
+                if (self::$cacheEnabled) self::clearCache();
+                $this->id = self::$db->insert_id;
+                $stmt->close();
+                return $this->id;
+            } else {
+                throw new \Exception("Error en execute: " . $stmt->error);
+            }
+
         } catch (\Exception $e) {
             error_log("Error en save: " . $e->getMessage());
             return false;
         }
     }
 
-    private function processImage($img, $carpeta, $tipo){ 
+    public function update($id = null, $exclude = []) {
         try {
-            self::$errors=[];
-            // Verificar que el archivo existe y es válido
-            if (!isset($img['tmp_name']) || !file_exists($img['tmp_name'])) {
-                throw new \Exception("Archivo de imagen no válido");
-                self::$errors["error"][]="Archivo de imagen no válido";
-            }
-            
-            // Verificar el tamaño del archivo (máximo 3MB para evitar problemas de memoria)
-            if ($img['size'] > 3 * 1024 * 1024) {
-                throw new \Exception("El archivo es demasiado grande (máximo 1MB)");
-                self::$errors["error"][]="Archivo es demasiado";
-            }
-            
-            // Verificar el tipo de archivo
-            $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
-            if (!in_array($img['type'], $allowedTypes)) {
-                throw new \Exception("Tipo de archivo no permitido");
-                self::$errors["error"][]="Archivo de imagen no válido";
-            }
-            
-            // Verificar que el archivo es realmente una imagen válida
-            $imageInfo = @getimagesize($img['tmp_name']);
-            if ($imageInfo === false) {
-                throw new \Exception("El archivo no es una imagen válida");
-                self::$errors["error"][]="Archivo de imagen no válido";
-            }
-            
-            // Verificar dimensiones máximas (máximo 2000x2000 para evitar problemas de memoria)
-            if ($imageInfo[0] > 2000 || $imageInfo[1] > 2000) {
-                throw new \Exception("La imagen es demasiado grande (máximo 2000x2000 píxeles)");
-                self::$errors["error"][]="es demasiado grande (maximo 2000x2000)";
-            }
-            
-            $nombre_img = md5(uniqid(rand(), true)) . $tipo;
-            $uploadDir = __DIR__ . '/../../public/imagenes/' . $carpeta . '/';
-            
-            // Crear directorio si no existe
-            if (!is_dir($uploadDir)) {
-                if (!mkdir($uploadDir, 0755, true)) {
-                    throw new \Exception("No se pudo crear el directorio de destino");
-                    
+            if (!empty(self::$errors)) return self::$errors;
+
+            $id = $id ?? $this->id;
+            if (empty($id)) throw new \Exception("ID requerido para actualizar");
+
+            $updates = [];
+            $values = [];
+
+            foreach (static::$columnDB as $column) {
+                if ($column !== 'id' && property_exists($this, $column) && !in_array($column, $exclude)) {
+                    $updates[] = "`$column` = ?";
+                    $values[] = $this->$column;
                 }
             }
-            
-            // Verificar permisos de escritura
-            if (!is_writable($uploadDir)) {
-                throw new \Exception("No hay permisos de escritura en el directorio");
+
+            if (empty($updates)) throw new \Exception("No hay columnas para actualizar");
+
+            $updatesStr = implode(", ", $updates);
+            $query = "UPDATE " . static::$table . " SET $updatesStr WHERE id = ?";
+
+            $stmt = self::$db->prepare($query);
+            if (!$stmt) throw new \Exception("Error en prepare: " . self::$db->error);
+
+            $types = "";
+            foreach ($values as $value) {
+                if (is_int($value)) $types .= "i";
+                elseif (is_float($value)) $types .= "d";
+                elseif (is_null($value)) $types .= "s";
+                else $types .= "s";
             }
-            
-            // Simplemente copiar el archivo sin procesar para evitar problemas de memoria
-            $filePath = $uploadDir . $nombre_img;
-            
-            if (!copy($img['tmp_name'], $filePath)) {
-                throw new \Exception("No se pudo copiar la imagen");
+
+            $types .= "i"; 
+            $values[] = $id;
+
+            $stmt->bind_param($types, ...$values);
+            $result = $stmt->execute();
+
+            if ($result) {
+                if (self::$cacheEnabled) {
+                    $cacheKey = static::$table . '_find_' . $id;
+                    unset(self::$cache[$cacheKey]);
+                }
+                $stmt->close();
+                return true;
+            } else {
+                throw new \Exception("Error en execute: " . $stmt->error);
             }
-            
-            // Verificar que el archivo se copió correctamente
-            if (!file_exists($filePath)) {
-                throw new \Exception("No se pudo guardar la imagen");
-                self::$errors["error"][]="error con el guardado de la imagen";
-            }
-            
-            return [$nombre_img];
-            
+
         } catch (\Exception $e) {
-            error_log("Error procesando imagen: " . $e->getMessage());
+            error_log("Error en update: " . $e->getMessage());
             return false;
         }
     }
-    
-    // Métodos para gestionar el cache
+
+    public function delete($id = null) {
+        try {
+            $id = $id ?? $this->id;
+            if (empty($id)) throw new \Exception("ID requerido para eliminar");
+
+            $query = "DELETE FROM " . static::$table . " WHERE id = ?";
+            $stmt = self::$db->prepare($query);
+            if (!$stmt) throw new \Exception("Error en prepare: " . self::$db->error);
+
+            $stmt->bind_param("i", $id);
+            $result = $stmt->execute();
+
+            if ($result) {
+                if (self::$cacheEnabled) {
+                    $cacheKey = static::$table . '_find_' . $id;
+                    unset(self::$cache[$cacheKey]);
+                }
+                $stmt->close();
+                return true;
+            } else {
+                throw new \Exception("Error en execute: " . $stmt->error);
+            }
+
+        } catch (\Exception $e) {
+            error_log("Error en delete: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /* ===================== CACHE ===================== */
     public static function clearCache() {
         self::$cache = [];
     }
-    
+
     public static function disableCache() {
         self::$cacheEnabled = false;
     }
-    
+
     public static function enableCache() {
         self::$cacheEnabled = true;
     }
-    
+
     public static function getCacheStats() {
         return [
             'enabled' => self::$cacheEnabled,
@@ -331,6 +301,9 @@ class main
             'keys' => array_keys(self::$cache)
         ];
     }
+
+
+
 }
 
   
