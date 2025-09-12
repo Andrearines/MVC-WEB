@@ -24,53 +24,56 @@ class FileManager
     {
         try {
             self::$errors = [];
-
+    
             if (!isset($img['tmp_name']) || !file_exists($img['tmp_name'])) {
-                throw new \Exception("Archivo de imagen no válido");
+                self::$errors["error"][]="Archivo de imagen no válido";
             }
-
+    
             if ($img['size'] > 3 * 1024 * 1024) {
-                throw new \Exception("El archivo es demasiado grande (máximo 3MB)");
+                self::$errors["error"][]="El archivo es demasiado grande (máximo 3MB)";
             }
-
+    
             $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
             if (!in_array($img['type'], $allowedTypes)) {
-                throw new \Exception("Tipo de archivo no permitido");
+                self::$errors["error"][]="Tipo de archivo no permitido";
             }
-
+    
             $imageInfo = @getimagesize($img['tmp_name']);
             if ($imageInfo === false) {
-                throw new \Exception("El archivo no es una imagen válida");
+                self::$errors["error"][]="El archivo no es una imagen válida";
             }
-
+    
             if ($imageInfo[0] > 2000 || $imageInfo[1] > 2000) {
-                throw new \Exception("La imagen es demasiado grande (máximo 2000x2000 píxeles)");
+                self::$errors["error"][]="La imagen es demasiado grande (máximo 2000x2000 píxeles)";
             }
-
+    
             $nombreArchivo = md5(uniqid(rand(), true)) . $tipo;
             $uploadDir = __DIR__ . '/../../public/imagenes/' . $carpeta . '/';
-
+    
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0755, true);
             }
-
+    
             if (!is_writable($uploadDir)) {
-                throw new \Exception("No hay permisos de escritura en el directorio");
+                self::$errors["error"][]="No hay permisos de escritura en el directorio";
             }
-
+    
             $filePath = $uploadDir . $nombreArchivo;
-
+    
             if (!move_uploaded_file($img['tmp_name'], $filePath)) {
-                throw new \Exception("No se pudo guardar la imagen");
+                self::$errors["error"][]="No se pudo guardar la imagen";
             }
-
-            return [$nombreArchivo];
+    
+            if (empty(self::$errors)) {
+                return [$nombreArchivo];
+            }
+            return self::$errors;
         } catch (\Exception $e) {
-            error_log("Error procesando imagen: " . $e->getMessage());
-            return false;
+            self::$errors["error"][]="Error procesando imagen: " . $e->getMessage();
+            return self::$errors;
         }
     }
-
+    
     /**
      * Procesa archivos genéricos (PDF, DOCX, ZIP, etc.) evitando webshells
      */
@@ -132,7 +135,7 @@ class FileManager
 
             return [$nombreArchivo];
         } catch (\Exception $e) {
-            error_log("Error procesando archivo: " . $e->getMessage());
+            ("Error procesando archivo: " . $e->getMessage());
             return false;
         }
     }
