@@ -13,6 +13,7 @@ Esta plantilla proporciona la estructura base para la interfaz de usuario de un 
 - **Optimización automática de imágenes** con redimensionamiento inteligente.
 - **Consultas optimizadas** con selección de columnas específicas.
 - **Validación de seguridad** mejorada para prevenir inyecciones SQL.
+- **userToken** model de user con JWT
 
 
 - **mejora del procesamiento de imgs**  se añadio valiraciones

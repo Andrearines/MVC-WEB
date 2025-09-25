@@ -1,8 +1,8 @@
 <?php
 
 namespace models;
-require "/../../config/Environment.php";
-Environment::load();
+require_once __DIR__ . '/../config/Environment.php';
+\Environment::load();
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
@@ -15,13 +15,13 @@ class email {
     
     public function __construct() {
         $this->config = [
-            'host' => Environment::get('MAIL_HOST', 'smtp.gmail.com'),
-            'port' => Environment::getInt('MAIL_PORT', 587),
-            'username' => Environment::get('MAIL_USERNAME', ''),
-            'password' => Environment::get('MAIL_PASSWORD', ''),
-            'encryption' => Environment::get('MAIL_ENCRYPTION', 'tls'),
-            'from_name' => Environment::get('APP_NAME', 'Web MVC'),
-            'from_email' => Environment::get('MAIL_USERNAME', '')
+            'host' => \Environment::get('MAIL_HOST', 'smtp.gmail.com'),
+            'port' => \Environment::getInt('MAIL_PORT', 587),
+            'username' => \Environment::get('MAIL_USERNAME', ''),
+            'password' => \Environment::get('MAIL_PASSWORD', ''),
+            'encryption' => \Environment::get('MAIL_ENCRYPTION', 'tls'),
+            'from_name' => \Environment::get('APP_NAME', 'Web MVC'),
+            'from_email' => \Environment::get('MAIL_USERNAME', '')
         ];
         
         $this->inicializarMailer();
@@ -50,13 +50,10 @@ class email {
             // Configuración del remitente
             $this->mailer->setFrom($this->config['from_email'], $this->config['from_name']);
             
-            // Debug en modo desarrollo
-            if (Environment::getBool('APP_DEBUG', false)) {
-                $this->mailer->SMTPDebug = SMTP::DEBUG_SERVER;
-            }
+           
             
-        } catch (Exception $e) {
-            throw new Exception("Error al inicializar PHPMailer: " . $e->getMessage());
+        } catch (\Exception $e) {
+            throw new \Exception("Error al inicializar PHPMailer: " . $e->getMessage());
         }
     }
     
@@ -80,8 +77,8 @@ class email {
             
             return $this->mailer->send();
             
-        } catch (Exception $e) {
-            throw new Exception("Error al enviar email: " . $e->getMessage());
+        } catch (\Exception $e) {
+            throw new \Exception("Error al enviar email: " . $e->getMessage());
         }
     }
     
@@ -93,8 +90,8 @@ class email {
             $html = $this->cargarPlantilla($plantilla, $datos);
             return $this->enviar($para, $asunto, $html, true);
             
-        } catch (Exception $e) {
-            throw new Exception("Error al enviar email con plantilla: " . $e->getMessage());
+        } catch (\Exception $e) {
+            throw new \Exception("Error al enviar email con plantilla: " . $e->getMessage());
         }
     }
     
@@ -112,8 +109,8 @@ class email {
             
             return $this->enviar($para, $asunto, $mensaje, $html);
             
-        } catch (Exception $e) {
-            throw new Exception("Error al enviar email con adjuntos: " . $e->getMessage());
+        } catch (\Exception $e) {
+            throw new \Exception("Error al enviar email con adjuntos: " . $e->getMessage());
         }
     }
     
@@ -141,8 +138,8 @@ class email {
             
             return $this->mailer->send();
             
-        } catch (Exception $e) {
-            throw new Exception("Error al enviar email múltiple: " . $e->getMessage());
+        } catch (\Exception $e) {
+            throw new \Exception("Error al enviar email múltiple: " . $e->getMessage());
         }
     }
     
@@ -153,7 +150,7 @@ class email {
         $rutaPlantilla = __DIR__ . "/../views/emails/{$plantilla}.php";
         
         if (!file_exists($rutaPlantilla)) {
-            throw new Exception("Plantilla de email no encontrada: {$plantilla}");
+            throw new \Exception("Plantilla de email no encontrada: {$plantilla}");
         }
         
         // Extraer variables para usar en la plantilla
@@ -200,8 +197,8 @@ class email {
     public function enviarBienvenida($email, $nombre) {
         $datos = [
             'nombre' => $nombre,
-            'app_name' => Environment::get('APP_NAME', 'Web MVC'),
-            'app_url' => Environment::get('APP_URL', 'http://localhost')
+            'app_name' => \Environment::get('APP_NAME', 'Web MVC'),
+            'app_url' => \Environment::get('APP_URL', 'http://localhost')
         ];
         
         return $this->enviarConPlantilla($email, 'Bienvenido a ' . $datos['app_name'], 'bienvenida', $datos);
@@ -214,8 +211,8 @@ class email {
         $datos = [
             'nombre' => $nombre,
             'token' => $token,
-            'app_name' => Environment::get('APP_NAME', 'Web MVC'),
-            'app_url' => Environment::get('APP_URL', 'http://localhost')
+            'app_name' => \Environment::get('APP_NAME', 'Web MVC'),
+            'app_url' => \Environment::get('APP_URL', 'http://localhost')
         ];
         
         return $this->enviarConPlantilla($email, 'Recuperación de contraseña', 'recuperacion_password', $datos);
@@ -229,7 +226,7 @@ class email {
             'titulo' => $titulo,
             'mensaje' => $mensaje,
             'tipo' => $tipo,
-            'app_name' => Environment::get('APP_NAME', 'Web MVC')
+            'app_name' => \Environment::get('APP_NAME', 'Web MVC')
         ];
         
         return $this->enviarConPlantilla($email, $titulo, 'notificacion', $datos);
