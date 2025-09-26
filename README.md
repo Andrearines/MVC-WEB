@@ -86,7 +86,8 @@ Para utilizar esta plantilla, asegúrese de agregar las siguientes dependencias 
 ```json
 {
     "require": {
-        "intervention/image": "^3.0"
+        "intervention/image": "^3.0",
+        "firebase/php-jwt": "^6.0"
     },
     "psr-4": {
         "models\\": "./app/models",
@@ -94,10 +95,6 @@ Para utilizar esta plantilla, asegúrese de agregar las siguientes dependencias 
         "controllers/API\\": "./app/controllers/API",
         "controllers\\": "./app/controllers"
     }
-    
-    //para autenticaion dinamica
-    "use Firebase\JWT\JWT;
-    composer require firebase/php-jwt"
 }
 ```
 

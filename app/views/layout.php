@@ -3,7 +3,7 @@
 if(!isset($_SESSION)){
 session_start();
 }
-$auth = $_SESSION['admin'] ?? null;
+
 if(!isset($barra_frotante)){
     $barra_frotante=false;
 }
@@ -12,49 +12,47 @@ if(!isset($inicio)){
     $inicio=false;
 
 }
-?>
+require_once __DIR__ . '../../../config/Environment.php';
+\Environment::load();
 
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../build/css/app.css">
-    <title></title>
+    <title> <?php echo Environment::get('APP_NAME')?>  | <?php echo $titulo ?></title>
 </head>
 <body>
 
     <header class="header 
-    <?php echo $inicio ?"inicio":"" ?>
-    <?php echo $barra_frotante ?"barra-frotante":"" ?>
-    ">
-        <div class="contenido-header">
-
-            <div class="barra">
+    <?php echo $inicio ?"inicio":"" ?>">
+   
+            <div class="barra  <?php echo $barra_frotante ?"barra-frotante":"" ?>">
                 
            </div> <!--barra-->
 
            <?php if($inicio){ ?>
            <h1> </h1><!--titulo-->
            <?php }?>
-        </div>
     </header>
 
     <?php echo $contenedor?>
    
     
 <footer class="footer">
+    <div class="logo-contenedor">
+        <a href=""></a>
+    </div>
         <div class="contenedor contenedor-footer">
             <nav class="navegacion">
                 
             </nav>
         </div>
-        <?php 
-        
-        $fecha =date("y");
-
-        ?>
-        <p class="copyright">todos los derechos resevados <?php echo(date("Y"))?> &copy;</p>
+    
+     <!-- <p class="copyright">todos los derechos resevados <?php echo(date("Y"))?> &copy;</p> -->
     </footer>
           <?php
     if($script){
