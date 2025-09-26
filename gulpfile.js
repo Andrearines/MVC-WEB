@@ -19,9 +19,9 @@ let imagemin;
 })();
 
 const paths = {
-    scss: 'src/scss/**/*.scss',
-    js: 'src/js/**/*.js',
-    imagenes: 'src/img/**/*'
+    scss: 'src/**/**/*.scss',
+    js: 'src/**/**/*.js',
+    imagenes: 'src/imgs/**/*'
 }
 
 function css() {
