@@ -1,7 +1,7 @@
 <?php
 
 namespace models;
-require_once __DIR__ . '/../config/Environment.php';
+require_once __DIR__ . '/../../config/Environment.php';
 \Environment::load();
 
 use PHPMailer\PHPMailer\PHPMailer;
@@ -24,8 +24,9 @@ class email {
             'from_email' => \Environment::get('MAIL_USERNAME', '')
         ];
         
-        $this->inicializarMailer();
-    }
+        if (\Environment::get('APP_DEBUG', false) === 'true' || \Environment::get('APP_DEBUG', false) === true) { $this->config['from_email'] = 'debug@mailtrap.io'; } $this->inicializarMailer(); }
+    
+  
     
     /**
      * Inicializa PHPMailer con la configuración del entorno
@@ -194,11 +195,13 @@ class email {
     /**
      * Envía email de bienvenida
      */
-    public function enviarBienvenida($email, $nombre) {
+    public function enviarBienvenida($email, $nombre,$token) {
         $datos = [
             'nombre' => $nombre,
             'app_name' => \Environment::get('APP_NAME', 'Web MVC'),
-            'app_url' => \Environment::get('APP_URL', 'http://localhost')
+            'app_url' => \Environment::get('APP_URL', 'http://localhost'),
+            'token' => $token
+
         ];
         
         return $this->enviarConPlantilla($email, 'Bienvenido a ' . $datos['app_name'], 'bienvenida', $datos);

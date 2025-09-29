@@ -22,8 +22,15 @@ class user extends main{
     public $updated_at; 
     public $img;
     public $password_c; 
+    static private $key = null;
 
-    static private $key = \Environment::get('JWT_KEY', 'prE!X2wW^*gH0MQ');
+    private static function getKey() {
+        if (self::$key === null) {
+            self::$key = \Environment::get('JWT_KEY', '');
+        }
+        return self::$key;
+    }
+
     
     public function __construct($args=[], $img=[])
     {
@@ -53,18 +60,17 @@ class user extends main{
         $stmt->bind_param("ss", $this->password, $this->token);
         $stmt->execute();
         $stmt->close();
-        
         // Limpiar caché completo después de reset de contraseña
         self::clearCache();
     }
 
   
     public static function desifrartoken(){
-        $key=self::$key;
+        $key=self::getKey();
         $token = $_COOKIE['access_token'] ?? null;
             if($token){
                 try{
-                $payload = JWT::decode($token, new Key($key, 'HS256'));
+                    $payload = JWT::decode($token, new Key($key, 'HS256'));
                 } catch (\Throwable $e) {
                     return false;
                 }
@@ -156,7 +162,7 @@ class user extends main{
         }
     
         // Si todo bien, generamos el token
-        $key = self::$key;   
+        $key = self::getKey();   
         $payload = [
             "id" => $user->id,
             "login" => true,
@@ -221,25 +227,7 @@ class user extends main{
     public function password_hash(){
         $this->password= password_hash($this->password, PASSWORD_ARGON2ID);
     }
-   public function varificar(){
-
-    $r=self::findBy("token",$this->token);
-    if($r && (int)$r->confirmado === 0 ){
-        $this->token = self::$db->real_escape_string($this->token);
-        $stmt = self::$db->prepare( "UPDATE " . static::$table . " SET token = '',confirmado=1 where token = ?");
-        $stmt->bind_param("s",$this->token);
-        $stmt->execute();
-        $stmt->close();
-        
-        // Limpiar caché completo después de verificar usuario
-        self::clearCache();
-        
-        return true;
-    }else{
-        static::$errors["error"][] = "no es valido o ha expirado";
-        return static::$errors;
-    }
-    }
+  
     public function existeUser(){
         $r=self::findAllBy("email",$this->email,["email"]);
         if($r){

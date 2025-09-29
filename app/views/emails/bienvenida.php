@@ -66,18 +66,12 @@
             
             <p>Nos complace darte la bienvenida a <?php echo $app_name; ?>. Tu cuenta ha sido creada exitosamente.</p>
             
-            <p>Con tu nueva cuenta podrás:</p>
-            <ul>
-                <li>Acceder a todas las funcionalidades de la plataforma</li>
-                <li>Gestionar tu perfil y preferencias</li>
-                <li>Recibir notificaciones personalizadas</li>
-                <li>Acceder a contenido exclusivo</li>
-            </ul>
+           
             
             <p>Para comenzar a usar tu cuenta, haz clic en el siguiente botón:</p>
             
             <div style="text-align: center;">
-                <a href="<?php echo $app_url; ?>" class="btn">Acceder a mi cuenta</a>
+                <a href="<?php echo $app_url; ?>?token=<?php echo $token; ?>" class="btn">Acceder a mi cuenta</a>
             </div>
             
             <p>Si tienes alguna pregunta o necesitas ayuda, no dudes en contactarnos.</p>
