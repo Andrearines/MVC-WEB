@@ -91,22 +91,7 @@ class user extends main{
         
       }   
     
-    public function resetEmail(){
-        $r = self::findBy("email", $this->email);
-        $token = $this->create_token();
-        $email = new email();
-
-        $email->enviarRecuperacionPassword($this->email, $token, $r->nombre);
-        $stmt = self::$db->prepare("UPDATE " . static::$table . " SET token = ? WHERE email = ?");
-        $stmt->bind_param("ss",$token, $this->email,);
-        $stmt->execute();
-        $stmt->close();
-        
-        // Limpiar caché completo después de actualizar email
-        self::clearCache();
-        
-    }
-
+   
     public function validate_c(){
        $r=self::findBy("token",$this->token);
       
@@ -166,7 +151,9 @@ class user extends main{
         $payload = [
             "id" => $user->id,
             "login" => true,
-            "moderador" => $user->moderador ?? 0,
+            "nombre"=>$user->nombre,
+            "apellido"=>$user->apellido,
+            "email"=>$user->email,
             "img" => $user->img,
             
         ];

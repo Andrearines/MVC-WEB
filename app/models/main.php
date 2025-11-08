@@ -28,13 +28,8 @@ class main
         self::$db = $database;
     }
 
-    public function validate()
-    {
-        static::$errors = [];
-        return static::$errors;
-    }
-
     public function createError($type, $msg){
+
         static::$errors[$type][] = $msg;
     }
 
@@ -83,35 +78,18 @@ class main
         return $res;
     }
 
-    /* ===================== CRUD ===================== */
-
-    public static function all($columns = ['*']){
-        $columnsStr = is_array($columns) ? implode(', ', $columns) : $columns;
-        $query = "SELECT $columnsStr FROM " . static::$table;
-        return self::SQL($query);
-    }
-
-    public static function find($id){
-        if (self::$cacheEnabled) {
-            $cacheKey = static::$table . '_find_' . $id;
-            if (isset(self::$cache[$cacheKey])) {
-                return self::$cache[$cacheKey];
+     public static function create($data){
+        $object = new static;
+        foreach ($data as $key => $value) {
+            if (property_exists($object, $key)) {
+                $object->$key = $value;
             }
         }
-
-        $query = "SELECT * FROM " . static::$table . " WHERE id = ? LIMIT 1";
-        $result = self::SQL($query, [$id], "i");
-
-        if ($result) {
-            $object = $result[0];
-            if (self::$cacheEnabled) {
-                self::$cache[$cacheKey] = $object;
-            }
-            return $object;
-        }
-        return null;
+        return $object;
     }
 
+
+    
     public static function findBy($column, $value){
         if (!in_array($column, static::$columnDB) && $column !== 'id') {
             return null;
@@ -132,15 +110,36 @@ class main
         return self::SQL($query, [$value], "s");
     }
 
-    public static function create($data){
-        $object = new static;
-        foreach ($data as $key => $value) {
-            if (property_exists($object, $key)) {
-                $object->$key = $value;
+      public static function find($id){
+        if (self::$cacheEnabled) {
+            $cacheKey = static::$table . '_find_' . $id;
+            if (isset(self::$cache[$cacheKey])) {
+                return self::$cache[$cacheKey];
             }
         }
-        return $object;
+
+        $query = "SELECT * FROM " . static::$table . " WHERE id = ? LIMIT 1";
+        $result = self::SQL($query, [$id], "i");
+
+        if ($result) {
+            $object = $result[0];
+            if (self::$cacheEnabled) {
+                self::$cache[$cacheKey] = $object;
+            }
+            return $object;
+        }
+        return null;
     }
+
+    /* ===================== CRUD ===================== */
+
+    public static function all($columns = ['*']){
+        $columnsStr = is_array($columns) ? implode(', ', $columns) : $columns;
+        $query = "SELECT $columnsStr FROM " . static::$table;
+        return self::SQL($query);
+    }
+
+  
 
     public function save($exclude = []) {
         try {
