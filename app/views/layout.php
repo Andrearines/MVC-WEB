@@ -56,7 +56,9 @@ require_once __DIR__ . '../../../config/Environment.php';
     </footer>
           <?php
     if($script){
-        echo "<script src='build/js/{$script}.js'></script>";
+        foreach($script as $script){
+            echo "<script src='build/js/{$script}.js'></script>";
+        }
     }
     ?>
     <script src="/build/js/modernizr.js"></script>
