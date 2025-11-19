@@ -1,9 +1,15 @@
 <?php
+
 namespace controllers;
+
 use MVC\Router;
-class loginController{
-    public static function loginView(Router $r){
-        
+
+class PagesController
+{
+
+    public static function indexView(Router $router)
+    {
+        $router->view('home/index.php', ['inicio' => true, "script" => [], "titulo" => "Home"]);
     }
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
@@ -12,7 +18,4 @@ class loginController{
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
-    public static function registerView(Router $r){
-        
-    }
 }

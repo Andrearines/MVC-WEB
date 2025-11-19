@@ -1,39 +1,40 @@
 <?php
 
 namespace models;
+
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
 
-class main
+class Main
 {
     public static $table;
     public static $db;
     static $columnDB = [];
-    
+
     public static $errors = [];
-    
+
     // Cache simple
     private static $cache = [];
     private static $cacheEnabled = true;
 
     public $id;
     public $img;
-    
-    public function __construct($data = [])
-    {
-    }
-    
+
+    public function __construct($data = []) {}
+
     public static function setDb($database)
     {
         self::$db = $database;
     }
 
-    public function createError($type, $msg){
+    public function createError($type, $msg)
+    {
 
         static::$errors[$type][] = $msg;
     }
 
-    public function sicronizar($data){
+    public function sicronizar($data)
+    {
         foreach ($data as $key => $value) {
             if (property_exists($this, $key)) {
                 $this->$key = $value;
@@ -44,7 +45,8 @@ class main
     /* ===================== SQL GENÉRICO ===================== */
 
     // Ejecución de query seguro (SELECT multiple)
-    public static function SQL($query, $params = [], $types = ""){
+    public static function SQL($query, $params = [], $types = "")
+    {
         $stmt = self::$db->prepare($query);
         if (!$stmt) throw new \Exception("Error en prepare: " . self::$db->error);
 
@@ -65,7 +67,8 @@ class main
     }
 
     // Ejecución directa (INSERT, UPDATE, DELETE genéricos)
-    public function exec($query, $params = [], $types = ""){
+    public function exec($query, $params = [], $types = "")
+    {
         $stmt = self::$db->prepare($query);
         if (!$stmt) throw new \Exception("Error en prepare: " . self::$db->error);
 
@@ -78,7 +81,8 @@ class main
         return $res;
     }
 
-     public static function create($data){
+    public static function create($data)
+    {
         $object = new static;
         foreach ($data as $key => $value) {
             if (property_exists($object, $key)) {
@@ -89,8 +93,9 @@ class main
     }
 
 
-    
-    public static function findBy($column, $value){
+
+    public static function findBy($column, $value)
+    {
         if (!in_array($column, static::$columnDB) && $column !== 'id') {
             return null;
         }
@@ -100,7 +105,8 @@ class main
         return $result ? $result[0] : null;
     }
 
-    public static function findAllBy($column, $value, $columns = ['*']){
+    public static function findAllBy($column, $value, $columns = ['*'])
+    {
         if (!in_array($column, static::$columnDB) && $column !== 'id') {
             return [];
         }
@@ -110,7 +116,8 @@ class main
         return self::SQL($query, [$value], "s");
     }
 
-      public static function find($id){
+    public static function find($id)
+    {
         if (self::$cacheEnabled) {
             $cacheKey = static::$table . '_find_' . $id;
             if (isset(self::$cache[$cacheKey])) {
@@ -133,15 +140,17 @@ class main
 
     /* ===================== CRUD ===================== */
 
-    public static function all($columns = ['*']){
+    public static function all($columns = ['*'])
+    {
         $columnsStr = is_array($columns) ? implode(', ', $columns) : $columns;
         $query = "SELECT $columnsStr FROM " . static::$table;
         return self::SQL($query);
     }
 
-  
 
-    public function save($exclude = []) {
+
+    public function save($exclude = [])
+    {
         try {
             if (!empty(self::$errors)) {
                 return self::$errors;
@@ -188,14 +197,14 @@ class main
             } else {
                 throw new \Exception("Error en execute: " . $stmt->error);
             }
-
         } catch (\Exception $e) {
             error_log("Error en save: " . $e->getMessage());
             return false;
         }
     }
 
-    public function update($id = null, $exclude = []) {
+    public function update($id = null, $exclude = [])
+    {
         try {
             if (!empty(self::$errors)) return self::$errors;
 
@@ -228,7 +237,7 @@ class main
                 else $types .= "s";
             }
 
-            $types .= "i"; 
+            $types .= "i";
             $values[] = $id;
 
             $stmt->bind_param($types, ...$values);
@@ -244,14 +253,14 @@ class main
             } else {
                 throw new \Exception("Error en execute: " . $stmt->error);
             }
-
         } catch (\Exception $e) {
             error_log("Error en update: " . $e->getMessage());
             return false;
         }
     }
 
-    public function delete($id = null) {
+    public function delete($id = null)
+    {
         try {
             $id = $id ?? $this->id;
             if (empty($id)) throw new \Exception("ID requerido para eliminar");
@@ -273,7 +282,6 @@ class main
             } else {
                 throw new \Exception("Error en execute: " . $stmt->error);
             }
-
         } catch (\Exception $e) {
             error_log("Error en delete: " . $e->getMessage());
             return false;
@@ -281,31 +289,27 @@ class main
     }
 
     /* ===================== CACHE ===================== */
-    public static function clearCache() {
+    public static function clearCache()
+    {
         self::$cache = [];
     }
 
-    public static function disableCache() {
+    public static function disableCache()
+    {
         self::$cacheEnabled = false;
     }
 
-    public static function enableCache() {
+    public static function enableCache()
+    {
         self::$cacheEnabled = true;
     }
 
-    public static function getCacheStats() {
+    public static function getCacheStats()
+    {
         return [
             'enabled' => self::$cacheEnabled,
             'items' => count(self::$cache),
             'keys' => array_keys(self::$cache)
         ];
     }
-
-
-
 }
-
-  
-       
-    
-
