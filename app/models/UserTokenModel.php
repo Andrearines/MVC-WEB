@@ -7,7 +7,7 @@ use Firebase\JWT\Key;
 
 require_once __DIR__ . "/../../config/Environment.php";
 \Environment::load();
-class UserTokenModel extends main
+class UserTokenModel extends Main
 {
 
     public static $table = "users";
