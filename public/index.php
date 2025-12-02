@@ -2,15 +2,19 @@
 require_once __DIR__ . '/../config/app.php';
 
 use controllers\PagesController;
-use controllers\API\API;
 use MVC\Router;
 
 $r = new Router;
 $r->get("/", [PagesController::class, 'indexView']);
 $r->post("/", [PagesController::class, 'indexView']);
-// API Routes
-$r->get("/api/servicios", [API::class, 'servicios']);
-$r->post("/api/servicios/crear", [API::class, 'crearServicio']);
-$r->put("/api/servicios/actualizar", [API::class, 'actualizarServicio']);
-$r->delete("/api/servicios/eliminar", [API::class, 'eliminarServicio']);
+
+// Add role-based access
+$r->setRol(['admin', 'user']);
+
+// Set area for layout
+$r->setArea(['admin']);
+
+$r->get("/admin/index", [PagesController::class, 'indexView']);
+
+
 $r->Rutas();
