@@ -16,7 +16,8 @@ class Environment
         $envFile = $path ?: __DIR__ . '/../.env';
 
         if (!file_exists($envFile)) {
-            throw new Exception("Archivo .env no encontrado en: " . $envFile);
+            echo "Archivo .env no encontrado en: " . $envFile;
+            exit;
         }
 
         $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);

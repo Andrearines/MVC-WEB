@@ -42,43 +42,6 @@ config/
 .env                          # Variables de entorno (crear desde env.ejemplo)
 ```
 
----
-
-## 📦 Instalación de Dependencias
-
-### 1. Instalar PHPMailer via Composer
-
-```bash
-composer require phpmailer/phpmailer
-```
-
-### 2. Verificar Autoload
-
-Asegúrate de que el autoload esté configurado en `composer.json`:
-
-```json
-{
-    "require": {
-        "phpmailer/phpmailer": "^6.8"
-    },
-    "autoload": {
-        "psr-4": {
-            "models\\": "./app/models",
-            "MVC\\": "./router",
-            "controllers\\": "./app/controllers"
-        }
-    }
-}
-```
-
-### 3. Actualizar Autoload
-
-```bash
-composer dump-autoload
-```
-
----
-
 ## ⚙️ Configuración del Entorno
 
 ### 1. Crear Archivo .env
@@ -112,6 +75,7 @@ Para usar Gmail, necesitas:
 
 1. **Habilitar 2FA** en tu cuenta de Google
 2. **Generar contraseña de aplicación**:
+
    - Ve a Configuración de Google
    - Seguridad
    - Verificación en 2 pasos
@@ -144,7 +108,7 @@ try {
         'Asunto del Email',
         'Contenido del mensaje'
     );
-    
+
     if ($resultado) {
         echo "Email enviado correctamente";
     }
@@ -167,9 +131,11 @@ $email->enviar('destinatario@ejemplo.com', 'Email HTML', $html, true);
 ### Métodos Principales
 
 #### `enviar($para, $asunto, $mensaje, $html = true)`
+
 Envía un email simple.
 
 **Parámetros:**
+
 - `$para`: Email del destinatario
 - `$asunto`: Asunto del email
 - `$mensaje`: Contenido del mensaje
@@ -178,38 +144,48 @@ Envía un email simple.
 **Retorna:** `bool` - true si se envió correctamente
 
 #### `enviarConPlantilla($para, $asunto, $plantilla, $datos = [])`
+
 Envía un email usando una plantilla HTML.
 
 **Parámetros:**
+
 - `$para`: Email del destinatario
 - `$asunto`: Asunto del email
 - `$plantilla`: Nombre de la plantilla (sin .php)
 - `$datos`: Array con variables para la plantilla
 
 #### `enviarConAdjuntos($para, $asunto, $mensaje, $adjuntos = [], $html = true)`
+
 Envía un email con archivos adjuntos.
 
 **Parámetros:**
+
 - `$adjuntos`: Array con rutas de archivos a adjuntar
 
 #### `enviarMultiple($destinatarios, $asunto, $mensaje, $html = true)`
+
 Envía un email a múltiples destinatarios.
 
 **Parámetros:**
+
 - `$destinatarios`: Array con emails de destinatarios
 
 ### Métodos Especializados
 
 #### `enviarBienvenida($email, $nombre)`
+
 Envía email de bienvenida usando la plantilla `bienvenida.php`.
 
 #### `enviarRecuperacionPassword($email, $token, $nombre = '')`
+
 Envía email de recuperación de contraseña usando la plantilla `recuperacion_password.php`.
 
 #### `enviarNotificacion($email, $titulo, $mensaje, $tipo = 'info')`
+
 Envía email de notificación usando la plantilla `notificacion.php`.
 
 **Tipos disponibles:**
+
 - `info`: Azul
 - `success`: Verde
 - `warning`: Amarillo
@@ -218,11 +194,13 @@ Envía email de notificación usando la plantilla `notificacion.php`.
 ### Métodos de Utilidad
 
 #### `verificarConfiguracion()`
+
 Verifica que todas las variables de entorno estén configuradas.
 
 **Retorna:** Array con errores encontrados
 
 #### `getConfiguracion()`
+
 Obtiene la configuración actual (sin contraseña).
 
 ---
@@ -236,6 +214,7 @@ Las plantillas se encuentran en `app/views/emails/` y usan PHP para variables di
 ### Variables Disponibles
 
 Todas las plantillas tienen acceso a:
+
 - `$app_name`: Nombre de la aplicación
 - `$app_url`: URL de la aplicación
 - Variables específicas según el tipo de email
@@ -243,22 +222,28 @@ Todas las plantillas tienen acceso a:
 ### Plantillas Incluidas
 
 #### 1. `bienvenida.php`
+
 Email de bienvenida para nuevos usuarios.
 
 **Variables:**
+
 - `$nombre`: Nombre del usuario
 
 #### 2. `recuperacion_password.php`
+
 Email para recuperación de contraseña.
 
 **Variables:**
+
 - `$nombre`: Nombre del usuario (opcional)
 - `$token`: Token de recuperación
 
 #### 3. `notificacion.php`
+
 Email de notificaciones generales.
 
 **Variables:**
+
 - `$titulo`: Título de la notificación
 - `$mensaje`: Mensaje de la notificación
 - `$tipo`: Tipo de notificación (info, success, warning, error)
@@ -367,7 +352,7 @@ try {
 } catch (Exception $e) {
     // Log del error
     error_log("Error de email: " . $e->getMessage());
-    
+
     // Mostrar mensaje al usuario
     echo "No se pudo enviar el email. Inténtalo más tarde.";
 }
@@ -389,11 +374,13 @@ if (!empty($errores)) {
 ### Errores Comunes
 
 1. **"SMTP connect() failed"**
+
    - Verificar credenciales SMTP
    - Comprobar puerto y encriptación
    - Verificar firewall
 
 2. **"Authentication failed"**
+
    - Usar contraseña de aplicación (Gmail)
    - Verificar usuario y contraseña
 
@@ -450,21 +437,25 @@ $this->mailer->SMTPOptions = array(
 ### Problemas Comunes
 
 #### 1. Email no se envía
+
 - Verificar configuración SMTP
 - Comprobar credenciales
 - Revisar logs del servidor
 
 #### 2. Email llega a spam
+
 - Configurar SPF, DKIM, DMARC
 - Usar servidor SMTP confiable
 - Evitar palabras spam en asunto/contenido
 
 #### 3. Caracteres especiales mal mostrados
+
 - Verificar encoding UTF-8
 - Usar `htmlspecialchars()` en contenido
 - Configurar charset correcto
 
 #### 4. Plantilla no se carga
+
 - Verificar ruta de plantilla
 - Comprobar permisos de archivo
 - Revisar sintaxis PHP en plantilla
@@ -490,17 +481,20 @@ print_r($config);
 ## 📝 Notas Importantes
 
 ### Seguridad
+
 - Nunca incluyas contraseñas en el código
 - Usa variables de entorno para credenciales
 - Valida emails de entrada
 - Sanitiza contenido HTML
 
 ### Rendimiento
+
 - Usa colas para emails masivos
 - Implementa rate limiting
 - Considera servicios de email transaccional
 
 ### Mantenimiento
+
 - Actualiza PHPMailer regularmente
 - Monitorea logs de email
 - Verifica configuración periódicamente
@@ -510,14 +504,16 @@ print_r($config);
 ## 🆘 Soporte
 
 ### Recursos Útiles
+
 - [Documentación PHPMailer](https://github.com/PHPMailer/PHPMailer)
 - [Configuración Gmail SMTP](https://support.google.com/mail/answer/7126229)
 - [Configuración Outlook SMTP](https://support.microsoft.com/en-us/office/pop-imap-and-smtp-settings-8361e398-8af4-4e97-b147-6c6c4ac95353)
 
 ### Contacto
+
 Para soporte técnico o preguntas sobre esta implementación, consulta la documentación o crea un issue en el repositorio.
 
 ---
 
-**Versión:** 1.0.0  
-**Compatibilidad:** PHP 7.4+, PHPMailer 6.8+ 
+**Versión:** 1.0.0
+**Compatibilidad:** PHP 7.4+, PHPMailer 6.8+
