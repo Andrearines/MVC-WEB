@@ -1,14 +1,17 @@
 <?php
 
-function sanitizar($html){
+function sanitiza($html)
+{
     return htmlspecialchars($html);
 }
-function redireccionar($url){
+function redireccionar($url)
+{
     header("Location: $url");
     exit;
 }
 
-function Authphp(){
+function Authphp()
+{
     if (session_status() !== PHP_SESSION_ACTIVE) {
         session_start();
     }
