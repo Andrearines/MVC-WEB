@@ -1,37 +1,56 @@
-
 #!/bin/bash
-echo "Inicializando proyecto Composer..."
+set -e
+
+echo "=== Inicializando proyecto Composer ==="
+
+# Inicializar Composer
 composer init -n
-echo "Código de salida: $?"
-echo "Instalando dependencias de Composer..."
+echo "✔ Composer init completado"
+
+echo ""
+echo "=== Instalando dependencias ==="
 
 composer require phpmailer/phpmailer
-echo "Código de salida: $?"
+echo "✔ PHPMailer instalado"
+
 composer require firebase/php-jwt
-echo "Código de salida: $?"
+echo "✔ Firebase JWT instalado"
+
 composer require intervention/image
-echo "Código de salida: $?"
+echo "✔ Intervention Image instalado"
 
-echo "Instalación completada!"
-echo "Código de salida final: $?"
-echo "Script completado con éxito"
-echo "Proyecto Composer listo para usar"
+echo ""
+echo "=== Actualizando dependencias ==="
 composer update
-echo "Actualización de dependencias completada!"
-echo "Verificando instalación..."
+echo "✔ Dependencias actualizadas"
+
+echo ""
+echo "=== Verificando instalación ==="
 composer show
-echo "Instalación y configuración completadas exitosamente!"
-echo "¡Todo listo! Puedes comenzar a desarrollar tu aplicación MVC con Composer."
-echo "Añade la siguiente configuración a tu archivo composer.json:"
-echo '    "psr-4": {'
-echo '      "models\\": "app/models/",'
-echo '      "MVC\\": "router/",'
-echo '      "controllers\\API\\": "app/controllers/API/",'
-echo '      "controllers\\": "app/controllers/"'
-echo '    },'
 
-echo "y ejecuta 'composer dump-autoload' para actualizar el autoloader."
-echo "¡Recuerda crear las carpetas correspondientes en tu proyecto!"
+echo ""
+echo "=== Proyecto Composer listo para usar ==="
 
+echo ""
+echo "=== Autoload PSR-4 recomendado ==="
+cat <<'EOF'
+{
+  "autoload": {
+    "psr-4": {
+      "Models\\": "app/models/",
+      "MVC\\": "router/",
+      "Controllers\\API\\": "app/controllers/API/",
+      "Controllers\\": "app/controllers/"
+    }
+  }
+}
+EOF
+
+echo ""
+echo "✔ Configuración de autoload mostrada"
+echo "✔ Recuerda crear las carpetas correspondientes"
+echo "✔ Ejecuta: composer dump-autoload"
+echo ""
+echo "🚀 Proyecto MVC listo para desarrollo"
 
 

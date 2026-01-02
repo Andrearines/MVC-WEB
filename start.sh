@@ -5,7 +5,7 @@ echo "Instalando dependencias con Composer..."
 chmod +x ./scripts/instalerComposer.sh
 ./scripts/instalerComposer.sh
 
-echo "Instalando dependencias con NPM por mientras se configura Composer..."
+echo "Instalando dependencias con NPM por miestras se configura Composer..."
 chmod +x ./scripts/instalerNpm.sh
 ./scripts/instalerNpm.sh
 
@@ -23,8 +23,9 @@ fi
 
 echo "usa npm run dev para iniciar la compilación"
 echo "Actualizando dependencias de Composer..."
-composer update
 echo "Actualización de Composer completada."
+composer dump-autoload
+echo "Autoload generado exitosamente."
 echo "Iniciando servidor..."
 chmod +x startServer.sh
 ./startServer.sh
