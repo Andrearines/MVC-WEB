@@ -4,8 +4,8 @@ namespace models;
 
 class UserPHP extends Main
 {
-    public static $table = "usuarios";
-    // ✅ AGREGADO "apellido" a las columnas
+    public static $table = "users";
+
     public static $columnDB = ["id", "nombre", "apellido", "email", "password", "confirmado", "token", "admin"];
 
     public $id;
@@ -118,7 +118,7 @@ class UserPHP extends Main
             static::$errors["error"][] = "Las contraseñas no coinciden";
         }
         if ($this->existeUser()) {
-            static::$errors["error"][] = "ya se uso este email";
+            static::$errors["error"][] = "El email ya está registrado. Por favor, inicia sesión.";
         }
         return static::$errors;
     }

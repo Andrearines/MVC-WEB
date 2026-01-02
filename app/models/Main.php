@@ -2,9 +2,6 @@
 
 namespace models;
 
-use Intervention\Image\Drivers\Gd\Driver;
-use Intervention\Image\ImageManager;
-
 class Main
 {
     public static $table;

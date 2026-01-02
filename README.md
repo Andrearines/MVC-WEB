@@ -67,11 +67,14 @@ MVC-WEB/
 - **Configuración SMTP** soportada
 - **Plantillas de email** personalizables
 
-### 📁 Gestión de Archivos
+### 📁 Gestión de Archivos Segura
 
-- **FileManagerModel** para manejo seguro de archivos
-- **Validaciones de seguridad** avanzadas
-- **Soporte para múltiples tipos** de archivos
+- **FileManagerModel** para manejo avanzado de archivos
+- **Procesamiento de imágenes** con redimensionamiento automático (800x600px)
+- **Validaciones de seguridad** contra webshells y contenido malicioso
+- **Soporte múltiple**: PDF, DOCX, ZIP, imágenes y más
+- **Nombres aleatorios** para evitar colisiones y ataques
+- **Control de tamaño** y tipos de archivo configurables
 
 ### 🎨 Frontend Moderno
 
@@ -240,15 +243,46 @@ $email->send(
 ```php
 use models\FileManagerModel;
 
-// Subir archivo
-$result = FileManagerModel::uploadFile($_FILES['archivo'], 'uploads/');
+// Procesar imágenes con redimensionamiento automático
+$result = FileManagerModel::processImage($_FILES['imagen'], 'perfil', '.jpg');
+if (is_array($result)) {
+    $nombreArchivo = $result[0]; // Nombre del archivo guardado
+    // La imagen se redimensiona automáticamente a 800x600px
+} else {
+    // Manejar errores
+    $errores = $result;
+}
 
-// Validar archivo
-$isValid = FileManagerModel::validateFile($file, ['jpg', 'png', 'pdf']);
+// Procesar archivos genéricos (PDF, DOCX, ZIP, etc.)
+$result = FileManagerModel::processFile(
+    $_FILES['documento'],
+    'documentos',
+    ['pdf', 'docx'], // Extensiones permitidas
+    5 * 1024 * 1024  // 5MB máximo
+);
 
-// Eliminar archivo
-FileManagerModel::deleteFile('ruta/al/archivo.jpg');
+// Eliminar imágenes
+FileManagerModel::deleteImage('perfil', 'nombre_archivo.jpg');
+
+// Eliminar archivos genéricos
+FileManagerModel::deleteFile('documentos', 'nombre_archivo.pdf');
 ```
+
+#### Características de Seguridad
+
+- **Validación MIME real**: Verifica el tipo de archivo real
+- **Protección contra webshells**: Escaneo de contenido sospechoso
+- **Extensiones permitidas**: Control estricto de tipos de archivo
+- **Tamaño máximo**: Límites configurables por archivo
+- **Nombres aleatorios**: Generación de nombres únicos con MD5
+
+#### Procesamiento de Imágenes
+
+- **Redimensionamiento automático**: 800x600px por defecto
+- **Formatos soportados**: JPEG, PNG, GIF
+- **Validación de dimensiones**: Máximo 2000x2000px
+- **Optimización de tamaño**: Máximo 3MB por archivo
+- **Directorio automático**: Creación de carpetas si no existen
 
 ## 🎯 Estructura MVC
 
@@ -270,6 +304,7 @@ FileManagerModel::deleteFile('ruta/al/archivo.jpg');
 
 - Organizadas por módulos en `app/views/`
 - Soporte para layouts y plantillas
+- Componentes reutilizables como input-file.php
 - Integración con assets compilados
 
 ## 🔧 Tareas de Gulp Disponibles
@@ -300,6 +335,7 @@ gulp
 
 - `firebase/php-jwt`: Autenticación JWT
 - `intervention/image`: Procesamiento de imágenes
+- `phpmailer/phpmailer`: Envío de correos
 
 ### Node.js (npm)
 
@@ -384,7 +420,7 @@ Si encuentras algún bug o necesitas ayuda:
 
 - [ ] Sistema de paginación para listas grandes
 - [ ] Logging avanzado para monitoreo de rendimiento
-- [ ] API REST completa
+- [ ] Sistema de logs centralizado
 - [ ] Sistema de caché distribuido
 - [ ] Testing automatizado
 - [ ] Dockerización del proyecto

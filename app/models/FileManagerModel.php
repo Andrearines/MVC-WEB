@@ -2,6 +2,9 @@
 
 namespace models;
 
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
+
 class FileManagerModel
 {
     private static $errors = [];
@@ -12,6 +15,14 @@ class FileManagerModel
     public static function deleteFile($carpeta, $nombreArchivo)
     {
         $filePath = __DIR__ . '/../../public/' . $carpeta . '/' . $nombreArchivo;
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        }
+    }
+
+    public static function deleteImage($carpeta, $nombreArchivo)
+    {
+        $filePath = __DIR__ . '/../../public/imagenes/' . $carpeta . '/' . $nombreArchivo;
         if (file_exists($filePath)) {
             unlink($filePath);
         }
@@ -60,7 +71,12 @@ class FileManagerModel
 
             $filePath = $uploadDir . $nombreArchivo;
 
-            if (!move_uploaded_file($img['tmp_name'], $filePath)) {
+            $manager = new ImageManager(new Driver());
+            $image = $manager->read($img['tmp_name']);
+            $image->scale(800, 600);
+            $image->save($filePath);
+
+            if (!file_exists($filePath)) {
                 self::$errors["error"][] = "No se pudo guardar la imagen";
             }
 
