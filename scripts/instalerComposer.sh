@@ -37,10 +37,10 @@ cat <<'EOF'
 {
   "autoload": {
     "psr-4": {
-      "Models\\": "app/models/",
-      "MVC\\": "router/",
-      "Controllers\\API\\": "app/controllers/API/",
-      "Controllers\\": "app/controllers/"
+      "Models\\": "./app/models/",
+      "MVC\\": "./router/",
+      "Controllers\\API\\": "./app/controllers/API/",
+      "Controllers\\": "./app/controllers/"
     }
   }
 }
