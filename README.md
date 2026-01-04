@@ -111,7 +111,25 @@ git clone <repositorio-url>
 cd MVC-WEB
 ```
 
-### 2. iniciar composer y instalar Dependencias PHP
+### 2. Instalación Automática (Recomendado)
+
+Usa el script de instalación automática que configura todo:
+
+```bash
+# Dar permisos y ejecutar instalación completa
+chmod +x start.sh
+./start.sh
+```
+
+Este script realiza automáticamente:
+
+- ✅ Instalación de dependencias Composer
+- ✅ Instalación de dependencias NPM
+- ✅ Configuración interactiva de variables de entorno
+- ✅ Generación de autoloader
+- ✅ Inicio del servidor de desarrollo
+
+### 2. Instalación Manual Paso a Paso
 
 ```bash
 
@@ -178,7 +196,151 @@ npm run dev
 gulp
 ```
 
-## 🚀 Uso del Sistema
+## �️ Scripts de Instalación
+
+El proyecto incluye scripts automatizados para facilitar la configuración:
+
+### 📁 Scripts Disponibles
+
+| Script                        | Propósito                            | Uso                             |
+| ----------------------------- | ------------------------------------ | ------------------------------- |
+| `start.sh`                    | Instalación completa automatizada    | `./start.sh`                    |
+| `scripts/instalerComposer.sh` | Instalación de dependencias PHP      | `./scripts/instalerComposer.sh` |
+| `scripts/instalerNpm.sh`      | Instalación de dependencias frontend | `./scripts/instalerNpm.sh`      |
+| `scripts/startEnv.sh`         | Configuración interactiva de entorno | `./scripts/startEnv.sh`         |
+| `startServer.sh`              | Iniciar servidor de desarrollo       | `./startServer.sh`              |
+
+### 🚀 Instalación Completa (start.sh)
+
+```bash
+chmod +x start.sh
+./start.sh
+```
+
+**Proceso automático:**
+
+1. **Composer**: Instala phpmailer, firebase/jwt, intervention/image
+2. **NPM**: Instala dependencias de frontend
+3. **Entorno**: Configura variables interactivamente
+4. **Autoload**: Genera PSR-4 autoloader
+5. **Servidor**: Inicia servidor en localhost:3000
+
+### ⚙️ Scripts Individuales
+
+#### Composer Dependencies
+
+```bash
+chmod +x scripts/instalerComposer.sh
+./scripts/instalerComposer.sh
+```
+
+Instala automáticamente:
+
+- `phpmailer/phpmailer: ^7.0`
+- `firebase/php-jwt: ^7.0`
+- `intervention/image: ^3.11`
+- Configura PSR-4 autoloader
+
+#### NPM Dependencies
+
+```bash
+chmod +x scripts/instalerNpm.sh
+./scripts/instalerNpm.sh
+```
+
+Instala dependencias de frontend para compilación de assets.
+
+#### Environment Configuration
+
+```bash
+chmod +x scripts/startEnv.sh
+./scripts/startEnv.sh
+```
+
+**Configura interactivamente:**
+
+- 🗄️ **Base de datos**: Host, usuario, contraseña, nombre
+- 🔐 **JWT**: Genera clave segura automáticamente
+- 🏷️ **Aplicación**: Nombre y URL
+- 💾 **Backup**: Guarda .env.backup automáticamente
+
+**Campos configurados:**
+
+```
+=== CONFIGURACIÓN DE BASE DE DATOS ===
+HOST: [localhost]
+USUARIO: [dev]
+CONTRASEÑA: [****]
+NOMBRE DE LA BASE DE DATOS: [mvc_web]
+
+=== CONFIGURACIÓN DE APLICACIÓN ===
+CLAVE JWT: [generada_automáticamente]
+NOMBRE DE LA APLICACIÓN: [Web MVC]
+URL DE LA APLICACIÓN: [http://localhost:3000]
+```
+
+#### Development Server
+
+```bash
+chmod +x startServer.sh
+./startServer.sh
+```
+
+Inicia servidor PHP en `http://localhost:3000`
+
+### 🔧 Troubleshooting de Scripts
+
+#### Permisos Denegados
+
+```bash
+# Dar permisos a todos los scripts
+chmod +x start.sh
+chmod +x scripts/*.sh
+chmod +x startServer.sh
+```
+
+#### Error de Autoloader
+
+```bash
+# Regenerar autoloader manualmente
+composer dump-autoload
+
+# O reinstalar completamente
+rm -rf vendor/
+composer install
+```
+
+#### Variables de Entorno
+
+```bash
+# Verificar configuración actual
+cat .env
+
+# Restaurar desde backup
+cp .env.backup .env
+
+# Reconfigurar
+./scripts/startEnv.sh
+```
+
+### 📋 Estructura de Scripts
+
+```
+MVC-WEB/
+├── start.sh                    # Instalación completa
+├── startServer.sh              # Servidor de desarrollo
+├── scripts/
+│   ├── instalerComposer.sh     # Dependencias PHP
+│   ├── instalerNpm.sh          # Dependencias NPM
+│   └── startEnv.sh             # Configuración entorno
+├── .env                        # Variables de entorno
+├── .env.backup                 # Backup de configuración
+└── composer.json               # Configuración Composer
+```
+
+---
+
+## �🚀 Uso del Sistema
 
 ### Gestión de Caché
 
