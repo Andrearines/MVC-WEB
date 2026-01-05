@@ -12,13 +12,16 @@ Bienvenido a la documentación completa del framework MVC-WEB. Aquí encontrará
 | [**FileManagerModel**](FILE_MANAGER_DOCUMENTATION.md) | Gestión segura de archivos e imágenes     | ✅ Nuevo       |
 | [**PaginationModel**](PAGINATION_DOCUMENTATION.md)    | Sistema de paginación completo            | ✅ Nuevo       |
 | [**EmailModel**](EMAIL_DOCUMENTATION.md)              | Sistema de envío de correos con PHPMailer | ✅ Actualizado |
+| [**User Models**](USER_DOCUMENTATION.md)              | Modelos de usuario y autenticación        | ✅ Nuevo       |
+| [**JWT Auth**](JWT_DOCUMENTATION.md)                  | Sistema de autenticación JWT              | ✅ Nuevo       |
 
-### 🎨 Componentes de UI
+### 🧩 Componentes y Vistas
 
-| Documentación                                       | Descripción                       | Estado        |
-| --------------------------------------------------- | --------------------------------- | ------------- |
-| [**SweetAlert2**](SWEETALERT2_DOCUMENTATION.md)     | Sistema de alertas modernas       | ✅ Disponible |
-| [**SweetAlert2 Examples**](SWEETALERT2_EXAMPLES.md) | Ejemplos prácticos de SweetAlert2 | ✅ Disponible |
+| Documentación                                              | Descripción                          | Estado        |
+| ---------------------------------------------------------- | ------------------------------------ | ------------- |
+| [**ComponentManager**](COMPONENT_MANAGER_DOCUMENTATION.md) | Sistema de componentes reutilizables | ✅ Nuevo      |
+| [**SweetAlert2**](SWEETALERT2_DOCUMENTATION.md)            | Sistema de alertas modernas          | ✅ Disponible |
+| [**SweetAlert2 Examples**](SWEETALERT2_EXAMPLES.md)        | Ejemplos prácticos de SweetAlert2    | ✅ Disponible |
 
 ### 📄 Licencias
 
@@ -52,6 +55,23 @@ $usuario = User::find(1); // Con caché automático
 $usuarios = User::all(['id', 'nombre', 'email']); // Columnas específicas
 ```
 
+#### User Models - Gestión de Usuarios
+
+- **UserPHP**: Modelo principal de usuarios
+- **UserTokenModel**: Gestión JWT
+- **Validaciones**: Registro, login, recuperación
+- **Seguridad**: Hashing Argon2ID
+
+```php
+// Autenticación JWT
+$token = UserTokenModel::generateToken($userId);
+$payload = UserTokenModel::validateToken($token);
+
+// Validación de usuario
+$user = new UserPHP($_POST);
+$errors = $user->Validate_Register();
+```
+
 #### FileManagerModel - Gestión de Archivos
 
 - **Procesamiento de Imágenes**: Redimensionamiento automático
@@ -78,6 +98,24 @@ $resultado = FileManagerModel::processFile($_FILES['documento'], 'docs', ['pdf']
 // Crear paginación
 $pagination = new PaginationModel($page, 10, $total);
 echo $pagination->pagination(); // HTML completo
+```
+
+### 🧩 Componentes
+
+#### ComponentManager - Sistema de Componentes
+
+- **Renderizado Dinámico**: Componentes con datos variables
+- **Estructura Modular**: Organización por carpetas temáticas
+- **Reutilización**: Componentes usables en múltiples vistas
+- **Aislamiento**: Cada componente es independiente
+
+```php
+// Usar componente
+$component = new ComponentManager('cards/card', [
+    'title' => 'Mi Tarjeta',
+    'content' => 'Contenido dinámico'
+]);
+echo $component->render();
 ```
 
 ### 📧 Comunicación
@@ -467,20 +505,23 @@ chmod 755 public/imagenes/
 
 ## 📊 Estadísticas de la Documentación
 
-| Documentación | Páginas | Líneas | Última Actualización |
-| ------------- | ------- | ------ | -------------------- |
-| Main Model    | 15      | 800+   | 2026-01-02           |
-| FileManager   | 12      | 600+   | 2026-01-02           |
-| Pagination    | 10      | 500+   | 2026-01-02           |
-| EmailModel    | 8       | 400+   | 2026-01-02           |
-| SweetAlert2   | 6       | 300+   | 2026-01-02           |
+| Documentación    | Páginas | Líneas | Última Actualización |
+| ---------------- | ------- | ------ | -------------------- |
+| Main Model       | 15      | 800+   | 2026-01-05           |
+| FileManager      | 12      | 600+   | 2026-01-05           |
+| Pagination       | 10      | 500+   | 2026-01-05           |
+| EmailModel       | 8       | 400+   | 2026-01-05           |
+| User Models      | 15      | 800+   | 2026-01-05           |
+| JWT Auth         | 12      | 700+   | 2026-01-05           |
+| ComponentManager | 10      | 600+   | 2026-01-05           |
+| SweetAlert2      | 6       | 300+   | 2026-01-02           |
 
-**Total**: 51 páginas, 2600+ líneas de documentación
+**Total**: 88 páginas, 4700+ líneas de documentación
 
 ---
 
-**Última actualización**: Enero 2, 2026
-**Versión de la documentación**: 1.0.0
+**Última actualización**: Enero 5, 2026
+**Versión de la documentación**: 2.0.0
 **Compatibilidad**: PHP 8.0+
 
 ---

@@ -9,32 +9,45 @@ Esta es una plantilla de desarrollo web MVC (Modelo-Vista-Controlador) en PHP co
 ```
 MVC-WEB/
 ├── app/
-│   ├── controllers/          # Controladores de la aplicación
-│   │   ├── API/             # Controladores de API
+│   ├── components/          # Componentes reutilizables
+│   │   ├── ComponentManager.php
+│   │   └── views/           # Vistas de componentes
+│   │       └── inputs/
+│   │           └── input-file.php
+│   ├── controllers/         # Controladores de la aplicación
+│   │   ├── API/            # Controladores de API
+│   │   │   └── API.php
 │   │   ├── LoginController.php
 │   │   └── PagesController.php
-│   ├── models/              # Modelos de datos
+│   ├── models/             # Modelos de datos
 │   │   ├── EmailModel.php
 │   │   ├── FileManagerModel.php
-│   │   ├── Main.php         # Modelo principal con caché
+│   │   ├── Main.php        # Modelo principal con caché
+│   │   ├── PaginationModel.php
 │   │   ├── UserPHP.php
 │   │   └── UserTokenModel.php
-│   └── views/               # Vistas de la aplicación
-├── config/                  # Archivos de configuración
-├── public/                  # Archivos públicos
-│   ├── build/              # Assets compilados
-│   └── index.php           # Punto de entrada
-├── router/                  # Sistema de enrutamiento
-├── src/                    # Archivos fuente frontend
-│   ├── base/               # Estilos base
-│   ├── img/                # Imágenes
+│   └── views/              # Vistas de la aplicación
+│       ├── emails/         # Plantillas de email
+│       ├── home/
+│       ├── includes/
+│       └── layouts/
+├── config/                 # Archivos de configuración
+├── public/                 # Archivos públicos
+│   ├── build/             # Assets compilados
+│   └── index.php          # Punto de entrada
+├── router/                 # Sistema de enrutamiento
+├── src/                   # Archivos fuente frontend
+│   ├── base/              # Estilos base
+│   ├── img/               # Imágenes
 │   └── app.scss
-├── db/                     # Base de datos
-├── vendor/                 # Dependencias Composer
-├── .env                    # Variables de entorno
-├── composer.json           # Dependencias PHP
-├── package.json            # Dependencias Node.js
-├── gulpfile.js            # Tareas de automatización
+├── db/                    # Base de datos
+├── docs/                  # Documentación completa
+├── scripts/               # Scripts de instalación
+├── vendor/                # Dependencias Composer
+├── .env                   # Variables de entorno
+├── composer.json          # Dependencias PHP
+├── package.json           # Dependencias Node.js
+├── gulpfile.js           # Tareas de automatización
 └── README.md
 ```
 
@@ -76,6 +89,20 @@ MVC-WEB/
 - **Nombres aleatorios** para evitar colisiones y ataques
 - **Control de tamaño** y tipos de archivo configurables
 
+### 📄 Sistema de Paginación
+
+- **PaginationModel** para navegación eficiente
+- **HTML semántico** y accesible
+- **Configuración flexible** de registros por página
+- **Estado actual** resaltado
+
+### 🧩 Sistema de Componentes
+
+- **ComponentManager** para componentes reutilizables
+- **Estructura modular** de vistas
+- **Input components** especializados
+- **Renderizado dinámico** con datos
+
 ### 🎨 Frontend Moderno
 
 - **Sass/SCSS** para estilos organizados
@@ -93,7 +120,33 @@ MVC-WEB/
 | Uso de memoria         | Alto   | Optimizado | **40%**  |
 | Seguridad              | Básica | Mejorada   | **+50%** |
 
-## 🛠️ Instalación y Configuración
+## � Documentación Completa
+
+El proyecto incluye documentación detallada para todos los componentes:
+
+### 📖 Documentación Principal
+
+- **[📁 Docs](docs/)** - Documentación completa del sistema
+- **[📋 Guía Rápida](docs/README.md)** - Índice de toda la documentación
+- **[🗄️ Main Model](docs/MAIN_MODEL_DOCUMENTATION.md)** - Modelo base con caché
+- **[📁 FileManager](docs/FILE_MANAGER_DOCUMENTATION.md)** - Gestión de archivos
+- **[📧 Email System](docs/EMAIL_DOCUMENTATION.md)** - Sistema de correos
+- **[📄 Pagination](docs/PAGINATION_DOCUMENTATION.md)** - Sistema de paginación
+- **[🧩 Componentes](docs/COMPONENT_MANAGER_DOCUMENTATION.md)** - Sistema de componentes
+- **[👤 User Models](docs/USER_DOCUMENTATION.md)** - Modelos de usuario
+- **[🔐 JWT Auth](docs/JWT_DOCUMENTATION.md)** - Autenticación JWT
+
+### 🎨 UI Components
+
+- **[🚨 SweetAlert2](docs/SWEETALERT2_DOCUMENTATION.md)** - Alertas modernas
+- **[💡 SweetAlert2 Examples](docs/SWEETALERT2_EXAMPLES.md)** - Ejemplos prácticos
+
+### 📄 Licencias
+
+- **[🏷️ License Badge](docs/LICENSE_BADGE.md)** - Insignia MIT
+- **[📋 License Detailed](docs/LICENSE_DETAILED.md)** - Términos completos
+
+## �🛠️ Instalación y Configuración
 
 ### Requisitos Previos
 
