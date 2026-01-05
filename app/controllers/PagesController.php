@@ -9,7 +9,11 @@ class PagesController
 
     public static function indexView(Router $router)
     {
-        $router->view('home/index.php', ['inicio' => true, "script" => [], "titulo" => "Home"]);
+        session_start();
+        echo "<pre>";
+        print_r($_SESSION);
+        echo "</pre>";
+        $router->view('home/index.php', ['inicio' => true, "script" => [], "titulo" => "Home"], ['admin']);
     }
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------

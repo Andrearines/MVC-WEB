@@ -8,13 +8,7 @@ $r = new Router;
 $r->get("/", [PagesController::class, 'indexView']);
 $r->post("/", [PagesController::class, 'indexView']);
 
-// Add role-based access
-$r->setRol(['admin', 'user']);
-
-// Set area for layout
-$r->setArea(['admin']);
-
-$r->get("/admin/index", [PagesController::class, 'indexView']);
+$r->get("/admin/index", [PagesController::class, 'indexView'], ['admin']);
 
 
 $r->Rutas();

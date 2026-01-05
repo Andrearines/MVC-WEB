@@ -21,8 +21,10 @@ let imagemin;
 const paths = {
     scss: 'src/**/**/*.scss',
     js: 'src/**/**/*.js',
-    imagenes: 'src/imgs/**/*'
+    imagenes: 'src/imgs/**/*',
+    components: 'app/components/**/**/**/**/*.{jpg,jpeg,png,gif,svg,scss,js}' // Solo assets
 }
+
 
 function css() {
     return src(paths.scss)
@@ -36,10 +38,6 @@ function css() {
 function javascript() {
     return src(paths.js)
       .pipe(sourcemaps.init())
-     // .pipe(concat('bundle.js'))
-     //.pipe(terser())
-     //.pipe(sourcemaps.write('.'))
-     //.pipe(rename({ suffix: '.min' }))
       .pipe(dest('./public/build/js'))
 }
 
@@ -47,30 +45,35 @@ async function imagenes() {
     if (!imagemin) {
         imagemin = (await import('gulp-imagemin')).default;
     }
-    
+
     return src(paths.imagenes)
         .pipe(cache(imagemin({ optimizationLevel: 3 })))
-        .pipe(dest('./public/build/img'))
-       
+        .pipe(dest('./public/build/assets/imgs'))
+
 }
 
 function versionWebp() {
     return src(paths.imagenes)
         .pipe(webp())
-        .pipe(dest('./public/build/img'))
-        .pipe(notify({ message: 'Imagen Completada' }));
+        .pipe(dest('./public/build/assets/img/webp/'))
 }
 
+function componentAssets() {
+    return src(paths.components)
+        .pipe(dest('./public/build/components'));
+}
 function watchArchivos() {
     watch(paths.scss, css);
     watch(paths.js, javascript);
     watch(paths.imagenes, imagenes);
     watch(paths.imagenes, versionWebp);
+    watch(paths.components, componentAssets);       // Assets de componente
 }
 
 exports.css = css;
 exports.javascript = javascript;
 exports.imagenes = imagenes;
 exports.versionWebp = versionWebp;
+exports.componentAssets = componentAssets;
 exports.watchArchivos = watchArchivos;
-exports.default = parallel(css, javascript, watchArchivos); 
+exports.default = parallel(css, javascript, componentAssets, watchArchivos);

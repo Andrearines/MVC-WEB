@@ -1,3 +1,5 @@
+<script src="/build/components/views/inputs/inputFile/js/hola.js"></script>
+
 <script>
   // Mejora inputs file normales dentro de un contenedor con clase .js-image-uploader
   document.addEventListener('DOMContentLoaded', () => {
