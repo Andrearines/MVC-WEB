@@ -1,16 +1,5 @@
 <?php
 
-if (!isset($_SESSION)) {
-    session_start();
-}
-
-if (!isset($barra_frotante)) {
-    $barra_frotante = false;
-}
-if (!isset($inicio)) {
-
-    $inicio = false;
-}
 require_once __DIR__ . '../../../../config/Environment.php';
 \Environment::load();
 
@@ -28,12 +17,7 @@ require_once __DIR__ . '../../../../config/Environment.php';
 
 <body>
 
-
-
-
     <?php echo $contenedor ?>
-
-
 
     <?php
     if ($script) {
@@ -42,9 +26,9 @@ require_once __DIR__ . '../../../../config/Environment.php';
         }
     }
     ?>
-    <script src="/build/js/modernizr.js"></script>
+    <script src="/build/js/base/js/modernizr.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="/build/js/sweetalert-config.js"></script>
+    <script src="/build/js/base/js/sweetalert-config.js"></script>
 </body>
 
 </html>

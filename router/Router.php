@@ -6,19 +6,9 @@ class Router
 {
     public $rutasGET = [];
     public $rutasPOST = [];
-
-    private $areas = [];
     private $rol = [];
     private $rutasConfig = [];
 
-    public function setArea($area)
-    {
-        if (is_array($area)) {
-            $this->areas = array_merge($this->areas, $area);
-        } else {
-            $this->areas[] = $area;
-        }
-    }
 
     public function setRol($rol)
     {
@@ -29,29 +19,28 @@ class Router
         }
     }
 
-    public function get($url, $fn)
+    public function get($url, $fn, $rol = [])
     {
         $this->rutasGET[$url] = $fn;
         $this->rutasConfig[$url] = [
-            'areas' => $this->areas,
-            'roles' => $this->rol
+            'areas' => $rol,
+            'roles' => $rol
         ];
-        $this->areas = [];
+
         $this->rol = [];
     }
 
-    public function post($url, $fn)
+    public function post($url, $fn, $rol = [])
     {
         $this->rutasPOST[$url] = $fn;
         $this->rutasConfig[$url] = [
-            'areas' => $this->areas,
-            'roles' => $this->rol
+            'areas' => $rol,
+            'roles' => $rol,
         ];
-        $this->areas = [];
         $this->rol = [];
     }
 
-    public function view($view, $datos = [])
+    public function view($view, $datos = [], $layout = null)
     {
         // Extraer datos para la vista
         foreach ($datos as $key => $value) {
@@ -69,10 +58,14 @@ class Router
         // Obtener configuración de esta ruta
         $config = $this->rutasConfig[$urlActual] ?? ['areas' => [], 'roles' => []];
 
-        // Buscar layout específico
+        // Usar layout específico si se proporciona, de lo contrario usar el predeterminado
+        $layoutFile = $layout ? __DIR__ . "/../app/views/layouts/" . $layout . ".php" : null;
         $layoutIncluded = false;
 
-        if (!empty($config['areas'])) {
+        if ($layoutFile && file_exists($layoutFile)) {
+            include $layoutFile;
+            $layoutIncluded = true;
+        } elseif (!empty($config['areas'])) {
             foreach ($config['areas'] as $area) {
                 if (str_contains($urlActual, $area)) {
                     $layoutFile = __DIR__ . "/../app/views/layouts/" . $area . ".php";

@@ -14,7 +14,7 @@ class FileManagerModel
      */
     public static function deleteFile($carpeta, $nombreArchivo)
     {
-        $filePath = __DIR__ . '/../../public/' . $carpeta . '/' . $nombreArchivo;
+        $filePath = __DIR__ . '/../../public/updates/imgs/' . $carpeta . '/' . $nombreArchivo;
         if (file_exists($filePath)) {
             unlink($filePath);
         }
@@ -22,7 +22,7 @@ class FileManagerModel
 
     public static function deleteImage($carpeta, $nombreArchivo)
     {
-        $filePath = __DIR__ . '/../../public/imagenes/' . $carpeta . '/' . $nombreArchivo;
+        $filePath = __DIR__ . '/../../public/updates/imgs/' . $carpeta . '/' . $nombreArchivo;
         if (file_exists($filePath)) {
             unlink($filePath);
         }
@@ -59,7 +59,7 @@ class FileManagerModel
             }
 
             $nombreArchivo = md5(uniqid(rand(), true)) . $tipo;
-            $uploadDir = __DIR__ . '/../../public/imagenes/' . $carpeta . '/';
+            $uploadDir = __DIR__ . '/../../public/updates/imgs/' . $carpeta . '/';
 
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0755, true);
@@ -131,7 +131,7 @@ class FileManagerModel
             }
 
             $nombreArchivo = md5(uniqid(rand(), true)) . '.' . $ext;
-            $uploadDir = __DIR__ . '/../../public/archivos/' . $carpeta . '/';
+            $uploadDir = __DIR__ . '/../../public/updates/archivos/' . $carpeta . '/';
 
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0755, true);
