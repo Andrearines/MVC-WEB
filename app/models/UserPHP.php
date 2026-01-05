@@ -30,7 +30,7 @@ class UserPHP extends Main
         $this->token = $this::$db->real_escape_string($args["token"] ?? "");
         $this->password = $this::$db->real_escape_string($args["password"] ?? "");
         $this->password_c = $this::$db->real_escape_string($args["password_c"] ?? "");
-        $this->admin = $this::$db->real_escape_string($args["admin"] ?? 0);
+        $this->admin = $this::$db->real_escape_string($args["admin"] ?? 0); //en session[] denbe ser rol=area que configuro en las rutas
     }
 
     public function create_token()

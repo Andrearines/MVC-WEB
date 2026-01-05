@@ -10,5 +10,8 @@ $r->post("/", [PagesController::class, 'indexView']);
 
 $r->get("/admin/index", [PagesController::class, 'indexView'], ['admin']);
 
+//es la ruta predeterminada para el login y cuando no esta autorizado a entrar a una ruta
+$r->get("/auth/login", [PagesController::class, 'loginView']);
+
 
 $r->Rutas();

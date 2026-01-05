@@ -57,7 +57,6 @@ MVC-WEB/
 
 - **JWT (JSON Web Tokens)** para autenticación segura
 - **UserTokenModel** para gestión de tokens
-- **LoginController** para manejo de sesiones
 - **Roles de usuario** con control de acceso
 
 ### 🚀 Sistema de Caché Inteligente
@@ -67,7 +66,7 @@ MVC-WEB/
 - **Gestión flexible** con métodos `enableCache()`, `disableCache()`, `clearCache()`
 - **Mejora del 99%** en consultas repetidas
 
-### 🖼️ Procesamiento de Imágenes Optimizado
+### 🖼️ Procesamiento de Imágenes Optimizado(npm)
 
 - **Redimensionamiento inteligente**: solo procesa si es necesario
 - **Conversión a WebP** para mejor compresión
@@ -276,7 +275,7 @@ chmod +x start.sh
 2. **NPM**: Instala dependencias de frontend
 3. **Entorno**: Configura variables interactivamente
 4. **Autoload**: Genera PSR-4 autoloader
-5. **Servidor**: Inicia servidor en localhost:3000
+5. **Servidor**: Inicia servidor en localhost:3000(tines que manualmente activar npm run dev)
 
 ### ⚙️ Scripts Individuales
 
@@ -522,7 +521,7 @@ FileManagerModel::deleteFile('documentos', 'nombre_archivo.pdf');
 - Componentes reutilizables como input-file.php
 - Integración con assets compilados
 
-## 🔧 Tareas de Gulp Disponibles
+## 🔧 Tareas de Gulp Disponibles(solo para desarrollo no funciona en produccion)
 
 ```bash
 # Compilar CSS
