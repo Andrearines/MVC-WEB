@@ -41,6 +41,7 @@ cat <<'EOF'
       "MVC\\": "./router/",
       "controllers\\API\\": "./app/controllers/API/",
       "controllers\\": "./app/controllers/"
+      "components\\":"./app/components/"
     }
   }
 }
