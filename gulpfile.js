@@ -4,12 +4,7 @@ const autoprefixer = require('autoprefixer');
 const postcss = require('gulp-postcss')
 const sourcemaps = require('gulp-sourcemaps')
 const cssnano = require('cssnano');
-const concat = require('gulp-concat');
-const terser = require('gulp-terser-js');
-const rename = require('gulp-rename');
-const notify = require('gulp-notify');
 const cache = require('gulp-cache');
-const clean = require('gulp-clean');
 const webp = require('gulp-webp');
 
 // Importación dinámica para gulp-imagemin
@@ -21,7 +16,7 @@ let imagemin;
 const paths = {
     scss: 'src/**/**/*.scss',
     js: 'src/**/**/*.js',
-    imagenes: 'src/imgs/**/*',
+    imagenes: 'src/**/**/*.{jpg,jpeg,png,gif,svg}',
     components: 'app/components/**/**/**/**/*.{jpg,jpeg,png,gif,svg,scss,js}' // Solo assets
 }
 
@@ -76,4 +71,4 @@ exports.imagenes = imagenes;
 exports.versionWebp = versionWebp;
 exports.componentAssets = componentAssets;
 exports.watchArchivos = watchArchivos;
-exports.default = parallel(css, javascript, componentAssets, watchArchivos);
+exports.default = parallel(css, javascript, imagenes, versionWebp, componentAssets, watchArchivos);

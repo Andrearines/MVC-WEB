@@ -38,7 +38,7 @@ MVC-WEB/
 ├── router/                 # Sistema de enrutamiento
 ├── src/                   # Archivos fuente frontend
 │   ├── base/              # Estilos base
-│   ├── img/               # Imágenes
+│   ├── pages/             # Paginas
 │   └── app.scss
 ├── db/                    # Base de datos
 ├── docs/                  # Documentación completa

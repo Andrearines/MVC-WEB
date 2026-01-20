@@ -1,0 +1,13 @@
+// Estructura de carpetas recomendada:
+// src/pages/
+//   └── page/
+//       ├── sections/
+//       │   ├── section.scss
+//       │   └── section.js
+//       │
+//       ├── imgs/
+//       │   ├── img.png
+//       │   └── img.jpg
+//       │
+//       ├── style.scss
+//       └── page.js
