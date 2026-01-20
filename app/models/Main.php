@@ -90,6 +90,21 @@ class Main
     }
 
 
+    public static function findAllOrden($column, $orden)
+    {
+        $query = "SELECT * FROM " . static::$table . " ORDER BY ? ?";
+        $stmt = self::$db->prepare($query);
+        if (!$stmt) throw new \Exception("Error en prepare: " . self::$db->error);
+        $stmt->bind_param("ss", $column, $orden);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $array = [];
+        while ($row = $result->fetch_assoc()) {
+            $array[] = static::create($row);
+        }
+        $stmt->close();
+        return $array;
+    }
 
     public static function findBy($column, $value)
     {
