@@ -1,5 +1,10 @@
 # MVC WEB - Plantilla de Desarrollo PHP
 
+# ¡nuevo! Alertas(alertas compatible con php y js)
+
+- **alertas.php**: input hiiden que contiene las alertas en formato JSON.
+- **alerts.js**: Script que maneja las alertas con sweetalert2.
+
 ## 📋 Descripción del Proyecto
 
 Esta es una plantilla de desarrollo web MVC (Modelo-Vista-Controlador) en PHP con características avanzadas de rendimiento, seguridad y optimización. Proporciona una estructura robusta para construir aplicaciones web modernas con autenticación JWT, caché inteligente y procesamiento optimizado de imágenes.
@@ -38,7 +43,7 @@ MVC-WEB/
 ├── router/                 # Sistema de enrutamiento
 ├── src/                   # Archivos fuente frontend
 │   ├── base/              # Estilos base
-│   ├── img/               # Imágenes
+│   ├── pages/             # Paginas
 │   └── app.scss
 ├── db/                    # Base de datos
 ├── docs/                  # Documentación completa
