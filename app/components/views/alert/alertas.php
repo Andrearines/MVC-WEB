@@ -1,7 +1,6 @@
 <div>
-  <?php
-  if ($alertas && is_array($alertas) && count($alertas) > 0 || $alertas && is_object($alertas) && !empty($alertas)) : ?>
-    <input type="hidden" id="alertas" value="<?= json_encode($alertas) ?>">
-  <?php
-  endif; ?>
+
+  <input type="hidden" id="alertas" value="<?= htmlspecialchars(json_encode($alertas)) ?>">
+
+  <script src="/build/components/views/alert/alerts.js"></script>
 </div>

@@ -15,9 +15,15 @@ class Main
     private static $cacheEnabled = true;
 
     public $id;
-    public $img;
 
-    public function __construct($data = []) {}
+    public function __construct($data = [])
+    {
+        foreach ($data as $key => $value) {
+            if (property_exists($this, $key)) {
+                $this->$key = $value;
+            }
+        }
+    }
 
     public static function setDb($database)
     {
@@ -45,7 +51,8 @@ class Main
     public static function SQL($query, $params = [], $types = "")
     {
         $stmt = self::$db->prepare($query);
-        if (!$stmt) throw new \Exception("Error en prepare: " . self::$db->error);
+        if (!$stmt)
+            throw new \Exception("Error en prepare: " . self::$db->error);
 
         if (!empty($params)) {
             $stmt->bind_param($types, ...$params);
@@ -67,7 +74,8 @@ class Main
     public function exec($query, $params = [], $types = "")
     {
         $stmt = self::$db->prepare($query);
-        if (!$stmt) throw new \Exception("Error en prepare: " . self::$db->error);
+        if (!$stmt)
+            throw new \Exception("Error en prepare: " . self::$db->error);
 
         if (!empty($params)) {
             $stmt->bind_param($types, ...$params);
@@ -94,7 +102,8 @@ class Main
     {
         $query = "SELECT * FROM " . static::$table . " ORDER BY ? ?";
         $stmt = self::$db->prepare($query);
-        if (!$stmt) throw new \Exception("Error en prepare: " . self::$db->error);
+        if (!$stmt)
+            throw new \Exception("Error en prepare: " . self::$db->error);
         $stmt->bind_param("ss", $column, $orden);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -192,17 +201,22 @@ class Main
 
             $types = "";
             foreach ($values as $value) {
-                if (is_int($value)) $types .= "i";
-                elseif (is_float($value)) $types .= "d";
-                elseif (is_null($value)) $types .= "s";
-                else $types .= "s";
+                if (is_int($value))
+                    $types .= "i";
+                elseif (is_float($value))
+                    $types .= "d";
+                elseif (is_null($value))
+                    $types .= "s";
+                else
+                    $types .= "s";
             }
 
             $stmt->bind_param($types, ...$values);
             $result = $stmt->execute();
 
             if ($result) {
-                if (self::$cacheEnabled) self::clearCache();
+                if (self::$cacheEnabled)
+                    self::clearCache();
                 $this->id = self::$db->insert_id;
                 $stmt->close();
                 return $this->id;
@@ -218,10 +232,12 @@ class Main
     public function update($id = null, $exclude = [])
     {
         try {
-            if (!empty(self::$errors)) return self::$errors;
+            if (!empty(self::$errors))
+                return self::$errors;
 
             $id = $id ?? $this->id;
-            if (empty($id)) throw new \Exception("ID requerido para actualizar");
+            if (empty($id))
+                throw new \Exception("ID requerido para actualizar");
 
             $updates = [];
             $values = [];
@@ -233,20 +249,26 @@ class Main
                 }
             }
 
-            if (empty($updates)) throw new \Exception("No hay columnas para actualizar");
+            if (empty($updates))
+                throw new \Exception("No hay columnas para actualizar");
 
             $updatesStr = implode(", ", $updates);
             $query = "UPDATE " . static::$table . " SET $updatesStr WHERE id = ?";
 
             $stmt = self::$db->prepare($query);
-            if (!$stmt) throw new \Exception("Error en prepare: " . self::$db->error);
+            if (!$stmt)
+                throw new \Exception("Error en prepare: " . self::$db->error);
 
             $types = "";
             foreach ($values as $value) {
-                if (is_int($value)) $types .= "i";
-                elseif (is_float($value)) $types .= "d";
-                elseif (is_null($value)) $types .= "s";
-                else $types .= "s";
+                if (is_int($value))
+                    $types .= "i";
+                elseif (is_float($value))
+                    $types .= "d";
+                elseif (is_null($value))
+                    $types .= "s";
+                else
+                    $types .= "s";
             }
 
             $types .= "i";
@@ -275,11 +297,13 @@ class Main
     {
         try {
             $id = $id ?? $this->id;
-            if (empty($id)) throw new \Exception("ID requerido para eliminar");
+            if (empty($id))
+                throw new \Exception("ID requerido para eliminar");
 
             $query = "DELETE FROM " . static::$table . " WHERE id = ?";
             $stmt = self::$db->prepare($query);
-            if (!$stmt) throw new \Exception("Error en prepare: " . self::$db->error);
+            if (!$stmt)
+                throw new \Exception("Error en prepare: " . self::$db->error);
 
             $stmt->bind_param("i", $id);
             $result = $stmt->execute();

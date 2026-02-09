@@ -1,0 +1,17 @@
+node_modules
+.git
+.env
+vendor
+public/build
+src
+gulpfile.js
+package-lock.json
+composer.lock
+README.md
+docs
+scripts
+app
+config
+router
+db
+*.sh
