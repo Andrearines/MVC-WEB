@@ -1,9 +1,7 @@
-# MVC WEB - Plantilla de Desarrollo PHP
+# MVC WEB - Plantilla de Desarrollo PHP v6.0.0
 
-# ¡nuevo! Alertas(alertas compatible con php y js)
-
-- **alertas.php**: input hiiden que contiene las alertas en formato JSON.
-- **alerts.js**: Script que maneja las alertas con sweetalert2.
+> [!IMPORTANT]
+> **¡Novedad en v6.0.0!** Ahora con soporte completo para **Docker**. Despliega tu base de datos MySQL en segundos con persistencia local automática. Consulta la sección de [Dockerización](#-dockerización) para más detalles.
 
 ## 📋 Descripción del Proyecto
 
@@ -45,7 +43,7 @@ MVC-WEB/
 │   ├── base/              # Estilos base
 │   ├── pages/             # Paginas
 │   └── app.scss
-├── db/                    # Base de datos
+├── db/                    # Base de datos con docker-compose
 ├── docs/                  # Documentación completa
 ├── scripts/               # Scripts de instalación
 ├── vendor/                # Dependencias Composer
@@ -641,7 +639,7 @@ Si encuentras algún bug o necesitas ayuda:
 - [ ] Sistema de logs centralizado
 - [ ] Sistema de caché distribuido
 - [ ] Testing automatizado
-- [ ] Dockerización del proyecto
+- [x] Dockerización del proyecto
 
 ---
 
