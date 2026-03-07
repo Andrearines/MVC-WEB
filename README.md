@@ -1,4 +1,4 @@
-# MVC WEB - Plantilla de Desarrollo PHP v6.0.0
+# MVC WEB - Plantilla de Desarrollo PHP v7.0.1
 
 > [!IMPORTANT]
 > **¡Novedad en v6.0.0!** Ahora con soporte completo para **Docker**. Despliega tu base de datos MySQL en segundos con persistencia local automática. Consulta la sección de [Dockerización](#-dockerización) para más detalles.
