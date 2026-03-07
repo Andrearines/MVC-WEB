@@ -191,14 +191,15 @@ Este script realiza automáticamente:
 composer init
 
  "require": {
-        "phpmailer/phpmailer": "^6.8",
-        "firebase/php-jwt": "^6.0"
+        "phpmailer/phpmailer": "*",
+        "firebase/php-jwt": "*"
     },
     "psr-4": {
         "models\\": "./app/models",
         "MVC\\": "./router",
         "controllers/API\\": "./app/controllers/API",
-        "controllers\\": "./app/controllers"
+        "controllers\\": "./app/controllers",
+        "components\\": "./app/components"
     }
 
 composer update

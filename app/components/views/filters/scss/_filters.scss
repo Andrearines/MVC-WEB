@@ -1,0 +1,118 @@
+@use '../base/scss/variables' as v;
+@use '../base/scss/mixins' as m;
+
+// Unified Filter Button
+.btn-filter {
+    background: v.$white;
+    color: v.$gray-700;
+    border: 1px solid v.$gray-200;
+    padding: v.$s-2-5 v.$s-6;
+    border-radius: v.$radius-full;
+    display: inline-flex;
+    align-items: center;
+    gap: v.$s-2;
+    font-weight: 600;
+    font-size: v.$text-sm;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: v.$shadow-sm;
+
+    i {
+        font-size: v.$text-base;
+        color: v.$gray-400;
+        transition: color 0.3s ease;
+    }
+
+    &:hover {
+        background: v.$gray-50;
+        border-color: v.$primary;
+        color: v.$primary;
+
+        i {
+            color: v.$primary;
+        }
+    }
+
+    &:active {
+        transform: translateY(1px);
+        box-shadow: none;
+    }
+}
+
+// Unified Filters Panel
+.filters-panel {
+    background: v.$white;
+    border-radius: v.$radius-2xl;
+    padding: v.$s-6;
+    margin-bottom: v.$s-8;
+    box-shadow: v.$shadow-md;
+    border: 1px solid v.$gray-100;
+    display: none; // Hidden by default, toggled via JS
+    animation: filterSlideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    .filters-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: v.$s-6;
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: v.$s-2;
+
+            label {
+                font-size: v.$text-xs;
+                font-weight: 700;
+                color: v.$gray-500;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
+
+            input,
+            select {
+                padding: v.$s-3 v.$s-4;
+                border-radius: v.$radius-lg;
+                border: 1px solid v.$gray-200;
+                background: v.$gray-50;
+                color: v.$gray-900;
+                font-family: inherit;
+                font-size: v.$text-sm;
+                transition: all 0.3s ease;
+                width: 100%;
+
+                &:focus {
+                    outline: none;
+                    border-color: v.$primary;
+                    background: v.$white;
+                    box-shadow: 0 0 0 4px rgba(v.$primary, 0.1);
+                }
+
+                &::placeholder {
+                    color: v.$gray-400;
+                }
+            }
+
+            select {
+                cursor: pointer;
+                appearance: none;
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239ca3af'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='C19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+                background-repeat: no-repeat;
+                background-position: right 1rem center;
+                background-size: 1.25rem;
+                padding-right: 2.5rem;
+            }
+        }
+    }
+}
+
+@keyframes filterSlideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

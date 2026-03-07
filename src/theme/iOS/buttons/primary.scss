@@ -1,0 +1,25 @@
+@use 'src/theme/iOS/variables.scss' as *;
+@use 'src/base/scss/mixins' as m;
+
+.btn-ios-primary {
+    @include m.boton($ios-blue, darken($ios-blue, 10%), inline-block, #ffffff, #ffffff);
+
+    // Sobrescribimos estilos para adaptarlo a iOS
+    border-radius: $ios-radius;
+    padding: 12px 20px;
+    font-size: 17px;
+    font-weight: 600;
+    font-family: $ios-font;
+    transition: opacity 0.2s ease;
+    -webkit-appearance: none;
+    appearance: none;
+
+    &:active {
+        opacity: 0.7;
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+}

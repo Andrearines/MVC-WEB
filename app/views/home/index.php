@@ -8,15 +8,13 @@
         </div>
 
         <div class="js-image-uploader">
-            <input type="file" name="files[]" multiple accept="image/*">
+
+            <input type="file" clase="js-image-uploader">
+            <?php
+            use components\ComponentManager;
+            $component = ComponentManager::make('inputs/inputFile/input-file', []);
+            $component->echo();
+            ?>
         </div>
-
-        <?php
-
-        use components\ComponentManager;
-
-        $component = ComponentManager::make('inputs/inputFile/input-file', []);
-        $component->echo();
-        ?>
 
 </main>

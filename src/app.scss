@@ -1,13 +1,7 @@
 @forward 'base/scss/normalize';
-@forward 'base/scss/variables';
-@forward 'base/scss/mixins';
 @forward 'base/scss/globaly';
 @forward 'base/scss/use';
-@forward 'base/scss/button';
-@forward 'base/scss/UI';
 
+@forward 'src/theme/iOS/index.scss';
 
-
-
-
-
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css");

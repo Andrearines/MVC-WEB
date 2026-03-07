@@ -1,0 +1,19 @@
+// iOS Theme Variables
+$ios-blue: #007AFF;
+$ios-green: #34C759;
+$ios-red: #FF3B30;
+$ios-gray: #8E8E93;
+$ios-gray-light: #E5E5EA;
+$ios-background: #F2F2F7;
+$ios-surface: #FFFFFF;
+$ios-text: #000000;
+$ios-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+$ios-radius: 10px;
+
+// Base Theme Class
+.ThemeIOS {
+    font-family: $ios-font;
+    background-color: $ios-background;
+    color: $ios-text;
+    -webkit-font-smoothing: antialiased;
+}

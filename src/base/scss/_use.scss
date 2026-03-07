@@ -1,13 +1,22 @@
 @use "variables" as *;
-.seccion{
+
+.seccion {
     margin-top: calc($space / 2);
     margin-bottom: calc($space / 2);
 }
+
 .content-center {
     max-width: 800px;
 }
-.container{
+
+.container {
     width: 95%;
     max-width: 120rem;
+    margin: 0 auto;
+}
+
+.container-sm {
+    width: 95%;
+    max-width: 100rem;
     margin: 0 auto;
 }

@@ -1,4 +1,5 @@
 @use "variables" as *;
+
 /** Media Queries **/
 @mixin telefono {
     @media (min-width: #{$telefono}) {
@@ -17,12 +18,15 @@
         @content;
     }
 }
+
 @mixin grid($columnas, $espaciado ) {
     display: grid;
     gap: $espaciado;
     grid-template-columns: repeat($columnas, 1fr);
 }
-@mixin boton($color,$hover, $display,$text,$text-hover){
+
+
+@mixin boton($color, $hover, $display, $text, $text-hover) {
     transition-property: background-color;
     transition-duration: .3s;
     border: none;
@@ -30,21 +34,22 @@
     padding: 1rem 2rem;
     background-color: $color;
     font-weight: bold;
-        color: $text;
-        text-decoration: none;
-        text-align: center;
-        display:$display ;
-    a{
+    color: $text;
+    text-decoration: none;
+    text-align: center;
+    display: $display ;
+
+    a {
         display: block;
     }
 
-&:hover{
-    transition-property: background-color;
-    transition-duration: .3s;
-    background-color:$hover;
-    color: $text-hover;
-    cursor: pointer;
-}
+    &:hover {
+        transition-property: background-color;
+        transition-duration: .3s;
+        background-color: $hover;
+        color: $text-hover;
+        cursor: pointer;
+    }
 
 
 

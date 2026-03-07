@@ -9,4 +9,4 @@ Environment::load();
 
 use models\Main;
 
-Main::setDb(conectaDB());
+//Main::setDb(conectaDB());
