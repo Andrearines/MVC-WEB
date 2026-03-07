@@ -219,7 +219,7 @@ DB_USER=root
 DB_PASSWORD=tu_password
 DB_NAME=nombre_db
 
-# Clave para JWT
+# Clave para JWT(opcional)
 JWT_KEY=tu_clave_secreta_jwt
 
 # Configuración de la Aplicación
