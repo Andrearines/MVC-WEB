@@ -1,14 +1,23 @@
 <?php
 
 namespace models;
-
+use errors\Errors;
 class Main
 {
     public static $table;
     public static $db;
     static $columnDB = [];
 
-    public static $errors = [];
+    /** @var \errors\Errors */
+    public static $errorManager = null;
+
+    public static function getErrorManager(): Errors
+    {
+        if (self::$errorManager === null) {
+            self::$errorManager = new Errors();
+        }
+        return self::$errorManager;
+    }
 
     // Cache simple
     private static $cache = [];
@@ -32,8 +41,7 @@ class Main
 
     public function createError($type, $msg)
     {
-
-        static::$errors[$type][] = $msg;
+        self::getErrorManager()->addError($type, $msg);
     }
 
     public function sicronizar($data)
@@ -52,7 +60,7 @@ class Main
     {
         $stmt = self::$db->prepare($query);
         if (!$stmt)
-            throw new \Exception("Error en prepare: " . self::$db->error);
+            self::getErrorManager()->addError("prepare", "Error en prepare: " . self::$db->error);
 
         if (!empty($params)) {
             $stmt->bind_param($types, ...$params);
@@ -75,7 +83,7 @@ class Main
     {
         $stmt = self::$db->prepare($query);
         if (!$stmt)
-            throw new \Exception("Error en prepare: " . self::$db->error);
+            self::getErrorManager()->addError("prepare", "Error en prepare: " . self::$db->error);
 
         if (!empty($params)) {
             $stmt->bind_param($types, ...$params);
@@ -103,7 +111,7 @@ class Main
         $query = "SELECT * FROM " . static::$table . " ORDER BY ? ?";
         $stmt = self::$db->prepare($query);
         if (!$stmt)
-            throw new \Exception("Error en prepare: " . self::$db->error);
+            self::getErrorManager()->addError("prepare", "Error en prepare: " . self::$db->error);
         $stmt->bind_param("ss", $column, $orden);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -173,8 +181,8 @@ class Main
     public function save($exclude = [])
     {
         try {
-            if (!empty(self::$errors)) {
-                return self::$errors;
+            if (self::getErrorManager()->hasErrors()) {
+                return self::getErrorManager()->getErrors();
             }
 
             $columns = [];
@@ -221,10 +229,10 @@ class Main
                 $stmt->close();
                 return $this->id;
             } else {
-                throw new \Exception("Error en execute: " . $stmt->error);
+                self::getErrorManager()->addError("execute", "Error en execute: " . $stmt->error);
             }
         } catch (\Exception $e) {
-            error_log("Error en save: " . $e->getMessage());
+            self::getErrorManager()->addError("execute", "Error en execute: " . $e->getMessage());
             return false;
         }
     }
@@ -232,12 +240,12 @@ class Main
     public function update($id = null, $exclude = [])
     {
         try {
-            if (!empty(self::$errors))
-                return self::$errors;
+            if (self::getErrorManager()->hasErrors())
+                return self::getErrorManager()->getErrors();
 
             $id = $id ?? $this->id;
             if (empty($id))
-                throw new \Exception("ID requerido para actualizar");
+                self::getErrorManager()->addError("id", "ID requerido para actualizar");
 
             $updates = [];
             $values = [];
@@ -298,7 +306,7 @@ class Main
         try {
             $id = $id ?? $this->id;
             if (empty($id))
-                throw new \Exception("ID requerido para eliminar");
+                self::getErrorManager()->addError("id", "ID requerido para eliminar");
 
             $query = "DELETE FROM " . static::$table . " WHERE id = ?";
             $stmt = self::$db->prepare($query);
@@ -316,10 +324,10 @@ class Main
                 $stmt->close();
                 return true;
             } else {
-                throw new \Exception("Error en execute: " . $stmt->error);
+                self::getErrorManager()->addError("execute", "Error en execute: " . $stmt->error);
             }
         } catch (\Exception $e) {
-            error_log("Error en delete: " . $e->getMessage());
+            self::getErrorManager()->addError("execute", "Error en execute: " . $e->getMessage());
             return false;
         }
     }

@@ -1,18 +1,21 @@
 <?php
 
-namespace models;
-
+namespace services\auth;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
 require_once __DIR__ . "/../../config/Environment.php";
 \Environment::load();
-class UserJWTModel extends UserPHP
-{
 
-    public static $table = "users";
-    static $columnDB = [];
-    static private $key = null;
+
+class JWTAuth
+{
+    private static $key = null;
+
+    public function __construct()
+    {
+        $this->key = self::getKey();
+    }
 
     private static function getKey()
     {
@@ -22,22 +25,9 @@ class UserJWTModel extends UserPHP
         return self::$key;
     }
 
-
-    public function __construct($data = [])
+    public function desifrartoken()
     {
-        parent::__construct($data);
-    }
-
-    public function create_token()
-    {
-        $token = bin2hex(random_bytes(8));
-        $this->token = $token;
-        return $token;
-    }
-
-    public static function desifrartoken()
-    {
-        $key = self::getKey();
+        $key = $this->key;
         $token = $_COOKIE['access_token'] ?? null;
         if ($token) {
             try {
@@ -59,12 +49,10 @@ class UserJWTModel extends UserPHP
             return false;
         }
     }
-
-
     public function login($payload)
     {
 
-        $key = self::getKey();
+        $key = $this->key;
         $token = JWT::encode($payload, $key, 'HS256');
 
         setcookie("access_token", $token, [
@@ -75,10 +63,4 @@ class UserJWTModel extends UserPHP
             'samesite' => 'Lax'
         ]);
     }
-
-    public function verify_password($hash, $password)
-    {
-        return password_verify($password, $hash);
-    }
-
 }

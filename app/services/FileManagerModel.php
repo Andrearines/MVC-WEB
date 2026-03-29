@@ -1,11 +1,11 @@
 <?php
 
-namespace models;
+namespace services;
 
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 
-class FileManagerModel
+class FileManager
 {
     private static $errors = [];
 

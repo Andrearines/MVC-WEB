@@ -1,6 +1,6 @@
 <?php
 
-namespace models;
+namespace services;
 
 require_once __DIR__ . '/../../config/Environment.php';
 \Environment::load();
@@ -9,7 +9,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
-class EmailModel
+class Email
 {
 
     private $mailer;
