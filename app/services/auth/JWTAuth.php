@@ -3,7 +3,7 @@
 namespace services\auth;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
-
+use models\User;
 require_once __DIR__ . "/../../config/Environment.php";
 \Environment::load();
 
@@ -39,7 +39,7 @@ class JWTAuth
             if ($uid <= 0) {
                 return false;
             }
-            $user = UserPHP::find($uid);
+            $user = User::find($uid);
             if (!$user) {
                 return false;
             } else {
@@ -49,7 +49,7 @@ class JWTAuth
             return false;
         }
     }
-    public function login($payload)
+    public function TokenJWT($payload)
     {
 
         $key = $this->key;

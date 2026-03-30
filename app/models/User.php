@@ -2,7 +2,7 @@
 
 namespace models;
 
-class Auth extends Main
+class User extends Main
 {
     public static $table = "users";
 
