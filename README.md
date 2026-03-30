@@ -400,7 +400,7 @@ MVC-WEB/
 
 ---
 
-## �🚀 Uso del Sistema
+## 🚀 Uso del Sistema
 
 ### Gestión de Caché
 
