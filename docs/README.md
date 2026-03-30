@@ -57,18 +57,20 @@ $usuarios = User::all(['id', 'nombre', 'email']); // Columnas específicas
 
 #### User Models - Gestión de Usuarios
 
-- **UserPHP**: Modelo principal de usuarios
-- **UserTokenModel**: Gestión JWT
+- **User**: Modelo principal de usuarios
+- **JWTAuth / PHPAuth**: Gestión de autenticación
 - **Validaciones**: Registro, login, recuperación
 - **Seguridad**: Hashing Argon2ID
 
 ```php
 // Autenticación JWT
-$token = UserTokenModel::generateToken($userId);
-$payload = UserTokenModel::validateToken($token);
+use services\auth\JWTAuth;
+$jwtAuth = new JWTAuth();
+$jwtAuth->TokenJWT($payload);
+$user = $jwtAuth->desifrartoken();
 
 // Validación de usuario
-$user = new UserPHP($_POST);
+$user = new User($_POST);
 $errors = $user->Validate_Register();
 ```
 

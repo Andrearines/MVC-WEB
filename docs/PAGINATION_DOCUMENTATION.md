@@ -37,7 +37,7 @@ La clase `PaginationModel` es un sistema completo de paginación para aplicacion
 ### Ubicación
 
 ```
-app/models/PaginationModel.php
+app/components/PaginationModel.php
 ```
 
 ### Namespace

@@ -505,8 +505,8 @@ require 'vendor/autoload.php';
 
 try {
     // Probar carga de modelos
-    $user = new \models\UserPHP();
-    echo "✓ Clase UserPHP cargada\n";
+    $user = new \models\User();
+    echo "✓ Clase User cargada\n";
 
     $email = new \models\EmailModel();
     echo "✓ Clase EmailModel cargada\n";
@@ -531,10 +531,10 @@ require 'config/Environment.php';
 Environment::load();
 
 try {
-    $token = \models\UserTokenModel::generateToken(1);
+    $token = \models\JWTAuth::generateToken(1);
     echo "✓ Token generado: " . substr($token, 0, 20) . "...\n";
 
-    $payload = \models\UserTokenModel::validateToken($token);
+    $payload = \models\JWTAuth::validateToken($token);
     if ($payload) {
         echo "✓ Token validado exitosamente\n";
         echo "✓ User ID: " . $payload['user_id'] . "\n";
