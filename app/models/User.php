@@ -8,7 +8,6 @@ class User extends Main
 
     public static $columnDB = ["email"];
 
-
     public $email;
 
 

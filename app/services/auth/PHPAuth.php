@@ -29,6 +29,7 @@ class PHPAuth
     {
         $password = $password ?? $this->password;
         $this->password = password_hash($password, PASSWORD_ARGON2ID);
+        return $this->password;
     }
     public function login($data = [])
     {

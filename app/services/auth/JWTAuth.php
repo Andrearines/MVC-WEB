@@ -1,6 +1,7 @@
 <?php
 
 namespace services\auth;
+use Exception;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use models\User;
@@ -49,10 +50,16 @@ class JWTAuth
             return false;
         }
     }
-    public function TokenJWT($payload)
+    public function TokenJWT(array $payload = [])
     {
+        if (empty($payload)) {
+            throw new Exception("No se proporciono payload");
+        }
 
         $key = $this->key;
+        if (empty($key)) {
+            throw new Exception("No se proporciono JWT_KEY en el archivo .env");
+        }
         $token = JWT::encode($payload, $key, 'HS256');
 
         setcookie("access_token", $token, [
