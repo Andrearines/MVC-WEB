@@ -200,10 +200,14 @@ composer init
     },
     "psr-4": {
         "models\\": "./app/models",
+        "services\\": "./app/services",
         "MVC\\": "./router",
         "controllers/API\\": "./app/controllers/API",
         "controllers\\": "./app/controllers",
-        "components\\": "./app/components"
+        "components\\": "./app/components",
+        "validator\\": "./app/validator",
+        "errors\\": "./app/errors",
+        "services\\auth\\": "./app/services/auth"
     }
 
 composer update
