@@ -43,6 +43,8 @@ MVC-WEB/
 │   ├── build/             # Assets compilados
 │   └── index.php          # Punto de entrada
 ├── router/                 # Sistema de enrutamiento
+│   ├── Request.php         # Gestión de peticiones y datos
+│   └── Router.php          # Despachador de rutas
 ├── src/                   # Archivos fuente frontend
 │   ├── base/              # Estilos base
 │   ├── pages/             # Paginas
@@ -141,6 +143,8 @@ El proyecto incluye documentación detallada para todos los componentes:
 - **[🧩 Componentes](docs/COMPONENT_MANAGER_DOCUMENTATION.md)** - Sistema de componentes
 - **[👤 User Models](docs/USER_DOCUMENTATION.md)** - Modelos de usuario
 - **[🔐 JWT Auth](docs/JWT_DOCUMENTATION.md)** - Autenticación JWT
+- [**🛣️ Router & Request**](docs/ROUTER_DOCUMENTATION.md) - Sistema de rutas RESTful
+- [**🎓 Escuela de Lógica**](docs/logic/ROUTING_AND_REQUEST.md) - Lecciones técnicas de arquitectura
 
 ### 🎨 UI Components
 

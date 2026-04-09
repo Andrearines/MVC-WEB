@@ -6,6 +6,8 @@ class Router
 {
     public $rutasGET = [];
     public $rutasPOST = [];
+    public $rutasPUT = [];
+    public $rutasDELETE = [];
     private $rol = [];
     private $rutasConfig = [];
 
@@ -40,6 +42,26 @@ class Router
         $this->rol = [];
     }
 
+    public function put($url, $fn, $rol = [])
+    {
+        $this->rutasPUT[$url] = $fn;
+        $this->rutasConfig[$url] = [
+            'areas' => $rol,
+            'roles' => $rol,
+        ];
+        $this->rol = [];
+    }
+
+    public function delete($url, $fn, $rol = [])
+    {
+        $this->rutasDELETE[$url] = $fn;
+        $this->rutasConfig[$url] = [
+            'areas' => $rol,
+            'roles' => $rol,
+        ];
+        $this->rol = [];
+    }
+
     public function view($view, $datos = [], $layout = null)
     {
         // Extraer datos para la vista
@@ -50,7 +72,7 @@ class Router
         // Capturar el contenido de la vista
         ob_start();
         include __DIR__ . "/../app/views/$view";
-        $contenedor = ob_get_clean();
+        $container = ob_get_clean();
 
         // Obtener URL actual
         $urlActual = $_SERVER['PATH_INFO'] ?? "/";
@@ -95,14 +117,16 @@ class Router
             session_start();
         }
 
-        $urlActual = $_SERVER['PATH_INFO'] ?? "/";
-        $metodo = $_SERVER['REQUEST_METHOD'];
+        $request = new Request();
+        $urlActual = $request->getPath();
+        $metodo = $request->getMethod();
 
-        // Obtener la función de la ruta
-        if ($metodo === 'GET') {
-            $fn = $this->rutasGET[$urlActual] ?? null;
-        } else {
-            $fn = $this->rutasPOST[$urlActual] ?? null;
+        // Obtener la función de la ruta dinámicamente
+        $propiedadRutas = "rutas" . $metodo;
+        $fn = null;
+
+        if (property_exists($this, $propiedadRutas)) {
+            $fn = $this->{$propiedadRutas}[$urlActual] ?? null;
         }
 
         if (!$fn) {
@@ -134,7 +158,8 @@ class Router
             }
         }
 
-        // ✅ Si pasó la verificación, ejecutar el controlador
-        call_user_func($fn, $this);
+        // ✅ Si pasó la verificación, ejecutar el controlador pasando el router y el request
+        call_user_func($fn, $this, $request);
     }
+
 }
