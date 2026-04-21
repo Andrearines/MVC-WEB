@@ -657,8 +657,8 @@ Si encuentras algún bug o necesitas ayuda:
 
 ## 🚀 Próximas Mejoras
 
-- [ ] Logging avanzado para monitoreo de rendimiento
-- [ ] Sistema de logs centralizado
+- [x] Logging avanzado para monitoreo de rendimiento
+- [x] Sistema de logs centralizado
 - [ ] Sistema de caché distribuido
 - [ ] Testing automatizado
 - [x] Dockerización del proyecto
