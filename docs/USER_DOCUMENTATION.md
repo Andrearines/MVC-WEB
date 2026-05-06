@@ -4,8 +4,8 @@
 
 1. [Descripción General](#descripción-general)
 2. [Modelos Disponibles](#modelos-disponibles)
-3. [UserPHP - Modelo Principal](#userphp---modelo-principal)
-4. [UserTokenModel - Autenticación JWT](#usertokenmodel---autenticación-jwt)
+3. [User - Modelo Principal](#userphp---modelo-principal)
+4. [JWTAuth - Autenticación JWT](#usertokenmodel---autenticación-jwt)
 5. [Estructura de Base de Datos](#estructura-de-base-de-datos)
 6. [Métodos de Validación](#métodos-de-validación)
 7. [Autenticación y Seguridad](#autenticación-y-seguridad)
@@ -33,9 +33,9 @@ El sistema de usuarios de MVC-WEB consta de dos modelos principales que trabajan
 
 ## 📚 Modelos Disponibles
 
-### 1. UserPHP
+### 1. User
 
-**Ubicación:** `app/models/UserPHP.php`
+**Ubicación:** `app/models/User.php`
 
 **Propósito:** Modelo principal para gestión de usuarios del sistema.
 
@@ -46,9 +46,9 @@ El sistema de usuarios de MVC-WEB consta de dos modelos principales que trabajan
 - Manejo de contraseñas seguras
 - Verificación de existencia de usuarios
 
-### 2. UserTokenModel
+### 2. JWTAuth
 
-**Ubicación:** `app/models/UserTokenModel.php`
+**Ubicación:** `app/services/auth/JWTAuth.php`
 
 **Propósito:** Gestión de tokens JWT para autenticación.
 
@@ -61,7 +61,7 @@ El sistema de usuarios de MVC-WEB consta de dos modelos principales que trabajan
 
 ---
 
-## 👤 UserPHP - Modelo Principal
+## 👤 User - Modelo Principal
 
 ### Estructura de la Clase
 
@@ -69,7 +69,7 @@ El sistema de usuarios de MVC-WEB consta de dos modelos principales que trabajan
 <?php
 namespace models;
 
-class UserPHP extends Main
+class User extends Main
 {
     public static $table = "users";
     public static $columnDB = ["id", "nombre", "apellido", "email", "password", "confirmado", "token", "admin"];
@@ -114,7 +114,7 @@ public function __construct($args = [])
 **Ejemplo:**
 
 ```php
-$user = new UserPHP([
+$user = new User([
     'nombre' => 'Juan',
     'apellido' => 'Pérez',
     'email' => 'juan@example.com',
@@ -125,7 +125,7 @@ $user = new UserPHP([
 
 ---
 
-## 🔐 UserTokenModel - Autenticación JWT
+## 🔐 JWTAuth - Autenticación JWT
 
 ### Métodos Principales
 
@@ -134,7 +134,7 @@ $user = new UserPHP([
 Genera un token JWT para un usuario.
 
 ```php
-$token = UserTokenModel::generateToken($userId);
+$token = JWTAuth::generateToken($userId);
 ```
 
 #### `validateToken($token)`
@@ -142,7 +142,7 @@ $token = UserTokenModel::generateToken($userId);
 Valida un token JWT y retorna el payload.
 
 ```php
-$payload = UserTokenModel::validateToken($token);
+$payload = JWTAuth::validateToken($token);
 if ($payload) {
     $userId = $payload['user_id'];
 }
@@ -153,7 +153,7 @@ if ($payload) {
 Refresca un token existente.
 
 ```php
-$newToken = UserTokenModel::refreshToken($oldToken);
+$newToken = JWTAuth::refreshToken($oldToken);
 ```
 
 ---
@@ -213,7 +213,7 @@ public function Validate_Register(): array
 **Ejemplo:**
 
 ```php
-$user = new UserPHP($_POST);
+$user = new User($_POST);
 $errors = $user->Validate_Register();
 
 if (!empty($errors['error'])) {
@@ -275,7 +275,7 @@ public function Validate_reset(): array
 Hashea una contraseña usando Argon2ID.
 
 ```php
-$user = new UserPHP();
+$user = new User();
 $user->password = "miPasswordSeguro";
 $user->Password_hash(); // Hashea la contraseña actual
 
@@ -288,7 +288,7 @@ $user->Password_hash("otroPassword");
 Verifica una contraseña contra su hash.
 
 ```php
-$user = new UserPHP();
+$user = new User();
 $isValid = $user->Verify_password($hash, $password);
 ```
 
@@ -328,7 +328,7 @@ if ($user->ExisteUser()) {
 public function register()
 {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $user = new UserPHP($_POST);
+        $user = new User($_POST);
 
         // Validar datos
         $errors = $user->Validate_Register();
@@ -371,16 +371,16 @@ public function register()
 public function login()
 {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $user = new UserPHP($_POST);
+        $user = new User($_POST);
         $errors = $user->Validate_Login();
 
         if (empty($errors['error'])) {
             // Buscar usuario por email
-            $foundUser = UserPHP::findBy('email', $user->email);
+            $foundUser = User::findBy('email', $user->email);
 
             if ($foundUser && $user->Verify_password($foundUser->password, $user->password)) {
                 // Generar token JWT
-                $token = UserTokenModel::generateToken($foundUser->id);
+                $token = JWTAuth::generateToken($foundUser->id);
 
                 // Guardar token en sesión
                 $_SESSION['token'] = $token;
@@ -412,12 +412,12 @@ public function login()
 public function forgotPassword()
 {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $user = new UserPHP($_POST);
+        $user = new User($_POST);
         $errors = $user->Validate_Forget();
 
         if (empty($errors['error'])) {
             // Buscar usuario
-            $foundUser = UserPHP::findBy('email', $user->email);
+            $foundUser = User::findBy('email', $user->email);
 
             if ($foundUser) {
                 // Generar token
@@ -461,13 +461,13 @@ public function forgotPassword()
 public function resetPassword($token)
 {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $user = new UserPHP($_POST);
+        $user = new User($_POST);
         $user->token = $token;
         $errors = $user->Validate_reset();
 
         if (empty($errors['error'])) {
             // Buscar usuario por token
-            $foundUser = UserPHP::findBy('token', $token);
+            $foundUser = User::findBy('token', $token);
 
             if ($foundUser) {
                 // Actualizar contraseña
@@ -491,7 +491,7 @@ public function resetPassword($token)
     }
 
     // Verificar que el token sea válido
-    $user = UserPHP::findBy('token', $token);
+    $user = User::findBy('token', $token);
     if (!$user) {
         return view('auth/invalid-token');
     }
@@ -519,7 +519,7 @@ class AuthMiddleware
         // Quitar "Bearer " si existe
         $token = str_replace('Bearer ', '', $token);
 
-        $payload = UserTokenModel::validateToken($token);
+        $payload = JWTAuth::validateToken($token);
 
         if (!$payload) {
             header('HTTP/1.0 401 Unauthorized');
@@ -527,7 +527,7 @@ class AuthMiddleware
         }
 
         // Obtener usuario
-        $user = UserPHP::find($payload['user_id']);
+        $user = User::find($payload['user_id']);
 
         if (!$user) {
             header('HTTP/1.0 401 Unauthorized');
@@ -562,9 +562,9 @@ class AuthMiddleware
 <?php
 namespace controllers;
 
-use models\UserPHP;
-use models\UserTokenModel;
-use models\EmailModel;
+use models\User;
+use models\JWTAuth;
+use services\Email;
 
 class LoginController
 {
@@ -620,7 +620,7 @@ $token = bin2hex(random_bytes(32)); // Más seguro que 5 bytes
 $email = filter_var($email, FILTER_VALIDATE_EMAIL);
 
 // ✅ Usa prepared statements (heredado de Main)
-$user = UserPHP::findBy('email', $email);
+$user = User::findBy('email', $email);
 ```
 
 ### 2. Manejo de Errores
@@ -707,10 +707,10 @@ $user->Verify_password($hash, $password); // Verificación correcta
 
 ```php
 // Verifica configuración de JWT
-$payload = UserTokenModel::validateToken($token);
+$payload = JWTAuth::validateToken($token);
 if (!$payload) {
     // Generar nuevo token
-    $newToken = UserTokenModel::generateToken($userId);
+    $newToken = JWTAuth::generateToken($userId);
 }
 ```
 
@@ -742,8 +742,8 @@ try {
 ### 1. Caché de Consultas
 
 ```php
-// UserPHP hereda caché de Main
-$users = UserPHP::all(['id', 'nombre', 'email']); // Con caché
+// User hereda caché de Main
+$users = User::all(['id', 'nombre', 'email']); // Con caché
 
 // Limpiar caché después de actualizaciones
 $user->save(); // Limpia caché automáticamente
@@ -753,17 +753,17 @@ $user->save(); // Limpia caché automáticamente
 
 ```php
 // ✅ Traer solo columnas necesarias
-$users = UserPHP::all(['id', 'nombre', 'email']);
+$users = User::all(['id', 'nombre', 'email']);
 
 // ✅ Usar índices en búsquedas
-$user = UserPHP::findBy('email', $email); // Usa índice idx_users_email
+$user = User::findBy('email', $email); // Usa índice idx_users_email
 ```
 
 ### 3. Batch Operations
 
 ```php
 // Para múltiples operaciones
-$users = UserPHP::findAllBy('confirmado', 0, ['id', 'email']);
+$users = User::findAllBy('confirmado', 0, ['id', 'email']);
 foreach ($users as $user) {
     $user->confirmado = 1;
     $user->update($user->id);
@@ -777,7 +777,7 @@ foreach ($users as $user) {
 ### 1. Campos Adicionales
 
 ```php
-class UserPHP extends Main
+class User extends Main
 {
     public static $columnDB = [
         "id", "nombre", "apellido", "email", "password",
@@ -801,7 +801,7 @@ class UserPHP extends Main
 ### 2. Roles Personalizados
 
 ```php
-class UserPHP extends Main
+class User extends Main
 {
     const ROLE_USER = 0;
     const ROLE_ADMIN = 1;

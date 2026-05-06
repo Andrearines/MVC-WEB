@@ -38,10 +38,13 @@ cat <<'EOF'
   "autoload": {
     "psr-4": {
       "models\\": "./app/models/",
+      "services\\": "./app/services/",
       "MVC\\": "./router/",
       "controllers\\API\\": "./app/controllers/API/",
       "controllers\\": "./app/controllers/"
-      "components\\":"./app/components/"
+      "components\\":"./app/components/",
+      "validator\\":"./app/validator/",
+      
     }
   }
 }

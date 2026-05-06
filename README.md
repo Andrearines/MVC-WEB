@@ -1,4 +1,4 @@
-# MVC WEB - Plantilla de Desarrollo PHP v7.0.2
+# framework MVC-WEB-PHP v8.0.0
 
 > [!IMPORTANT]
 > **¡Novedad en v6.0.0!** Ahora con soporte completo para **Docker**. Despliega tu base de datos MySQL en segundos con persistencia local automática. Consulta la sección de [Dockerización](#-dockerización) para más detalles.
@@ -14,21 +14,25 @@ MVC-WEB/
 ├── app/
 │   ├── components/          # Componentes reutilizables
 │   │   ├── ComponentManager.php
+│   │   ├── PaginationModel.php
 │   │   └── views/           # Vistas de componentes
-│   │       └── inputs/
-│   │           └── input-file.php
 │   ├── controllers/         # Controladores de la aplicación
 │   │   ├── API/            # Controladores de API
-│   │   │   └── API.php
 │   │   ├── LoginController.php
 │   │   └── PagesController.php
+│   ├── errors/              # Manejo de errores
+│   │   └── Errors.php
 │   ├── models/             # Modelos de datos
-│   │   ├── EmailModel.php
-│   │   ├── FileManagerModel.php
 │   │   ├── Main.php        # Modelo principal con caché
-│   │   ├── PaginationModel.php
-│   │   ├── UserPHP.php
-│   │   └── UserTokenModel.php
+│   │   └── User.php        # Modelo de usuario
+│   ├── services/           # Servicios de la aplicación
+│   │   ├── auth/           # Servicios de autenticación
+│   │   │   ├── JWTAuth.php
+│   │   │   └── PHPAuth.php
+│   │   ├── EmailModel.php
+│   │   └── FileManagerModel.php
+│   ├── validator/          # Sistema de validación
+│   │   └── ValidatorModels.php
 │   └── views/              # Vistas de la aplicación
 │       ├── emails/         # Plantillas de email
 │       ├── home/
@@ -39,6 +43,8 @@ MVC-WEB/
 │   ├── build/             # Assets compilados
 │   └── index.php          # Punto de entrada
 ├── router/                 # Sistema de enrutamiento
+│   ├── Request.php         # Gestión de peticiones y datos
+│   └── Router.php          # Despachador de rutas
 ├── src/                   # Archivos fuente frontend
 │   ├── base/              # Estilos base
 │   ├── pages/             # Paginas
@@ -59,7 +65,7 @@ MVC-WEB/
 ### 🔐 Sistema de Autenticación
 
 - **JWT (JSON Web Tokens)** para autenticación segura
-- **UserTokenModel** para gestión de tokens
+- **JWTAuth** y **PHPAuth** para gestión de tokens y sesiones
 - **Roles de usuario** con control de acceso
 
 ### 🚀 Sistema de Caché Inteligente
@@ -137,6 +143,8 @@ El proyecto incluye documentación detallada para todos los componentes:
 - **[🧩 Componentes](docs/COMPONENT_MANAGER_DOCUMENTATION.md)** - Sistema de componentes
 - **[👤 User Models](docs/USER_DOCUMENTATION.md)** - Modelos de usuario
 - **[🔐 JWT Auth](docs/JWT_DOCUMENTATION.md)** - Autenticación JWT
+- [**🛣️ Router & Request**](docs/ROUTER_DOCUMENTATION.md) - Sistema de rutas RESTful
+- [**🎓 Escuela de Lógica**](docs/logic/ROUTING_AND_REQUEST.md) - Lecciones técnicas de arquitectura
 
 ### 🎨 UI Components
 
@@ -196,10 +204,14 @@ composer init
     },
     "psr-4": {
         "models\\": "./app/models",
+        "services\\": "./app/services",
         "MVC\\": "./router",
         "controllers/API\\": "./app/controllers/API",
         "controllers\\": "./app/controllers",
-        "components\\": "./app/components"
+        "components\\": "./app/components",
+        "validator\\": "./app/validator",
+        "errors\\": "./app/errors",
+        "services\\auth\\": "./app/services/auth"
     }
 
 composer update
@@ -396,7 +408,7 @@ MVC-WEB/
 
 ---
 
-## �🚀 Uso del Sistema
+## 🚀 Uso del Sistema
 
 ### Gestión de Caché
 
@@ -430,22 +442,22 @@ $usuario = UserPHP::find(1);
 ### Autenticación JWT
 
 ```php
-use models\UserTokenModel;
+use services\auth\JWTAuth;
 
-// Generar token
-$token = UserTokenModel::generateToken($userId);
+// Instanciar el servicio
+$jwtAuth = new JWTAuth();
 
-// Validar token
-$payload = UserTokenModel::validateToken($token);
+// Generar token (establece la cookie)
+$jwtAuth->TokenJWT($payload);
 
-// Refrescar token
-$newToken = UserTokenModel::refreshToken($token);
+// Validar y descifrar token (retorna el usuario o false)
+$user = $jwtAuth->desifrartoken();
 ```
 
 ### Envío de Emails
 
 ```php
-use models\EmailModel;
+use services\EmailModel;
 
 $email = new EmailModel();
 $email->send(
@@ -459,7 +471,7 @@ $email->send(
 ### Gestión de Archivos
 
 ```php
-use models\FileManagerModel;
+use services\FileManagerModel;
 
 // Procesar imágenes con redimensionamiento automático
 $result = FileManagerModel::processImage($_FILES['imagen'], 'perfil', '.jpg');
@@ -507,10 +519,19 @@ FileManagerModel::deleteFile('documentos', 'nombre_archivo.pdf');
 ### Modelos
 
 - **Main.php**: Modelo base con sistema de caché
-- **UserPHP.php**: Gestión de usuarios
-- **UserTokenModel.php**: Manejo de tokens JWT
+- **User.php**: Gestión de usuarios
+
+### Servicios
+
+- **auth/JWTAuth.php**: Servicio de autenticación por tokens JWT
+- **auth/PHPAuth.php**: Servicio de autenticación por sesiones PHP
 - **EmailModel.php**: Sistema de envío de correos
 - **FileManagerModel.php**: Gestión de archivos
+
+### Validadores y Errores
+
+- **ValidatorModels.php**: Sistema de validación de entradas
+- **Errors.php**: Manejador de errores centralizado
 
 ### Controladores
 
@@ -636,8 +657,8 @@ Si encuentras algún bug o necesitas ayuda:
 
 ## 🚀 Próximas Mejoras
 
-- [ ] Logging avanzado para monitoreo de rendimiento
-- [ ] Sistema de logs centralizado
+- [x] Logging avanzado para monitoreo de rendimiento
+- [x] Sistema de logs centralizado
 - [ ] Sistema de caché distribuido
 - [ ] Testing automatizado
 - [x] Dockerización del proyecto

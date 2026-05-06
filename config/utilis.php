@@ -1,21 +1,24 @@
 <?php
 
-function sanitiza($html)
+function sanitize($html)
 {
     return htmlspecialchars($html);
 }
-function redireccionar($url)
+function redirect($url)
 {
     header("Location: $url");
     exit;
 }
 
-function Authphp()
+function auth($rol = null)
 {
     if (session_status() !== PHP_SESSION_ACTIVE) {
         session_start();
     }
     if (empty($_SESSION["login"]) || $_SESSION["login"] !== true) {
-        redireccionar('/login');
+        redirect('/login');
+    }
+    if ($rol !== null && $_SESSION["rol"] !== $rol) {
+        redirect('/login');
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace models;
+namespace services;
 
 require_once __DIR__ . '/../../config/Environment.php';
 \Environment::load();
@@ -9,7 +9,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
-class EmailModel
+class Email
 {
 
     private $mailer;
@@ -59,7 +59,7 @@ class EmailModel
             // Configuración del remitente
             $this->mailer->setFrom($this->config['from_email'], $this->config['from_name']);
         } catch (\Exception $e) {
-            throw new \Exception("Error al inicializar PHPMailer: " . $e->getMessage());
+            Logger::critical("Error al inicializar PHPMailer: " . $e->getMessage());
         }
     }
 
@@ -82,9 +82,10 @@ class EmailModel
                 $this->mailer->Body = $mensaje;
             }
 
+            Logger::info("Email enviado exitosamente: " . $para);
             return $this->mailer->send();
         } catch (\Exception $e) {
-            throw new \Exception("Error al enviar email: " . $e->getMessage());
+            Logger::error("Error al enviar email: " . $e->getMessage());
         }
     }
 
@@ -95,9 +96,10 @@ class EmailModel
     {
         try {
             $html = $this->cargarPlantilla($plantilla, $datos);
+            Logger::info("Email enviado exitosamente: " . $para);
             return $this->enviar($para, $asunto, $html, true);
         } catch (\Exception $e) {
-            throw new \Exception("Error al enviar email con plantilla: " . $e->getMessage());
+            Logger::error("Error al enviar email con plantilla: " . $e->getMessage());
         }
     }
 
@@ -113,10 +115,10 @@ class EmailModel
                     $this->mailer->addAttachment($adjunto);
                 }
             }
-
+            Logger::info("Email enviado exitosamente: " . $para);
             return $this->enviar($para, $asunto, $mensaje, $html);
         } catch (\Exception $e) {
-            throw new \Exception("Error al enviar email con adjuntos: " . $e->getMessage());
+            Logger::error("Error al enviar email con adjuntos: " . $e->getMessage());
         }
     }
 
@@ -142,10 +144,10 @@ class EmailModel
                 $this->mailer->isHTML(false);
                 $this->mailer->Body = $mensaje;
             }
-
+            Logger::info("Email enviado exitosamente: " . $destinatarios);
             return $this->mailer->send();
         } catch (\Exception $e) {
-            throw new \Exception("Error al enviar email múltiple: " . $e->getMessage());
+            Logger::error("Error al enviar email múltiple: " . $e->getMessage());
         }
     }
 
@@ -155,9 +157,10 @@ class EmailModel
     private function cargarPlantilla($plantilla, $datos = [])
     {
         $rutaPlantilla = __DIR__ . "/../views/emails/{$plantilla}.php";
+        Logger::info("Ruta de la plantilla: " . $rutaPlantilla);
 
         if (!file_exists($rutaPlantilla)) {
-            throw new \Exception("Plantilla de email no encontrada: {$plantilla}");
+            Logger::error("Plantilla de email no encontrada: {$plantilla}");
         }
 
         // Extraer variables para usar en la plantilla
@@ -165,6 +168,7 @@ class EmailModel
 
         ob_start();
         include $rutaPlantilla;
+        Logger::info("Plantilla cargada exitosamente: " . $plantilla);
         return ob_get_clean();
     }
 
@@ -177,15 +181,19 @@ class EmailModel
 
         if (empty($this->config['username'])) {
             $errores[] = "MAIL_USERNAME no está configurado";
+            Logger::error("MAIL_USERNAME no está configurado");
         }
 
         if (empty($this->config['password'])) {
             $errores[] = "MAIL_PASSWORD no está configurado";
+            Logger::error("MAIL_PASSWORD no está configurado");
         }
 
         if (empty($this->config['host'])) {
             $errores[] = "MAIL_HOST no está configurado";
+            Logger::error("MAIL_HOST no está configurado");
         }
+
 
         return $errores;
     }
@@ -197,6 +205,7 @@ class EmailModel
     {
         $config = $this->config;
         unset($config['password']); // No mostrar contraseña
+        Logger::info("Configuración del email obtenida exitosamente");
         return $config;
     }
 
@@ -212,7 +221,7 @@ class EmailModel
             'token' => $token
 
         ];
-
+        Logger::info("Email de bienvenida enviado exitosamente: " . $email);
         return $this->enviarConPlantilla($email, 'Bienvenido a ' . $datos['app_name'], 'bienvenida', $datos);
     }
 
@@ -227,7 +236,7 @@ class EmailModel
             'app_name' => \Environment::get('APP_NAME', 'Web MVC'),
             'app_url' => \Environment::get('APP_URL', 'http://localhost')
         ];
-
+        Logger::info("Email de recuperación de contraseña enviado exitosamente: " . $email);
         return $this->enviarConPlantilla($email, 'Recuperación de contraseña', 'recuperacion_password', $datos);
     }
 
@@ -242,7 +251,7 @@ class EmailModel
             'tipo' => $tipo,
             'app_name' => \Environment::get('APP_NAME', 'Web MVC')
         ];
-
+        Logger::info("Email de notificación enviado exitosamente: " . $email);
         return $this->enviarConPlantilla($email, $titulo, 'notificacion', $datos);
     }
 }

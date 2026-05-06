@@ -9,5 +9,5 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 // Agregar marcador
 L.marker([MAP_LAT, MAP_LNG])
   .addTo(map)
-  .bindPopup("<h3>Ubicación del Evento</h3>")
+  .bindPopup(MAP_TILE)
   .openPopup();

@@ -92,7 +92,7 @@ Para usar Gmail, necesitas:
 
 ```php
 <?php
-use models\email;
+use services\Email;
 
 // Crear instancia
 $email = new email();
@@ -263,7 +263,7 @@ Email de notificaciones generales.
 
 ```php
 <?php
-use models\email;
+use services\Email;
 
 try {
     $email = new email();
@@ -278,7 +278,7 @@ try {
 
 ```php
 <?php
-use models\email;
+use services\Email;
 
 $email = new email();
 $email->enviarRecuperacionPassword($usuario, $token, $nombre);
@@ -288,7 +288,7 @@ $email->enviarRecuperacionPassword($usuario, $token, $nombre);
 
 ```php
 <?php
-use models\email;
+use services\Email;
 
 $email = new email();
 $email->enviarNotificacion(
@@ -303,7 +303,7 @@ $email->enviarNotificacion(
 
 ```php
 <?php
-use models\email;
+use services\Email;
 
 $adjuntos = [
     '/ruta/al/archivo.pdf',
@@ -323,7 +323,7 @@ $email->enviarConAdjuntos(
 
 ```php
 <?php
-use models\email;
+use services\Email;
 
 $destinatarios = [
     'usuario1@ejemplo.com',

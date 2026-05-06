@@ -8,6 +8,9 @@ Bienvenido a la documentación completa del framework MVC-WEB. Aquí encontrará
 
 | Documentación                                         | Descripción                               | Estado         |
 | ----------------------------------------------------- | ----------------------------------------- | -------------- |
+| Documentación                                         | Descripción                               | Estado         |
+| ----------------------------------------------------- | ----------------------------------------- | -------------- |
+| [**Router & Request**](ROUTER_DOCUMENTATION.md)       | Sistema de rutas y manejo de peticiones   | ✅ Nuevo       |
 | [**Main Model**](MAIN_MODEL_DOCUMENTATION.md)         | Modelo base con CRUD y caché inteligente  | ✅ Actualizado |
 | [**FileManagerModel**](FILE_MANAGER_DOCUMENTATION.md) | Gestión segura de archivos e imágenes     | ✅ Nuevo       |
 | [**PaginationModel**](PAGINATION_DOCUMENTATION.md)    | Sistema de paginación completo            | ✅ Nuevo       |
@@ -22,6 +25,15 @@ Bienvenido a la documentación completa del framework MVC-WEB. Aquí encontrará
 | [**ComponentManager**](COMPONENT_MANAGER_DOCUMENTATION.md) | Sistema de componentes reutilizables | ✅ Nuevo      |
 | [**SweetAlert2**](SWEETALERT2_DOCUMENTATION.md)            | Sistema de alertas modernas          | ✅ Disponible |
 | [**SweetAlert2 Examples**](SWEETALERT2_EXAMPLES.md)        | Ejemplos prácticos de SweetAlert2    | ✅ Disponible |
+
+### ⚙️ Lógica de Ingeniería (Arquitectura Profunda)
+
+| Lección                                                 | Tema                                      | Nivel        |
+| ------------------------------------------------------- | ----------------------------------------- | ------------ |
+| [**Routing & Request**](logic/ROUTING_AND_REQUEST.md)   | Ciclo de vida de una petición y spoofing  | 🟢 Esencial  |
+| [**Smart Cache Engine**](logic/CACHE_ENGINE.md)         | Cómo funciona el caché reactivo           | 🟡 Intermedio |
+| [**Security Architecture**](logic/SECURITY_ARCHITECTURE.md) | Defensa en profundidad y sanitización     | 🔴 Avanzado   |
+
 
 ### 📄 Licencias
 
@@ -57,18 +69,20 @@ $usuarios = User::all(['id', 'nombre', 'email']); // Columnas específicas
 
 #### User Models - Gestión de Usuarios
 
-- **UserPHP**: Modelo principal de usuarios
-- **UserTokenModel**: Gestión JWT
+- **User**: Modelo principal de usuarios
+- **JWTAuth / PHPAuth**: Gestión de autenticación
 - **Validaciones**: Registro, login, recuperación
 - **Seguridad**: Hashing Argon2ID
 
 ```php
 // Autenticación JWT
-$token = UserTokenModel::generateToken($userId);
-$payload = UserTokenModel::validateToken($token);
+use services\auth\JWTAuth;
+$jwtAuth = new JWTAuth();
+$jwtAuth->TokenJWT($payload);
+$user = $jwtAuth->desifrartoken();
 
 // Validación de usuario
-$user = new UserPHP($_POST);
+$user = new User($_POST);
 $errors = $user->Validate_Register();
 ```
 

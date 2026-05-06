@@ -3,6 +3,7 @@
 $lat ?? 14.0723;   // Latitud
 $lng ?? -87.1921;  // Longitud
 $zoom ?? 13;
+$tile ?? "Ubicación del Evento";
 ?>
 
 <div>
@@ -16,6 +17,7 @@ $zoom ?? 13;
         const MAP_LAT = <?= $lat ?>;
         const MAP_LNG = <?= $lng ?>;
         const MAP_ZOOM = <?= $zoom ?>;
+        const MAP_TILE = "<?= $tile ?>";
     </script>
 
     <!-- Leaflet JS -->

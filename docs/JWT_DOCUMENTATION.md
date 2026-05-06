@@ -5,7 +5,7 @@
 1. [Descripción General](#descripción-general)
 2. [Características Principales](#características-principales)
 3. [Instalación y Configuración](#instalación-y-configuración)
-4. [UserTokenModel - Clase Principal](#usertokenmodel---clase-principal)
+4. [JWTAuth - Clase Principal](#usertokenmodel---clase-principal)
 5. [Métodos JWT](#métodos-jwt)
 6. [Configuración de Entorno](#configuración-de-entorno)
 7. [Flujo de Autenticación](#flujo-de-autenticación)
@@ -66,12 +66,12 @@ JWT_REFRESH_EXPIRE=604800
 
 ---
 
-## 🏗️ UserTokenModel - Clase Principal
+## 🏗️ JWTAuth - Clase Principal
 
 ### Ubicación
 
 ```
-app/models/UserTokenModel.php
+app/services/auth/JWTAuth.php
 ```
 
 ### Estructura de la Clase
@@ -83,7 +83,7 @@ namespace models;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
-class UserTokenModel extends Main
+class JWTAuth extends Main
 {
     public static $table = "users";
     static $columnDB = ["id", "nombre", "email", "password", "confirmado", "token", "admin"];
@@ -142,7 +142,7 @@ public static function generateToken($userId, $expiresIn = null): string
 **Ejemplo:**
 
 ```php
-$token = UserTokenModel::generateToken(123);
+$token = JWTAuth::generateToken(123);
 // eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
 ```
 
@@ -177,7 +177,7 @@ public static function validateToken($token): array|false
 **Ejemplo:**
 
 ```php
-$payload = UserTokenModel::validateToken($token);
+$payload = JWTAuth::validateToken($token);
 if ($payload) {
     $userId = $payload['user_id'];
     $email = $payload['email'];
@@ -203,7 +203,7 @@ public static function refreshToken($token): string|false
 **Ejemplo:**
 
 ```php
-$newToken = UserTokenModel::refreshToken($oldToken);
+$newToken = JWTAuth::refreshToken($oldToken);
 if ($newToken) {
     $_SESSION['token'] = $newToken;
 }
@@ -272,11 +272,11 @@ JWT_AUDIENCE=http://localhost
 ```php
 <?php
 // 1. Verificar credenciales
-$user = UserPHP::findBy('email', $email);
+$user = User::findBy('email', $email);
 if ($user && $user->Verify_password($user->password, $password)) {
 
     // 2. Generar token
-    $token = UserTokenModel::generateToken($user->id);
+    $token = JWTAuth::generateToken($user->id);
 
     // 3. Almacenar token
     $_SESSION['token'] = $token;
@@ -307,7 +307,7 @@ function authenticate()
     // Quitar "Bearer " si existe
     $token = str_replace('Bearer ', '', $token);
 
-    $payload = UserTokenModel::validateToken($token);
+    $payload = JWTAuth::validateToken($token);
     if (!$payload) {
         header('HTTP/1.0 401 Unauthorized');
         exit('Token inválido o expirado');
@@ -324,10 +324,10 @@ function authenticate()
 <?php
 function refreshTokenIfNeeded($token)
 {
-    $payload = UserTokenModel::decodeToken($token);
+    $payload = JWTAuth::decodeToken($token);
 
     if ($payload && $payload['exp'] - time() < 300) { // 5 minutos antes
-        $newToken = UserTokenModel::refreshToken($token);
+        $newToken = JWTAuth::refreshToken($token);
         if ($newToken) {
             $_SESSION['token'] = $newToken;
             setcookie('jwt_token', $newToken, time() + 3600, '/', '', true, true);
@@ -364,11 +364,11 @@ class AuthController
             }
 
             // Buscar usuario
-            $user = UserPHP::findBy('email', $email);
+            $user = User::findBy('email', $email);
 
             if ($user && $user->Verify_password($user->password, $password)) {
                 // Generar token con claims personalizados
-                $token = UserTokenModel::generateToken($user->id);
+                $token = JWTAuth::generateToken($user->id);
 
                 // Guardar en sesión y cookie
                 $_SESSION['token'] = $token;
@@ -425,7 +425,7 @@ class ApiMiddleware
         // Quitar "Bearer "
         $token = str_replace('Bearer ', '', $token);
 
-        $payload = UserTokenModel::validateToken($token);
+        $payload = JWTAuth::validateToken($token);
         if (!$payload) {
             self::jsonResponse(['error' => 'Token inválido o expirado'], 401);
             exit;
@@ -473,7 +473,7 @@ class UserController
         $payload = ApiMiddleware::authenticate();
 
         // Obtener información completa del usuario
-        $user = UserPHP::find($payload['user_id']);
+        $user = User::find($payload['user_id']);
 
         if (!$user) {
             ApiMiddleware::jsonResponse(['error' => 'Usuario no encontrado'], 404);
@@ -494,7 +494,7 @@ class UserController
 
         $data = json_decode(file_get_contents('php://input'), true);
 
-        $user = UserPHP::find($payload['user_id']);
+        $user = User::find($payload['user_id']);
         if (!$user) {
             ApiMiddleware::jsonResponse(['error' => 'Usuario no encontrado'], 404);
             return;
@@ -662,7 +662,7 @@ class AuthMiddleware
             self::unauthorized('Token requerido');
         }
 
-        $payload = UserTokenModel::validateToken($token);
+        $payload = JWTAuth::validateToken($token);
 
         if (!$payload) {
             self::unauthorized('Token inválido o expirado');
@@ -896,9 +896,9 @@ if (count($parts) !== 3) {
 
 ```php
 // Implementar refresco automático
-$payload = UserTokenModel::decodeToken($token);
+$payload = JWTAuth::decodeToken($token);
 if ($payload && $payload['exp'] - time() < 300) {
-    $newToken = UserTokenModel::refreshToken($token);
+    $newToken = JWTAuth::refreshToken($token);
 }
 ```
 
@@ -931,7 +931,7 @@ class CachedTokenValidator
         $hash = md5($token);
 
         if (!isset(self::$cache[$hash])) {
-            self::$cache[$hash] = UserTokenModel::validateToken($token);
+            self::$cache[$hash] = JWTAuth::validateToken($token);
         }
 
         return self::$cache[$hash];
@@ -943,10 +943,10 @@ class CachedTokenValidator
 
 ```php
 // Para APIs móviles, usar tokens más cortos
-$apiToken = UserTokenModel::generateToken($userId, 900); // 15 minutos
+$apiToken = JWTAuth::generateToken($userId, 900); // 15 minutos
 
 // Para web, tokens más largos
-$webToken = UserTokenModel::generateToken($userId, 3600); // 1 hora
+$webToken = JWTAuth::generateToken($userId, 3600); // 1 hora
 ```
 
 ---

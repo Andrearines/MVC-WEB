@@ -1,4 +1,4 @@
-# 📁 FileManagerModel - Documentación Completa
+# 📁 FileManager - Documentación Completa
 
 ## 📋 Tabla de Contenidos
 
@@ -17,7 +17,7 @@
 
 ## 🎯 Descripción General
 
-La clase `FileManagerModel` es un sistema completo para la gestión segura de archivos e imágenes en aplicaciones PHP. Proporciona funcionalidades para subir, procesar, validar y eliminar archivos con múltiples capas de seguridad y optimización.
+La clase `FileManager` es un sistema completo para la gestión segura de archivos e imágenes en aplicaciones PHP. Proporciona funcionalidades para subir, procesar, validar y eliminar archivos con múltiples capas de seguridad y optimización.
 
 ### Características Principales
 
@@ -144,11 +144,11 @@ Elimina un archivo del directorio de archivos.
 
 ```php
 <?php
-use models\FileManagerModel;
+use services\FileManager;
 
 // Procesar avatar de usuario
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['avatar'])) {
-    $resultado = FileManagerModel::processImage(
+    $resultado = FileManager::processImage(
         $_FILES['avatar'],
         'perfil',
         '.jpg'
@@ -199,11 +199,11 @@ $image->save($filePath);
 
 ```php
 <?php
-use models\FileManagerModel;
+use services\FileManager;
 
 // Procesar documento PDF
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['documento'])) {
-    $resultado = FileManagerModel::processFile(
+    $resultado = FileManager::processFile(
         $_FILES['documento'],
         'documentos',
         ['pdf', 'docx'],  // Solo PDF y DOCX
@@ -293,7 +293,7 @@ class UserController
             return ['error' => 'No se seleccionó ningún archivo'];
         }
 
-        $resultado = FileManagerModel::processImage(
+        $resultado = FileManager::processImage(
             $_FILES['avatar'],
             'perfil',
             '.jpg'
@@ -302,7 +302,7 @@ class UserController
         if (is_array($resultado) && !isset($resultado['error'])) {
             // Eliminar avatar anterior si existe
             if ($this->usuario->imagen) {
-                FileManagerModel::deleteImage('perfil', $this->usuario->imagen);
+                FileManager::deleteImage('perfil', $this->usuario->imagen);
             }
 
             // Actualizar base de datos
@@ -338,7 +338,7 @@ class GalleryController
                     'size' => $_FILES['imagenes']['size'][$key]
                 ];
 
-                $resultado = FileManagerModel::processImage($file, 'galeria', '.jpg');
+                $resultado = FileManager::processImage($file, 'galeria', '.jpg');
 
                 if (is_array($resultado) && !isset($resultado['error'])) {
                     $imagenesSubidas[] = $resultado[0];
@@ -367,7 +367,7 @@ class DocumentController
         $allowedTypes = ['pdf', 'docx', 'xlsx'];
         $maxSize = 20 * 1024 * 1024; // 20MB
 
-        $resultado = FileManagerModel::processFile(
+        $resultado = FileManager::processFile(
             $_FILES['documento'],
             'documentos',
             $allowedTypes,
@@ -414,7 +414,7 @@ class CleanupController
                     if ($archivo !== '.' && $archivo !== '..') {
                         if (!in_array($archivo, $archivosEnUso)) {
                             // Eliminar archivo no utilizado
-                            FileManagerModel::deleteImage($directorio, $archivo);
+                            FileManager::deleteImage($directorio, $archivo);
                             echo "Eliminado: $directorio/$archivo\n";
                         }
                     }
@@ -456,7 +456,7 @@ throw new \Exception("No se pudo guardar el archivo");
 ```php
 <?php
 try {
-    $resultado = FileManagerModel::processImage($_FILES['imagen'], 'perfil', '.jpg');
+    $resultado = FileManager::processImage($_FILES['imagen'], 'perfil', '.jpg');
 
     if (is_array($resultado)) {
         if (isset($resultado['error'])) {
@@ -484,7 +484,7 @@ try {
 ### Personalizar Validaciones
 
 ```php
-class CustomFileManager extends FileManagerModel
+class CustomFileManager extends FileManager
 {
     public static function processImageCustom($img, $carpeta, $tipo, $options = [])
     {
@@ -530,7 +530,7 @@ class File extends Main
 
     public function uploadAndSave($file, $carpeta, $allowedTypes = null)
     {
-        $resultado = FileManagerModel::processFile($file, $carpeta, $allowedTypes);
+        $resultado = FileManager::processFile($file, $carpeta, $allowedTypes);
 
         if (is_array($resultado) && !isset($resultado['error'])) {
             $this->nombre_original = $file['name'];
@@ -548,7 +548,7 @@ class File extends Main
     public function deleteFileAndRecord()
     {
         // Eliminar archivo físico
-        FileManagerModel::deleteFile($this->carpeta, $this->nombre_archivo);
+        FileManager::deleteFile($this->carpeta, $this->nombre_archivo);
 
         // Eliminar registro de base de datos
         return $this->delete();
