@@ -1,5 +1,5 @@
-@use 'src/theme/iOS/variables.scss' as *;
-@use 'src/base/scss/mixins' as m;
+@use '../variables.scss' as *;
+@use '../../../scss/mixins' as m;
 
 .btn-ios-primary {
     @include m.boton($ios-blue, darken($ios-blue, 10%), inline-block, #ffffff, #ffffff);
