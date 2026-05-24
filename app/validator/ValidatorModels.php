@@ -1,10 +1,17 @@
 <?php
 
 namespace validator;
+use errors\Errors;
 
 class ValidatorModels
 {
-    private array $errors = [];
+
+    private Errors $Errors;
+
+    public function __construct()
+    {
+        $this->Errors = new Errors();
+    }
 
     /**
      * Valida los datos según las reglas especificadas.
@@ -28,7 +35,7 @@ class ValidatorModels
 
             // Si es requerido y viene vacío, detenemos la validación de ese campo
             if ($isRequired && $isEmpty) {
-                $this->addError($field, "El campo {$field} es requerido");
+                $this->Errors->addError($field, "El campo {$field} es requerido");
                 continue;
             }
 
@@ -41,7 +48,7 @@ class ValidatorModels
             foreach ($parsedRules as $ruleName) {
                 // Ya validamos required
                 if ($ruleName === 'required') {
-                    continue; 
+                    continue;
                 }
 
                 $this->applyRule($field, $value, $ruleName);
@@ -52,6 +59,7 @@ class ValidatorModels
     /**
      * Extrae las reglas desde un array o un texto separado por '|'.
      */
+
     private function parseRules($rules): array
     {
         if (is_array($rules)) {
@@ -79,33 +87,33 @@ class ValidatorModels
         switch ($ruleName) {
             case 'numeric':
                 if (!is_numeric($value)) {
-                    $this->addError($field, "El campo {$field} debe ser número (entero o decimal)");
+                    $this->Errors->addError($field, "El campo {$field} debe ser número (entero o decimal)");
                 }
                 break;
             case 'integer':
                 // Validación estricta para números enteros
                 if (filter_var($value, FILTER_VALIDATE_INT) === false) {
-                    $this->addError($field, "El campo {$field} debe ser un número entero válido");
+                    $this->Errors->addError($field, "El campo {$field} debe ser un número entero válido");
                 }
                 break;
             case 'string':
                 if (!is_string($value)) {
-                    $this->addError($field, "El campo {$field} debe ser un texto");
+                    $this->Errors->addError($field, "El campo {$field} debe ser un texto");
                 }
                 break;
             case 'email':
                 if (filter_var($value, FILTER_VALIDATE_EMAIL) === false) {
-                    $this->addError($field, "El campo {$field} debe ser un correo electrónico válido");
+                    $this->Errors->addError($field, "El campo {$field} debe ser un correo electrónico válido");
                 }
                 break;
             case 'array':
                 if (!is_array($value)) {
-                    $this->addError($field, "El campo {$field} debe ser una lista (arreglo)");
+                    $this->Errors->addError($field, "El campo {$field} debe ser una lista (arreglo)");
                 }
                 break;
             case 'boolean': // Valida si es bool puro o string de true/false
                 if (!is_bool($value) && !in_array($value, [0, 1, '0', '1', true, false], true)) {
-                    $this->addError($field, "El campo {$field} debe ser verdadero o falso (boolean)");
+                    $this->Errors->addError($field, "El campo {$field} debe ser verdadero o falso (boolean)");
                 }
                 break;
             default:
@@ -117,27 +125,18 @@ class ValidatorModels
     /**
      * Agrega el mensaje al array del campo en cuestión.
      */
-    private function addError(string $field, string $message): void
-    {
-        // Si no existe la llave para este campo, la inicializamos
-        if (!isset($this->errors[$field])) {
-            $this->errors[$field] = [];
-        }
-        $this->errors[$field][] = $message;
-    }
-
-    public function getErrors(): array
-    {
-        return $this->errors;
-    }
 
     public function hasErrors(): bool
     {
-        return !empty($this->errors);
+        return $this->Errors->hasErrors();
     }
 
     public function clearErrors(): void
     {
-        $this->errors = [];
+        $this->Errors->clearErrors();
+    }
+    public function getErrors()
+    {
+        return $this->Errors->getErrors();
     }
 }
