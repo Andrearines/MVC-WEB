@@ -26,9 +26,11 @@ require_once __DIR__ . '../../../../config/Environment.php';
         }
     }
     ?>
-    <script src="/build/js/base/js/modernizr.js"></script>
+    <script src="/build/js/core/js/modernizr.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="/build/js/base/js/sweetalert-config.js"></script>
+    <script src="/build/js/core/js/sweetalert-config.js"></script>
+    <script src="/build/js/core/theme/ThemeStore.js"></script>
+    <script src="/build/js/core/theme/darkmode.js"></script>
 </body>
 
 </html>

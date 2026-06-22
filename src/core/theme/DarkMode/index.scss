@@ -1,0 +1,173 @@
+/**
+ * Dark Mode - Estilos Minimalistas, Premium y SIN BORDES
+ * Se activa aplicando la clase `.dark` al elemento <body> o <html>.
+ * En lugar de bordes, se utiliza diferenciación de tonos de fondo y sombras suaves para separar elementos.
+ */
+
+body.dark {
+    // Colores de Fondo (Diferenciación de tonos para evitar la necesidad de bordes)
+    --bg-primaryD: #0a0c10; // Fondo principal de la página
+    --bg-secondaryD: #141822; // Fondo de tarjetas, secciones, header y footer
+    --bg-tertiaryD: #1e2330; // Fondo de inputs, botones en reposo
+    --bg-hoverD: #272f40; // Fondo de elementos al hacer hover
+
+    // Colores de Texto
+    --text-primaryD: #f3f4f6; // Texto principal
+    --text-secondaryD: #a1a8b9; // Texto secundario/subtítulos
+    --text-mutedD: #626a7f; // Texto deshabilitado o pie de foto
+
+    // Acentos e interacciones (Sin bordes, solo color y sombras)
+    --accentD: #6366f1; // Color de realce (Indigo)
+    --accent-hoverD: #4f46e5; // Hover de realce
+
+    // Sombras muy suaves y difuminadas para dar volumen plano sin usar líneas divisorias
+    --shadow-smD: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-mdD: 0 4px 16px rgba(0, 0, 0, 0.4);
+
+    // Ajuste de scrollbar para navegadores modernos
+    scrollbar-color: var(--bg-tertiaryD) var(--bg-primaryD);
+}
+
+// Aplicación de los estilos al activar el modo oscuro
+body.dark {
+    background-color: var(--bg-primaryD);
+    color: var(--text-primaryD);
+    transition: background-color 0.3s ease, color 0.3s ease;
+
+    // Encabezados limpios
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        color: var(--text-primaryD);
+        font-weight: 300;
+        letter-spacing: -0.02em;
+    }
+
+    p,
+    span,
+    li,
+    label {
+        color: var(--text-secondaryD);
+    }
+
+    a {
+        color: var(--accentD);
+        transition: color 0.2s ease;
+
+        &:hover {
+            color: var(--accent-hoverD);
+        }
+    }
+
+    // Contenedores, Tarjetas y Cabeceras (SIN BORDES, diferenciados por color de fondo y sombra)
+    .card,
+    .container,
+    .section,
+    header,
+    footer,
+    nav,
+    .header {
+        background-color: var(--bg-secondaryD);
+        border: none !important; // Garantizar que no haya bordes
+        box-shadow: var(--shadow-smD);
+        border-radius: 8px;
+    }
+
+    // Inputs, Textareas y Selects (Sin bordes, diferenciación por fondo y sombra al enfocar)
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    input[type="tel"],
+    textarea,
+    select {
+        background-color: var(--bg-tertiaryD);
+        color: var(--text-primaryD);
+        border: none !important; // Sin bordes
+        border-radius: 8px;
+        padding: 1rem 1.4rem;
+        outline: none;
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+        transition: background-color 0.2s ease, box-shadow 0.2s ease;
+
+        &::placeholder {
+            color: var(--text-mutedD);
+        }
+
+        // Resaltado al enfocar usando sombras (box-shadow) en lugar de bordes
+        &:focus {
+            background-color: var(--bg-secondaryD);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.4);
+        }
+
+        &:disabled {
+            background-color: var(--bg-primaryD);
+            color: var(--text-mutedD);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+    }
+
+    // Botones minimalistas sin bordes
+    button,
+    .btn,
+    input[type="submit"] {
+        border: none !important; // Sin bordes
+        border-radius: 8px;
+        font-weight: 500;
+        padding: 0.8rem 1.8rem;
+        transition: background-color 0.2s ease, transform 0.1s ease;
+        cursor: pointer;
+
+        // Botón primario
+        &.btn-primary,
+        &[type="submit"] {
+            background-color: var(--accentD);
+            color: #ffffff;
+
+            &:hover {
+                background-color: var(--accent-hoverD);
+            }
+
+            &:active {
+                transform: scale(0.98);
+            }
+        }
+
+        // Botón secundario/terciario
+        &.btn-secondary {
+            background-color: var(--bg-tertiaryD);
+            color: var(--text-primaryD);
+
+            &:hover {
+                background-color: var(--bg-hoverD);
+            }
+
+            &:active {
+                transform: scale(0.98);
+            }
+        }
+    }
+
+    // Scrollbars sin bordes
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: var(--bg-primaryD);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: var(--bg-tertiaryD);
+        border-radius: 4px;
+
+        &:hover {
+            background: var(--bg-hoverD);
+        }
+    }
+}
