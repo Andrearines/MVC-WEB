@@ -1,7 +1,10 @@
-# framework MVC-WEB-PHP v8.0.0
+# framework MVC-WEB-PHP v8.1.0
 
 > [!IMPORTANT]
-> **¡Novedad en v6.0.0!** Ahora con soporte completo para **Docker**. Despliega tu base de datos MySQL en segundos con persistencia local automática. Consulta la sección de [Dockerización](#-dockerización) para más detalles.
+> **¡Novedad en v8.1.0!** Sistema de **Manejo de Estado Global** para Vanilla JS (Store Pattern) con persistencia automática entre páginas. Incluye ThemeStore, CartStore y Dark Mode minimalista sin bordes.
+
+> [!NOTE]
+> **v6.0.0**: Soporte completo para **Docker**. Despliega tu base de datos MySQL en segundos con persistencia local automática.
 
 ## 📋 Descripción del Proyecto
 
@@ -46,8 +49,21 @@ MVC-WEB/
 │   ├── Request.php         # Gestión de peticiones y datos
 │   └── Router.php          # Despachador de rutas
 ├── src/                   # Archivos fuente frontend
-│   ├── base/              # Estilos base
-│   ├── pages/             # Paginas
+│   ├── Ui/                # Componentes de interfaz por página
+│   │   └── home/          # Estilos y widgets de la página de inicio
+│   ├── core/
+│   │   ├── js/            # Scripts base (modernizr, sweetalert)
+│   │   │   └── theme/     # darkmode.js (suscriptor del Store)
+│   │   ├── provider/      # Sistema de Estado Global (Store Pattern)
+│   │   │   ├── Store.js        # Clase base genérica
+│   │   │   ├── ThemeStore.js   # Store del tema (deprecated, ver src/core/theme/)
+│   │   │   └── CartStore.js    # Store del carrito de compras
+│   │   ├── scss/          # Estilos base (variables, mixins, normalize)
+│   │   └── theme/         # Temas visuales
+│   │       ├── iOS/       # Componentes de estilo iOS
+│   │       ├── DarkMode/  # Modo oscuro minimalista
+│   │       │   └── index.scss
+│   │       └── ThemeStore.js   # Store de temas con persistencia
 │   └── app.scss
 ├── db/                    # Base de datos con docker-compose
 ├── docs/                  # Documentación completa
@@ -111,6 +127,23 @@ MVC-WEB/
 - **Input components** especializados
 - **Renderizado dinámico** con datos
 
+### 🗃️ Manejo de Estado Global (Store — v8.1.0)
+
+- **Patrón Store** reactivo en JavaScript puro, sin dependencias externas
+- **Persistencia automática** en `localStorage` — el estado sobrevive al cambiar de página
+- **ThemeStore**: controla el tema Claro/Oscuro en toda la aplicación
+- **CartStore**: gestiona el carrito de compras entre páginas
+- **Patrón Observer**: cualquier script puede suscribirse a los cambios de estado
+- **Extensible**: crea nuevos Stores en `src/core/provider/` siguiendo el mismo patrón
+
+### 🌙 Dark Mode Minimalista (v8.1.0)
+
+- **Sin bordes**: separación visual mediante diferenciación de tonos de fondo
+- **Transiciones suaves**: cambio de tema con `transition: 0.3s ease`
+- **Variables CSS**: paleta completa de colores configurables
+- **Logo adaptable**: el SVG inline cambia de color según el tema usando `fill` en CSS
+- **Scrollbar personalizado**: estilo oscuro nativo en navegadores webkit
+
 ### 🎨 Frontend Moderno
 
 - **Sass/SCSS** para estilos organizados
@@ -136,6 +169,7 @@ El proyecto incluye documentación detallada para todos los componentes:
 
 - **[📁 Docs](docs/)** - Documentación completa del sistema
 - **[📋 Guía Rápida](docs/README.md)** - Índice de toda la documentación
+- **[🗃️ Store & Estado](docs/STORE_DOCUMENTATION.md)** - ⭐ **NUEVO** — Sistema de estado global en Vanilla JS
 - **[🗄️ Main Model](docs/MAIN_MODEL_DOCUMENTATION.md)** - Modelo base con caché
 - **[📁 FileManager](docs/FILE_MANAGER_DOCUMENTATION.md)** - Gestión de archivos
 - **[📧 Email System](docs/EMAIL_DOCUMENTATION.md)** - Sistema de correos

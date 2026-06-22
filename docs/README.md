@@ -26,6 +26,12 @@ Bienvenido a la documentación completa del framework MVC-WEB. Aquí encontrará
 | [**SweetAlert2**](SWEETALERT2_DOCUMENTATION.md)            | Sistema de alertas modernas          | ✅ Disponible |
 | [**SweetAlert2 Examples**](SWEETALERT2_EXAMPLES.md)        | Ejemplos prácticos de SweetAlert2    | ✅ Disponible |
 
+### 🗃️ Frontend y Estado
+
+| Documentación                               | Descripción                                          | Estado         |
+| ------------------------------------------- | ---------------------------------------------------- | -------------- |
+| [**Store & Estado**](STORE_DOCUMENTATION.md) | Sistema de estado global en Vanilla JS (Observer)    | ⭐ Nuevo v8.1 |
+
 ### ⚙️ Lógica de Ingeniería (Arquitectura Profunda)
 
 | Lección                                                 | Tema                                      | Nivel        |
@@ -457,10 +463,12 @@ error_log("System Stats: " . json_encode($stats));
 
 ### En Desarrollo
 
-- [ ] **Sistema de Logs Centralizado**
+- [x] **Sistema de Logs Centralizado**
+- [x] **Dockerización del proyecto**
+- [x] **Store / Manejo de Estado Global (Vanilla JS)**
+- [x] **Dark Mode Minimalista sin bordes**
 - [ ] **API REST Completa**
 - [ ] **Testing Automatizado**
-- [ ] **Dockerización**
 - [ ] **Caché Distribuido**
 
 ### Mejoras Planificadas
@@ -534,8 +542,8 @@ chmod 755 public/imagenes/
 
 ---
 
-**Última actualización**: Enero 5, 2026
-**Versión de la documentación**: 2.0.0
+**Última actualización**: Junio 22, 2026  
+**Versión de la documentación**: 3.0.0  
 **Compatibilidad**: PHP 8.0+
 
 ---
