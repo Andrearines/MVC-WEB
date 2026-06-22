@@ -20,3 +20,18 @@
     max-width: 100rem;
     margin: 0 auto;
 }
+
+.logo-sm {
+    width: 10rem;
+    height: 10rem;
+
+    path {
+        fill: black;
+    }
+
+
+}
+
+.disable {
+    display: none;
+}

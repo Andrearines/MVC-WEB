@@ -7,3 +7,4 @@
 /.env.backup
 /.env.local
 /public/build/
+/db/docker/mysql_data

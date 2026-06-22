@@ -6,10 +6,9 @@ use MVC\Router;
 
 class PagesController
 {
-
     public static function indexView(Router $router)
     {
-        $router->view('home/index.php', ['inicio' => true, "script" => [], "titulo" => "Home"]);
+        $router->view('home/index.php', ['inicio' => true, "script" => ["core/theme/ThemeStore", "core/js/darkmode"], "titulo" => "Home"]);
     }
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------

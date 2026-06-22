@@ -1,0 +1,170 @@
+/**
+ * Dark Mode - Estilos Minimalistas y Premium
+ * Se activa aplicando la clase `.dark` al elemento <body> o <html>.
+ */
+
+// Definición de variables del tema oscuro minimalista
+
+body.dark {
+    // Colores de Fondo (Basado en una paleta charcoal/slate muy suave)
+    --bg-primaryD: #0a0c10; // Fondo de la página principal (ultra oscuro)
+    --bg-secondaryD: #12151c; // Fondo de tarjetas, secciones, headers (un poco más claro)
+    --bg-tertiaryD: #1b1f2b; // Fondo de inputs, botones en reposo
+    --bg-hoverD: #232938; // Fondo de elementos al hacer hover
+
+    // Colores de Texto (Evitando blanco puro para reducir fatiga visual)
+    --text-primaryD: #f3f4f6; // Texto principal (casi blanco)
+    --text-secondaryD: #9ca3af; // Texto secundario, subtítulos y descripciones (gris claro)
+    --text-mutedD: #6b7280; // Texto deshabilitado o de menor importancia (gris medio)
+
+    // Acentos y Estados (Minimalistas y refinados)
+    --accentD: #6366f1; // Color de realce (Indigo moderno)
+    --accent-hoverD: #4f46e5; // Color de realce al hacer hover
+    --border-colorD: #1e293b; // Bordes ultra delgados y sutiles
+    --border-hoverD: #334155; // Bordes al enfocar/hover
+
+    // Sombras sutiles para dar profundidad plana
+    --shadow-smD: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+    --shadow-mdD: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.5);
+    --shadow-lgD: 0 10px 15px -3px rgba(0, 0, 0, 0.6), 0 4px 6px -2px rgba(0, 0, 0, 0.5);
+
+    // Ajuste de scrollbar para navegadores modernos
+    scrollbar-color: var(--bg-tertiaryD) var(--bg-primaryD);
+}
+
+// Aplicación de estilos generales cuando el modo oscuro está activo
+body.dark {
+    background-color: var(--bg-primaryD);
+    color: var(--text-primaryD);
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+
+    // Encabezados
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        color: var(--text-primaryD);
+        font-weight: 300;
+        letter-spacing: -0.025em;
+    }
+
+    // Texto de párrafo y etiquetas
+    p,
+    span,
+    li,
+    label {
+        color: var(--text-secondaryD);
+    }
+
+    // Enlaces minimalistas
+    a {
+        color: var(--accentD);
+        transition: color 0.2s ease;
+
+        &:hover {
+            color: var(--accent-hoverD);
+        }
+    }
+
+    // Contenedores, Tarjetas y Secciones
+    .card,
+    .container,
+    .section,
+    header,
+    footer,
+    nav {
+        background-color: var(--bg-secondaryD);
+        border: 1px solid var(--border-colorD);
+        box-shadow: var(--shadow-smD);
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    // Inputs, Textareas y Selects
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    input[type="tel"],
+    textarea,
+    select {
+        background-color: var(--bg-tertiaryD);
+        color: var(--text-primaryD);
+        border: 1px solid var(--border-colorD);
+        border-radius: 6px;
+        padding: 0.8rem 1.2rem;
+        outline: none;
+        transition: border-color 0.2s ease, background-color 0.2s ease;
+
+        &::placeholder {
+            color: var(--text-mutedD);
+        }
+
+        &:focus {
+            border-color: var(--accentD);
+            background-color: var(--bg-secondaryD);
+        }
+
+        &:disabled {
+            background-color: var(--bg-primaryD);
+            color: var(--text-mutedD);
+            cursor: not-allowed;
+        }
+    }
+
+    // Botones con estilo minimalista
+    button,
+    .btn,
+    input[type="submit"] {
+        border-radius: 6px;
+        font-weight: 500;
+        padding: 0.8rem 1.6rem;
+        transition: all 0.2s ease;
+        cursor: pointer;
+
+        // Botón primario
+        &.btn-primary,
+        &[type="submit"] {
+            background-color: var(--accentD);
+            color: #ffffff;
+            border: 1px solid transparent;
+
+            &:hover {
+                background-color: var(--accent-hoverD);
+            }
+        }
+
+        // Botón secundario/outline
+        &.btn-secondary {
+            background-color: transparent;
+            color: var(--text-primaryD);
+            border: 1px solid var(--border-colorD);
+
+            &:hover {
+                background-color: var(--bg-tertiaryD);
+                border-color: var(--border-hoverD);
+            }
+        }
+    }
+
+    // Scrollbars personalizados para Webkit (Chrome, Safari, Edge)
+    ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: var(--bg-primaryD);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: var(--bg-tertiaryD);
+        border-radius: 5px;
+        border: 2px solid var(--bg-primaryD);
+
+        &:hover {
+            background: var(--bg-hoverD);
+        }
+    }
+}
