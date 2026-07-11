@@ -36,14 +36,19 @@ class Authentication
      * @param array $data
      * @return void
      */
-    public static function login(array $data): void
+    public static function login(int $userId, string $role, array $data = []): void
     {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
-        $_SESSION['login'] = true;
-        foreach ($data as $key => $value) {
-            $_SESSION[$key] = $value;
+
+        $_SESSION["user_id"] = $userId;
+        $_SESSION["rol"] = $role;
+
+        if (!empty($data)) {
+            foreach ($data as $key => $value) {
+                $_SESSION[$key] = $value;
+            }
         }
     }
 

@@ -13,6 +13,7 @@ class Authorization
     protected static $rolePermissions = [
         'admin' => ['view-admin', 'edit-settings', 'manage-users'],
         'user' => ['view-profile']
+
     ];
 
     /**
@@ -41,7 +42,7 @@ class Authorization
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
-        
+
         // Also support storing permissions array directly in the session
         if (isset($_SESSION['permissions']) && is_array($_SESSION['permissions'])) {
             if (in_array($permission, $_SESSION['permissions'])) {
