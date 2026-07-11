@@ -1,17 +1,12 @@
 <?php
-require_once __DIR__ . '/../config/app.php';
 
-use controllers\PagesController;
-use MVC\Router;
+// Require Composer Autoloader
+require_once __DIR__ . '/../vendor/autoload.php';
 
-$r = new Router;
-$r->get("/", [PagesController::class, 'indexView']);
-$r->post("/", [PagesController::class, 'indexView']);
+use app\Core\Application;
 
-$r->get("/admin/index", [PagesController::class, 'indexView'], ['admin']);
+// Initialize Application
+$app = new Application(__DIR__ . '/../');
 
-//es la ruta predeterminada para el login y cuando no esta autorizado a entrar a una ruta
-$r->get("/auth/login", [PagesController::class, 'loginView']);
-
-
-$r->Rutas();
+// Run application routing & plugins lifecycle
+$app->run();

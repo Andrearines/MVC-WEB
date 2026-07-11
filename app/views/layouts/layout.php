@@ -11,7 +11,7 @@ require_once __DIR__ . '../../../../config/Environment.php';
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../build/css/app.css">
+    <?php echo asset_vite('src/main.js'); ?>
     <title> <?php echo Environment::get('APP_NAME') ?> | <?php echo $title ?? "" ?></title>
 </head>
 
@@ -19,18 +19,14 @@ require_once __DIR__ . '../../../../config/Environment.php';
 
     <?php echo $container ?? "" ?>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <?php
-    if ($script) {
-        foreach ($script as $script) {
-            echo "<script src='build/js/{$script}.js'></script>";
+    if (isset($script) && is_array($script)) {
+        foreach ($script as $s) {
+            echo "<script src='build/js/{$s}.js'></script>";
         }
     }
     ?>
-    <script src="/build/js/core/js/modernizr.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="/build/js/core/js/sweetalert-config.js"></script>
-    <script src="/build/js/core/theme/ThemeStore.js"></script>
-    <script src="/build/js/core/theme/darkmode.js"></script>
 </body>
 
 </html>

@@ -1,6 +1,6 @@
 <?php
 namespace controllers\API;
-use MVC\Router;
+use app\Core\Router;
 class API{
     public static function servicios(Router $r){
         echo json_encode('hola mundo');
