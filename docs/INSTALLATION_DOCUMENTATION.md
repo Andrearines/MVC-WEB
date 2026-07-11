@@ -1,753 +1,255 @@
-# 🚀 Guía de Instalación - Documentación Completa
+# 🚀 Guía de Instalación — MVC-WEB v9.0.0
 
-## 📋 Tabla de Contenidos
+## Tabla de Contenidos
 
-1. [Descripción General](#descripción-general)
-2. [Requisitos Previos](#requisitos-previos)
-3. [Scripts de Instalación](#scripts-de-instalación)
-4. [Instalación Automática](#instalación-automática)
-5. [Instalación Manual](#instalación-manual)
-6. [Configuración del Entorno](#configuración-del-entorno)
-7. [Verificación de la Instalación](#verificación-de-la-instalación)
-8. [Troubleshooting](#troubleshooting)
-9. [Configuración Avanzada](#configuración-avanzada)
-10. [Mantenimiento](#mantenimiento)
-
----
-
-## 🎯 Descripción General
-
-MVC-WEB incluye un sistema completo de scripts de instalación automatizada que facilitan la configuración del proyecto desde cero. Los scripts manejan la instalación de dependencias, configuración del entorno y puesta en marcha del servidor de desarrollo.
-
-### Características de los Scripts
-
-- ✅ **Instalación automática** de dependencias PHP y Node.js
-- ✅ **Configuración interactiva** de variables de entorno
-- ✅ **Generación de claves** seguras automáticamente
-- ✅ **Verificación de requisitos** del sistema
-- ✅ **Backup automático** de configuración
-- ✅ **Inicio del servidor** de desarrollo
-- ✅ **Manejo de errores** con mensajes claros
+1. [Descripción General](#1-descripción-general)
+2. [Requisitos Previos](#2-requisitos-previos)
+3. [Instalación Automática (Recomendada)](#3-instalación-automática-recomendada)
+4. [Instalación Manual Paso a Paso](#4-instalación-manual-paso-a-paso)
+5. [Configuración del Entorno (.env)](#5-configuración-del-entorno-env)
+6. [Configuración del Servidor Web](#6-configuración-del-servidor-web)
+7. [Frontend con Vite](#7-frontend-con-vite)
+8. [Verificación de la Instalación](#8-verificación-de-la-instalación)
+9. [Troubleshooting](#9-troubleshooting)
+10. [Actualización desde v8.x](#10-actualización-desde-v8x)
 
 ---
 
-## 🔧 Requisitos Previos
+## 1. Descripción General
+
+MVC-WEB v9.0.0 incluye un sistema de scripts de instalación automatizada que cubre:
+
+- ✅ Configuración interactiva de variables de entorno
+- ✅ Instalación de dependencias PHP con Composer (PSR-4 autoloading)
+- ✅ Instalación de dependencias Node.js y compilación con Vite
+- ✅ Detección automática de Composer (global, local o phar)
+- ✅ Generación automática de claves JWT seguras
+- ✅ Backup del `.env` antes de modificaciones
+
+### Scripts disponibles
+
+| Script | Descripción |
+|--------|-------------|
+| `scripts/install.sh` | ★ **Instalador maestro** — ejecuta todo en orden |
+| `scripts/startEnv.sh` | Configura interactivamente el archivo `.env` |
+| `scripts/instalerComposer.sh` | Instala dependencias PHP y genera autoload |
+| `scripts/instalerNpm.sh` | Instala dependencias Node.js y compila con Vite |
+
+---
+
+## 2. Requisitos Previos
 
 ### Sistema Operativo
 
-- **Linux** (Ubuntu 18.04+, Debian 10+, CentOS 8+)
-- **macOS** (10.15+)
-- **Windows** (10+ con WSL2 recomendado)
+- **Linux** (Ubuntu 20.04+, Debian 11+, CentOS 8+)
+- **macOS** (12+)
+- **Windows 11** con WSL2 (recomendado)
 
-### Software Requerido
+### Software requerido
 
-| Software      | Versión Mínima | Verificación         |
-| ------------- | -------------- | -------------------- |
-| PHP           | 8.0+           | `php --version`      |
-| Composer      | 2.0+           | `composer --version` |
-| Node.js       | 16.0+          | `node --version`     |
-| npm           | 8.0+           | `npm --version`      |
-| MySQL/MariaDB | 5.7+           | `mysql --version`    |
-| Git           | 2.0+           | `git --version`      |
+| Software      | Versión Mínima | Verificar con          |
+|---------------|----------------|------------------------|
+| PHP           | 8.0+           | `php --version`        |
+| Composer      | 2.0+           | `composer --version`   |
+| Node.js       | 16.0+          | `node --version`       |
+| npm           | 8.0+           | `npm --version`        |
+| MySQL/MariaDB | 5.7+           | `mysql --version`      |
+| Git           | 2.0+           | `git --version`        |
 
-### Extensiones PHP Requeridas
+### Extensiones PHP requeridas
 
 ```bash
-# Verificar extensiones instaladas
-php -m | grep -E "(mysqli|pdo|mbstring|json|curl|gd|zip)"
+# Verificar todas a la vez
+php -m | grep -E "(mysqli|pdo|pdo_mysql|mbstring|json|curl|gd|zip|openssl)"
 ```
 
-Extensiones necesarias:
-
-- `mysqli` o `pdo_mysql`
-- `mbstring`
-- `json`
-- `curl`
-- `gd` (para procesamiento de imágenes)
-- `zip`
-- `openssl`
-- `tokenizer`
+Las extensiones necesarias son:
+- `mysqli` / `pdo_mysql` — Conexión a base de datos
+- `mbstring` — Manejo de cadenas multibyte
+- `json` — Soporte JSON (JWT)
+- `curl` — Peticiones HTTP externas
+- `gd` / `imagick` — Procesamiento de imágenes
+- `zip` — Compresión de archivos
+- `openssl` — Generación de claves seguras
 
 ---
 
-## 📁 Scripts de Instalación
-
-### Estructura de Scripts
-
-```
-MVC-WEB/
-├── start.sh                    # Instalación completa automatizada
-├── startServer.sh              # Inicio del servidor de desarrollo
-└── scripts/
-    ├── instalerComposer.sh     # Instalación de dependencias PHP
-    ├── instalerNpm.sh          # Instalación de dependencias frontend
-    └── startEnv.sh             # Configuración de variables de entorno
-```
-
-### Permisos de Ejecución
+## 3. Instalación Automática (Recomendada)
 
 ```bash
-# Dar permisos a todos los scripts
-chmod +x start.sh
-chmod +x startServer.sh
+# 1. Clonar el repositorio
+git clone https://github.com/tu-usuario/MVC-WEB.git
+cd MVC-WEB
+
+# 2. Dar permisos de ejecución
 chmod +x scripts/*.sh
 
-# Verificar permisos
-ls -la *.sh scripts/*.sh
+# 3. Ejecutar el instalador maestro
+bash scripts/install.sh
+```
+
+El instalador te guiará por **3 pasos**:
+
+```
+▶ PASO 1/3 — Configurando variables de entorno...
+  → Configura DB, JWT, APP_NAME, APP_URL interactivamente
+
+▶ PASO 2/3 — Instalando dependencias PHP con Composer...
+  → Detecta Composer (global/local/phar)
+  → Instala paquetes de composer.json
+  → Genera autoload PSR-4 optimizado
+
+▶ PASO 3/3 — Instalando dependencias Node.js / Vite...
+  → npm install
+  → Opción de compilar assets para producción
 ```
 
 ---
 
-## 🚀 Instalación Automática
+## 4. Instalación Manual Paso a Paso
 
-### Script Principal: start.sh
+Si prefieres control total sobre cada paso:
 
-El script `start.sh` realiza la instalación completa del proyecto en un solo paso.
-
-#### Uso Básico
+### 4.1 Clonar el repositorio
 
 ```bash
-# Clonar el proyecto
-git clone <repositorio-url>
-cd MVC-WEB
-
-# Dar permisos y ejecutar
-chmod +x start.sh
-./start.sh
-```
-
-#### Proceso de Instalación
-
-El script realiza los siguientes pasos automáticamente:
-
-1. **Verificación de requisitos**
-2. **Instalación de dependencias Composer**
-3. **Instalación de dependencias NPM**
-4. **Configuración interactiva del entorno**
-5. **Generación de autoloader**
-6. **Compilación de assets**
-7. **Inicio del servidor de desarrollo**
-
-#### Opciones del Script
-
-```bash
-# Ejecución con opciones específicas
-./start.sh --help                    # Muestra ayuda
-./start.sh --skip-npm               # Omite instalación NPM
-./start.sh --dev                    # Modo desarrollo
-./start.sh --prod                   # Modo producción
-./start.sh --force                  # Fuerza reinstalación
-```
-
----
-
-## 📦 Scripts Individuales
-
-### 1. instalerComposer.sh
-
-Instala las dependencias PHP necesarias para el proyecto.
-
-#### Ejecución
-
-```bash
-chmod +x scripts/instalerComposer.sh
-./scripts/instalerComposer.sh
-```
-
-#### Funcionalidades
-
-- **Verificación de Composer**: Comprueba si Composer está instalado
-- **Instalación/Actualización**: Instala o actualiza dependencias
-- **Generación de autoloader**: Crea el PSR-4 autoloader
-- **Verificación de paquetes**: Confirma que los paquetes estén instalados
-
-#### Dependencias Instaladas
-
-```json
-{
-  "require": {
-    "phpmailer/phpmailer": "^6.8",
-    "firebase/php-jwt": "^6.0",
-    "intervention/image": "^3.11"
-  }
-}
-```
-
-#### Salida Esperada
-
-```
-=== Instalación de Dependencias PHP ===
-✓ Composer detectado: v2.5.5
-✓ Instalando paquetes...
-✓ phpmailer/phpmailer instalado
-✓ firebase/php-jwt instalado
-✓ intervention/image instalado
-✓ Generando autoloader...
-✓ Autoloader generado exitosamente
-=== Instalación PHP completada ===
-```
-
-### 2. instalerNpm.sh
-
-Instala las dependencias de frontend y compila los assets.
-
-#### Ejecución
-
-```bash
-chmod +x scripts/instalerNpm.sh
-./scripts/instalerNpm.sh
-```
-
-#### Funcionalidades
-
-- **Verificación de Node.js y npm**
-- **Instalación de paquetes NPM**
-- **Compilación de assets CSS y JS**
-- **Optimización de imágenes**
-- **Generación de source maps**
-
-#### Dependencias Instaladas
-
-```json
-{
-  "devDependencies": {
-    "cssnano": "^6.0.5",
-    "gulp": "^4.0.2",
-    "gulp-autoprefixer": "^8.0.0",
-    "gulp-cache": "^1.1.3",
-    "gulp-clean": "^0.4.0",
-    "gulp-concat": "^2.6.1",
-    "gulp-imagemin": "^8.0.0",
-    "gulp-notify": "^4.0.0",
-    "gulp-postcss": "^9.0.1",
-    "gulp-rename": "^2.0.0",
-    "gulp-sass": "^5.1.0",
-    "gulp-sourcemaps": "^3.0.0",
-    "gulp-terser-js": "^5.2.2",
-    "gulp-webp": "^4.0.1",
-    "sass": "^1.71.1",
-    "terser": "^5.28.1"
-  }
-}
-```
-
-#### Salida Esperada
-
-```
-=== Instalación de Dependencias Frontend ===
-✓ Node.js detectado: v18.17.0
-✓ npm detectado: v9.6.7
-✓ Instalando paquetes NPM...
-✓ Paquetes instalados exitosamente
-✓ Compilando assets...
-✓ CSS compilado
-✓ JavaScript minificado
-✓ Imágenes optimizadas
-=== Instalación Frontend completada ===
-```
-
-### 3. startEnv.sh
-
-Configura las variables de entorno de forma interactiva.
-
-#### Ejecución
-
-```bash
-chmod +x scripts/startEnv.sh
-./scripts/startEnv.sh
-```
-
-#### Funcionalidades
-
-- **Configuración interactiva** de base de datos
-- **Generación automática** de clave JWT
-- **Configuración de la aplicación**
-- **Creación de backup** automático
-- **Validación** de datos ingresados
-
-#### Flujo de Configuración
-
-```
-=== CONFIGURACIÓN DE BASE DE DATOS ===
-HOST [localhost]:
-USUARIO [root]:
-CONTRASEÑA: ********
-NOMBRE DE LA BASE DE DATOS [mvc_web]:
-
-=== CONFIGURACIÓN DE APLICACIÓN ===
-CLAVE JWT: [generada_automáticamente]
-NOMBRE DE LA APLICACIÓN [Web MVC]:
-URL DE LA APLICACIÓN [http://localhost:3000]:
-
-=== CONFIGURACIÓN DE EMAIL (OPCIONAL) ===
-MAIL HOST [smtp.gmail.com]:
-MAIL PORT [587]:
-MAIL USERNAME:
-MAIL PASSWORD:
-MAIL ENCRYPTION [tls]:
-
-=== CONFIGURACIÓN COMPLETADA ===
-✓ Archivo .env creado
-✓ Backup .env.backup creado
-✓ Variables validadas
-```
-
----
-
-## ⚙️ Instalación Manual
-
-### Paso 1: Clonar el Proyecto
-
-```bash
-git clone <repositorio-url>
+git clone https://github.com/tu-usuario/MVC-WEB.git
 cd MVC-WEB
 ```
 
-### Paso 2: Instalar Dependencias PHP
+### 4.2 Configurar variables de entorno
 
 ```bash
-# Instalar dependencias de Composer
-composer install
+# Opción A: Script interactivo
+bash scripts/startEnv.sh
 
-# O manualmente
-composer init
-composer require phpmailer/phpmailer:^6.8
-composer require firebase/php-jwt:^6.0
-composer require intervention/image:^3.11
-
-# Configurar autoloader
-composer dump-autoload
-```
-
-### Paso 3: Instalar Dependencias Frontend
-
-```bash
-# Instalar paquetes NPM
-npm install
-
-# Compilar assets
-npm run dev
-# O manualmente con gulp
-gulp
-```
-
-### Paso 4: Configurar Variables de Entorno
-
-```bash
-# Copiar archivo de ejemplo
+# Opción B: Manual
 cp env.ejemplo .env
-
-# Editar archivo .env
-nano .env
+nano .env   # o tu editor favorito
 ```
 
-#### Configuración Básica de .env
-
-```env
-# Base de datos
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=tu_password
-DB_NAME=mvc_web
-
-# Aplicación
-APP_NAME="Web MVC"
-APP_ENV=development
-APP_DEBUG=true
-APP_URL=http://localhost:3000
-
-# JWT
-JWT_KEY=tu_clave_secreta_jwt_aqui
-
-# Email (opcional)
-MAIL_HOST=smtp.gmail.com
-MAIL_PORT=587
-MAIL_USERNAME=tu_email@gmail.com
-MAIL_PASSWORD=tu_password_email
-MAIL_ENCRYPTION=tls
-```
-
-### Paso 5: Configurar Base de Datos
-
-```sql
--- Crear base de datos
-CREATE DATABASE mvc_web CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- Crear tabla de usuarios
-CREATE TABLE users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    apellido VARCHAR(100) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    confirmado TINYINT(1) DEFAULT 0,
-    token VARCHAR(255) NULL,
-    admin TINYINT(1) DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-```
-
-### Paso 6: Iniciar Servidor de Desarrollo
+### 4.3 Instalar dependencias PHP
 
 ```bash
-# Usar el script
-chmod +x startServer.sh
-./startServer.sh
-
-# O manualmente
-php -S localhost:3000 -t public
-```
-
----
-
-## 🔍 Verificación de la Instalación
-
-### Checklist de Verificación
-
-#### 1. Verificar Dependencias PHP
-
-```bash
-# Verificar paquetes instalados
-composer show
-
-# Verificar autoloader
+# Si tienes Composer instalado globalmente
+composer install
 composer dump-autoload --optimize
 
-# Probar carga de clases
-php -r "require 'vendor/autoload.php'; echo 'Autoload OK\n';"
+# Si no tienes Composer, el script lo descarga
+bash scripts/instalerComposer.sh
 ```
 
-#### 2. Verificar Dependencias Frontend
+### 4.4 Instalar dependencias Node.js
 
 ```bash
-# Verificar paquetes NPM
-npm list
-
-# Verificar compilación
-ls -la public/build/
-
-# Verificar archivos generados
-ls -la public/build/css/
-ls -la public/build/js/
-```
-
-#### 3. Verificar Configuración
-
-```bash
-# Verificar variables de entorno
-cat .env
-
-# Verificar conexión a base de datos
-php -r "
-require 'vendor/autoload.php';
-require 'config/Environment.php';
-Environment::load();
-echo 'DB_HOST: ' . Environment::get('DB_HOST') . PHP_EOL;
-echo 'DB_NAME: ' . Environment::get('DB_NAME') . PHP_EOL;
-"
-```
-
-#### 4. Verificar Servidor
-
-```bash
-# Verificar que el servidor esté corriendo
-curl -I http://localhost:3000
-
-# Verificar respuesta del servidor
-curl http://localhost:3000
-```
-
-### Tests de Funcionalidad
-
-#### Test 1: Conexión a Base de Datos
-
-```php
-<?php
-// test_db.php
-require 'vendor/autoload.php';
-require 'config/Environment.php';
-
-Environment::load();
-
-try {
-    $mysqli = new mysqli(
-        Environment::get('DB_HOST'),
-        Environment::get('DB_USER'),
-        Environment::get('DB_PASSWORD'),
-        Environment::get('DB_NAME')
-    );
-
-    if ($mysqli->connect_error) {
-        throw new Exception($mysqli->connect_error);
-    }
-
-    echo "✓ Conexión a base de datos exitosa\n";
-
-    // Probar consulta simple
-    $result = $mysqli->query("SELECT 1");
-    if ($result) {
-        echo "✓ Consulta de prueba exitosa\n";
-    }
-
-} catch (Exception $e) {
-    echo "✗ Error: " . $e->getMessage() . "\n";
-}
-?>
-```
-
-#### Test 2: Carga de Clases
-
-```php
-<?php
-// test_classes.php
-require 'vendor/autoload.php';
-
-try {
-    // Probar carga de modelos
-    $user = new \models\User();
-    echo "✓ Clase User cargada\n";
-
-    $email = new \models\EmailModel();
-    echo "✓ Clase EmailModel cargada\n";
-
-    $fileManager = new \models\FileManagerModel();
-    echo "✓ Clase FileManagerModel cargada\n";
-
-} catch (Exception $e) {
-    echo "✗ Error cargando clases: " . $e->getMessage() . "\n";
-}
-?>
-```
-
-#### Test 3: Funcionalidad JWT
-
-```php
-<?php
-// test_jwt.php
-require 'vendor/autoload.php';
-require 'config/Environment.php';
-
-Environment::load();
-
-try {
-    $token = \models\JWTAuth::generateToken(1);
-    echo "✓ Token generado: " . substr($token, 0, 20) . "...\n";
-
-    $payload = \models\JWTAuth::validateToken($token);
-    if ($payload) {
-        echo "✓ Token validado exitosamente\n";
-        echo "✓ User ID: " . $payload['user_id'] . "\n";
-    }
-
-} catch (Exception $e) {
-    echo "✗ Error JWT: " . $e->getMessage() . "\n";
-}
-?>
-```
-
----
-
-## 🔧 Troubleshooting
-
-### Problemas Comunes
-
-#### 1. Permisos Denegados
-
-**Error:** `Permission denied: ./start.sh`
-
-**Solución:**
-
-```bash
-# Dar permisos de ejecución
-chmod +x start.sh
-chmod +x startServer.sh
-chmod +x scripts/*.sh
-
-# Verificar permisos
-ls -la *.sh scripts/*.sh
-```
-
-#### 2. Composer No Encontrado
-
-**Error:** `composer: command not found`
-
-**Solución:**
-
-```bash
-# Instalar Composer globalmente
-curl -sS https://getcomposer.org/installer | php
-sudo mv composer.phar /usr/local/bin/composer
-
-# O usar localmente
-php composer.phar install
-```
-
-#### 3. Node.js No Encontrado
-
-**Error:** `node: command not found`
-
-**Solución:**
-
-```bash
-# Instalar Node.js con nvm
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-source ~/.bashrc
-nvm install 18
-nvm use 18
-
-# O instalar desde repositorios
-sudo apt update
-sudo apt install nodejs npm
-```
-
-#### 4. Error de Conexión a Base de Datos
-
-**Error:** `Connection refused` o `Access denied`
-
-**Solución:**
-
-```bash
-# Verificar que MySQL esté corriendo
-sudo systemctl status mysql
-
-# Iniciar MySQL si no está corriendo
-sudo systemctl start mysql
-
-# Verificar credenciales
-mysql -u root -p
-
-# Crear usuario si es necesario
-CREATE USER 'mvc_user'@'localhost' IDENTIFIED BY 'password';
-GRANT ALL PRIVILEGES ON mvc_web.* TO 'mvc_user'@'localhost';
-FLUSH PRIVILEGES;
-```
-
-#### 5. Error de Extensiones PHP
-
-**Error:** `Call to undefined function` o extensiones faltantes
-
-**Solución:**
-
-```bash
-# Ubuntu/Debian
-sudo apt install php8.0-mysql php8.0-mbstring php8.0-json php8.0-curl php8.0-gd php8.0-zip
-
-# CentOS/RHEL
-sudo yum install php80-mysqlnd php80-mbstring php80-json php80-curl php80-gd php80-zip
-
-# Verificar extensiones
-php -m | grep -E "(mysqli|mbstring|json|curl|gd|zip)"
-```
-
-#### 6. Error de Compilación de Assets
-
-**Error:** `gulp command not found` o errores de compilación
-
-**Solución:**
-
-```bash
-# Instalar Gulp globalmente
-npm install -g gulp-cli
-
-# O usar npx
-npx gulp
-
-# Limpiar caché de npm
-npm cache clean --force
-rm -rf node_modules package-lock.json
 npm install
 ```
 
-### Logs y Debug
-
-#### Verbose Mode
+### 4.5 Compilar assets con Vite
 
 ```bash
-# Ejecutar scripts con verbose
-bash -x start.sh
-bash -x scripts/instalerComposer.sh
-bash -x scripts/startEnv.sh
+# Desarrollo (con HMR en localhost:5173)
+npm run dev
+
+# Producción (genera public/build/)
+npm run build
 ```
 
-#### Logs de Error
+### 4.6 Importar base de datos
 
 ```bash
-# Ver logs de PHP
-php -l index.php
-
-# Ver logs de Composer
-composer install --verbose
-
-# Ver logs de npm
-npm install --verbose
+mysql -u root -p tu_base_de_datos < db/schema.sql
 ```
 
-#### Debug Mode
+### 4.7 Configurar el servidor web
+
+Apunta el `DocumentRoot` a la carpeta `public/`. Ver [sección 6](#6-configuración-del-servidor-web).
+
+---
+
+## 5. Configuración del Entorno (.env)
+
+El archivo `.env` controla toda la configuración sensible. Nunca lo commitas al repositorio.
+
+```env
+# ────────────────────────────────────────
+#  Base de Datos
+# ────────────────────────────────────────
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=tu_contraseña_segura
+DB_NAME=mvc_web_db
+
+# ────────────────────────────────────────
+#  Aplicación
+# ────────────────────────────────────────
+APP_NAME="Mi Aplicación"
+APP_URL=http://localhost
+APP_ENV=development   # development | production
+
+# ────────────────────────────────────────
+#  Seguridad
+# ────────────────────────────────────────
+JWT_KEY=clave_aleatoria_segura_de_al_menos_32_chars
+
+# ────────────────────────────────────────
+#  Email (opcional)
+# ────────────────────────────────────────
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USER=tu@email.com
+MAIL_PASS=app_password
+MAIL_FROM=noreply@tudominio.com
+```
+
+### Generar JWT_KEY manualmente
 
 ```bash
-# Habilitar debug en .env
-APP_DEBUG=true
-
-# Ver errores de PHP
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
+openssl rand -base64 32
 ```
 
 ---
 
-## ⚙️ Configuración Avanzada
+## 6. Configuración del Servidor Web
 
-### 1. Configuración de Producción
+> [!IMPORTANT]
+> El `DocumentRoot` del servidor web **debe apuntar a la carpeta `public/`**, no a la raíz del proyecto. Esto protege todos los archivos del framework.
 
-```bash
-# Variables de entorno de producción
-APP_ENV=production
-APP_DEBUG=false
+### Apache
 
-# Optimizar autoloader
-composer dump-autoload --optimize --no-dev
-
-# Compilar assets para producción
-npm run build
-# O gulp --production
-
-# Configurar cache de OPcache
-opcache.enable=1
-opcache.memory_consumption=128
-opcache.max_accelerated_files=4000
-```
-
-### 2. Configuración de Servidor Web
-
-#### Apache (.htaccess)
+Crear o editar el VirtualHost:
 
 ```apache
-# public/.htaccess
-RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php [QSA,L]
+<VirtualHost *:80>
+    ServerName mvc-web.local
+    DocumentRoot /ruta/a/MVC-WEB/public
 
-# Seguridad
-<Files .env>
-    Order allow,deny
-    Deny from all
-</Files>
+    <Directory /ruta/a/MVC-WEB/public>
+        AllowOverride All
+        Require all granted
+    </Directory>
 
-# Headers de seguridad
-Header always set X-Content-Type-Options nosniff
-Header always set X-Frame-Options DENY
-Header always set X-XSS-Protection "1; mode=block"
+    ErrorLog ${APACHE_LOG_DIR}/mvc-web-error.log
+    CustomLog ${APACHE_LOG_DIR}/mvc-web-access.log combined
+</VirtualHost>
 ```
 
-#### Nginx
+Asegúrate de tener el módulo `mod_rewrite` habilitado:
+
+```bash
+sudo a2enmod rewrite
+sudo systemctl restart apache2
+```
+
+El archivo `.htaccess` en `public/` ya está configurado para redirigir todo al `index.php`.
+
+### Nginx
 
 ```nginx
 server {
     listen 80;
-    server_name localhost;
-    root /path/to/MVC-WEB/public;
+    server_name mvc-web.local;
+    root /ruta/a/MVC-WEB/public;
     index index.php;
 
     location / {
@@ -755,203 +257,222 @@ server {
     }
 
     location ~ \.php$ {
-        fastcgi_pass unix:/var/run/php/php8.0-fpm.sock;
+        fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
         fastcgi_index index.php;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
         include fastcgi_params;
     }
 
-    # Seguridad
-    location ~ /\.env {
+    location ~ /\. {
         deny all;
     }
 }
 ```
 
-### 3. Configuración de Docker
+### PHP Built-in Server (solo desarrollo)
 
-#### Dockerfile
-
-```dockerfile
-FROM php:8.0-apache
-
-# Instalar extensiones
-RUN docker-php-ext-install mysqli mbstring curl gd zip
-
-# Instalar Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Copiar proyecto
-COPY . /var/www/html/
-
-# Instalar dependencias
-WORKDIR /var/www/html/
-RUN composer install --no-dev --optimize-autoloader
-RUN npm install && npm run build
-
-# Configurar Apache
-RUN a2enmod rewrite
-COPY docker/apache.conf /etc/apache2/sites-available/000-default.conf
-
-EXPOSE 80
-```
-
-#### docker-compose.yml
-
-```yaml
-version: "3.8"
-
-services:
-  app:
-    build: .
-    ports:
-      - "80:80"
-    environment:
-      - DB_HOST=db
-      - DB_USER=root
-      - DB_PASSWORD=password
-      - DB_NAME=mvc_web
-    depends_on:
-      - db
-
-  db:
-    image: mysql:8.0
-    environment:
-      - MYSQL_ROOT_PASSWORD=password
-      - MYSQL_DATABASE=mvc_web
-    volumes:
-      - db_data:/var/lib/mysql
-
-volumes:
-  db_data:
+```bash
+php -S localhost:8000 -t public/
 ```
 
 ---
 
-## 🔧 Mantenimiento
+## 7. Frontend con Vite
 
-### 1. Actualización de Dependencias
+### Desarrollo con HMR (Hot Module Replacement)
 
 ```bash
-# Actualizar Composer
-composer update
-
-# Actualizar npm
-npm update
-
-# Verificar actualizaciones seguras
-composer audit
-npm audit
+npm run dev
+# → Vite server en http://localhost:5173
+# → PHP en http://localhost:8000 (o tu servidor web)
 ```
 
-### 2. Limpieza
+### Build para producción
 
 ```bash
-# Limpiar caché de Composer
-composer clear-cache
-
-# Limpiar caché de npm
-npm cache clean --force
-
-# Limpiar assets compilados
-rm -rf public/build/*
 npm run build
+# → Genera public/build/manifest.json y assets con hash
 ```
 
-### 3. Backup
+### Usar assets en vistas PHP
+
+El helper `asset_vite()` detecta automáticamente si está en modo dev o producción:
+
+```php
+<?php
+// En tu layout principal (app/views/layouts/layout.php)
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- En dev: apunta a localhost:5173 -->
+    <!-- En prod: usa el archivo con hash de public/build/ -->
+    <link rel="stylesheet" href="<?= asset_vite('src/main.css') ?>">
+</head>
+<body>
+    <?= $contenido ?>
+    <script type="module" src="<?= asset_vite('src/main.js') ?>"></script>
+</body>
+</html>
+```
+
+La función `asset_vite()` está definida en `config/utilis.php`.
+
+---
+
+## 8. Verificación de la Instalación
+
+### Verificar autoloading PHP
 
 ```bash
-# Backup del proyecto
-tar -czf mvc-web-backup-$(date +%Y%m%d).tar.gz \
-    --exclude=node_modules \
-    --exclude=vendor \
-    --exclude=.git \
-    .
-
-# Backup de base de datos
-mysqldump -u root -p mvc_web > backup-$(date +%Y%m%d).sql
+php -r "require 'vendor/autoload.php'; echo class_exists('app\\Core\\Router') ? 'OK' : 'FAIL';"
+# → OK
 ```
 
-### 4. Monitoreo
+### Verificar estructura de archivos clave
 
 ```bash
-# Verificar espacio en disco
-df -h
-
-# Verificar uso de memoria
-free -h
-
-# Verificar procesos
-ps aux | grep php
-
-# Verificar logs
-tail -f /var/log/apache2/error.log
+# Deben existir estos archivos
+ls public/index.php           # Punto de entrada
+ls routes/web.php             # Rutas web
+ls routes/api.php             # Rutas API
+ls app/Core/Application.php   # Bootstrap
+ls app/Core/Router.php        # Enrutador
+ls vite.config.js             # Config Vite
 ```
 
----
-
-## 📝 Notas Importantes
-
-### Seguridad
-
-- **Nunca expongas** el archivo `.env` públicamente
-- **Usa HTTPS** en producción
-- **Mantén actualizadas** las dependencias
-- **Configura firewall** apropiadamente
-- **Usa claves seguras** y únicas
-
-### Rendimiento
-
-- **Habilita OPcache** en producción
-- **Usa CDN** para assets estáticos
-- **Configura caché** de base de datos
-- **Optimiza imágenes** y assets
-- **Monitorea recursos** del servidor
-
-### Mantenimiento
-
-- **Actualiza regularmente** Composer y npm
-- **Revisa logs** de errores periódicamente
-- **Haz backups** regulares
-- **Monitorea seguridad** y vulnerabilidades
-- **Documenta cambios** personalizados
-
----
-
-## 🆘 Soporte
-
-### Recursos Útiles
-
-- [Documentación Composer](https://getcomposer.org/doc/)
-- [Documentación npm](https://docs.npmjs.com/)
-- [Documentación PHP](https://www.php.net/docs.php)
-- [Documentación MySQL](https://dev.mysql.com/doc/)
-
-### Comandos Útiles
+### Verificar variables de entorno
 
 ```bash
-# Verificar versión de PHP
-php --version
+php -r "
+require 'vendor/autoload.php';
+\$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+\$dotenv->load();
+echo 'DB_HOST: ' . \$_ENV['DB_HOST'] . PHP_EOL;
+echo 'APP_URL: ' . \$_ENV['APP_URL'] . PHP_EOL;
+"
+```
 
-# Verificar extensiones
-php -m
+### Test rápido de conexión a BD
 
-# Verificar configuración
-php --ini
-
-# Debug de Composer
-composer --verbose install
-
-# Debug de npm
-npm install --verbose
+```bash
+php -r "
+require 'vendor/autoload.php';
+\$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+\$dotenv->load();
+\$pdo = new PDO('mysql:host='.\$_ENV['DB_HOST'].';dbname='.\$_ENV['DB_NAME'], \$_ENV['DB_USER'], \$_ENV['DB_PASSWORD']);
+echo \$pdo ? 'Conexión BD: OK' : 'ERROR';
+"
 ```
 
 ---
 
-**Versión:** 2.0.0
-**Compatibilidad:** PHP 8.0+, Node.js 16+, MySQL 5.7+
-**Última Actualización:** Enero 5, 2026
+## 9. Troubleshooting
+
+### ❌ Error: `Class not found` / `namespace not found`
+
+```bash
+# Regenerar el autoload
+php composer dump-autoload --optimize
+# o
+composer dump-autoload --optimize
+```
+
+Verifica que el namespace coincida con la estructura de carpetas (PSR-4):
+- `app\Core\Router` → `app/Core/Router.php`
+- `modules\Blog\BlogController` → `modules/Blog/BlogController.php`
 
 ---
 
-**Documentación mantenida con ❤️ por el equipo MVC-WEB**
+### ❌ Error: Rutas no funcionan (404 en todo)
+
+1. Verifica que `DocumentRoot` apunte a `public/`
+2. Verifica que `mod_rewrite` esté habilitado (Apache)
+3. Verifica el `.htaccess` en `public/`:
+
+```apache
+Options -Indexes
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [L]
+```
+
+---
+
+### ❌ Error: Assets de Vite no cargan
+
+```bash
+# En desarrollo: asegúrate de que Vite esté corriendo
+npm run dev
+
+# En producción: asegúrate de haber hecho el build
+npm run build
+ls public/build/   # debe contener manifest.json y los assets
+```
+
+---
+
+### ❌ Error: `composer: command not found`
+
+El script `instalerComposer.sh` descarga Composer automáticamente. Pero si quieres hacerlo manualmente:
+
+```bash
+# Descargar y usar localmente
+curl -sS https://getcomposer.org/installer | php -- --filename=composer
+php ./composer install
+```
+
+---
+
+### ❌ Permisos denegados en Linux
+
+```bash
+# Dar permisos a carpetas de escritura
+chmod -R 775 logs/
+chmod -R 775 public/build/
+chown -R www-data:www-data .  # si usas Apache
+```
+
+---
+
+## 10. Actualización desde v8.x
+
+> [!WARNING]
+> La v9.0.0 introduce cambios en los namespaces. Los alias de compatibilidad están activos pero se recomienda migrar.
+
+### Cambios de namespace
+
+| v8.x               | v9.0.0                  |
+|--------------------|-------------------------|
+| `MVC\Router`       | `app\Core\Router`       |
+| `MVC\Request`      | `app\Core\Request`      |
+| `router/Router.php`| `app/Core/Router.php`   |
+
+### Alias de compatibilidad
+
+Los siguientes alias están activos en `app/Core/Application.php`:
+
+```php
+class_alias(\app\Core\Router::class,  'MVC\Router');
+class_alias(\app\Core\Request::class, 'MVC\Request');
+```
+
+Esto permite que el código existente siga funcionando sin cambios. Migra gradualmente usando los nuevos namespaces.
+
+### Migrar rutas del `router/` antiguo
+
+```php
+// Antes (v8.x) — en public/index.php
+require_once '../router/Router.php';
+$router = new MVC\Router();
+$router->get('/', ...);
+$router->Rutas();
+
+// Ahora (v9.0.0) — en routes/web.php
+use app\Core\Router;
+return function(Router $router): void {
+    $router->get('/', ...);
+};
+// Application.php carga y despacha todo automáticamente
+```

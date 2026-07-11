@@ -1,702 +1,402 @@
-# framework MVC-WEB-PHP v8.1.0
+# 🚀 MVC-WEB Framework PHP v9.0.0
 
 > [!IMPORTANT]
-> **¡Novedad en v8.1.0!** Sistema de **Manejo de Estado Global** para Vanilla JS (Store Pattern) con persistencia automática entre páginas. Incluye ThemeStore, CartStore y Dark Mode minimalista sin bordes.
+> **¡Nuevo en v9.0.0!** Arquitectura completamente modular con sistema de **Módulos**, **Plugins**, **Routes separadas** (web/api/admin), **Auth & Middleware** en capas, y **Vite** como sistema de build frontend.
 
 > [!NOTE]
-> **v6.0.0**: Soporte completo para **Docker**. Despliega tu base de datos MySQL en segundos con persistencia local automática.
+> **v8.1.0**: Sistema de Manejo de Estado Global (Store Pattern) para Vanilla JS. Aún disponible y compatible.
+
+---
 
 ## 📋 Descripción del Proyecto
 
-Esta es una plantilla de desarrollo web MVC (Modelo-Vista-Controlador) en PHP con características avanzadas de rendimiento, seguridad y optimización. Proporciona una estructura robusta para construir aplicaciones web modernas con autenticación JWT, caché inteligente y procesamiento optimizado de imágenes.
+**MVC-WEB** es un framework PHP de desarrollo web basado en el patrón **Modelo-Vista-Controlador**. Diseñado para ser extensible, seguro y moderno, incluye un sistema completo de enrutamiento con middleware, autenticación JWT, módulos independientes, sistema de plugins y compilación de assets con Vite.
 
-## 🏗️ Arquitectura del Proyecto
+---
+
+## 🏗️ Arquitectura v9.0.0
 
 ```
 MVC-WEB/
+│
 ├── app/
-│   ├── components/          # Componentes reutilizables
-│   │   ├── ComponentManager.php
-│   │   ├── PaginationModel.php
-│   │   └── views/           # Vistas de componentes
-│   ├── controllers/         # Controladores de la aplicación
-│   │   ├── API/            # Controladores de API
+│   ├── Core/                       # Núcleo del framework
+│   │   ├── Application.php         # Bootstrap principal
+│   │   ├── Router.php              # Enrutador con middleware & grupos
+│   │   ├── Request.php             # Objeto de petición HTTP
+│   │   ├── Event.php               # Sistema de eventos
+│   │   ├── Plugin.php              # Gestor de plugins
+│   │   ├── Auth/
+│   │   │   ├── Authentication.php  # ¿Quién eres?
+│   │   │   ├── Authorization.php   # ¿Qué puedes hacer?
+│   │   │   └── Permission.php      # Sistema de permisos granular
+│   │   └── Middleware/
+│   │       ├── Middleware.php      # Interfaz base
+│   │       ├── AuthMiddleware.php  # Protección por autenticación
+│   │       └── PermissionMiddleware.php  # Protección por permisos
+│   │
+│   ├── controllers/                # Controladores principales
+│   │   ├── API/                    # Controladores de API
 │   │   ├── LoginController.php
 │   │   └── PagesController.php
-│   ├── errors/              # Manejo de errores
-│   │   └── Errors.php
-│   ├── models/             # Modelos de datos
-│   │   ├── Main.php        # Modelo principal con caché
-│   │   └── User.php        # Modelo de usuario
-│   ├── services/           # Servicios de la aplicación
-│   │   ├── auth/           # Servicios de autenticación
+│   │
+│   ├── models/                     # Modelos de datos
+│   │   ├── Main.php                # Modelo base con caché y CRUD
+│   │   └── User.php
+│   │
+│   ├── services/                   # Servicios de la aplicación
+│   │   ├── auth/
 │   │   │   ├── JWTAuth.php
 │   │   │   └── PHPAuth.php
 │   │   ├── EmailModel.php
 │   │   └── FileManagerModel.php
-│   ├── validator/          # Sistema de validación
-│   │   └── ValidatorModels.php
-│   └── views/              # Vistas de la aplicación
-│       ├── emails/         # Plantillas de email
+│   │
+│   └── views/                      # Vistas de la aplicación
+│       ├── layouts/
+│       │   └── layout.php          # Layout principal (Vite assets)
 │       ├── home/
-│       ├── includes/
-│       └── layouts/
-├── config/                 # Archivos de configuración
-├── public/                 # Archivos públicos
-│   ├── build/             # Assets compilados
-│   └── index.php          # Punto de entrada
-├── router/                 # Sistema de enrutamiento
-│   ├── Request.php         # Gestión de peticiones y datos
-│   └── Router.php          # Despachador de rutas
-├── src/                   # Archivos fuente frontend
-│   ├── Ui/                # Componentes de interfaz por página
-│   │   └── home/          # Estilos y widgets de la página de inicio
-│   ├── core/
-│   │   ├── js/            # Scripts base (modernizr, sweetalert)
-│   │   │   └── theme/     # darkmode.js (suscriptor del Store)
-│   │   ├── provider/      # Sistema de Estado Global (Store Pattern)
-│   │   │   ├── Store.js        # Clase base genérica
-│   │   │   ├── ThemeStore.js   # Store del tema (deprecated, ver src/core/theme/)
-│   │   │   └── CartStore.js    # Store del carrito de compras
-│   │   ├── scss/          # Estilos base (variables, mixins, normalize)
-│   │   └── theme/         # Temas visuales
-│   │       ├── iOS/       # Componentes de estilo iOS
-│   │       ├── DarkMode/  # Modo oscuro minimalista
-│   │       │   └── index.scss
-│   │       └── ThemeStore.js   # Store de temas con persistencia
-│   └── app.scss
-├── db/                    # Base de datos con docker-compose
-├── docs/                  # Documentación completa
-├── scripts/               # Scripts de instalación
-├── vendor/                # Dependencias Composer
-├── .env                   # Variables de entorno
-├── composer.json          # Dependencias PHP
-├── package.json           # Dependencias Node.js
-├── gulpfile.js           # Tareas de automatización
-└── README.md
+│       └── includes/
+│
+├── routes/                         # Definición de rutas globales
+│   ├── web.php                     # Rutas web (HTML, páginas)
+│   ├── api.php                     # Rutas API REST (v1, v2, etc.)
+│   └── admin.php                   # Rutas del panel de administración
+│
+├── modules/                        # Módulos independientes
+│   └── Blog/
+│       ├── routes.php              # Rutas propias del módulo
+│       ├── controllers/
+│       │   └── BlogController.php
+│       └── views/
+│           └── index.php
+│
+├── plugins/                        # Plugins del framework
+│   └── AnalyticsPlugin/
+│       └── AnalyticsPlugin.php
+│
+├── config/                         # Configuración global
+│   ├── config.php
+│   └── utilis.php                  # Helpers (incluye asset_vite())
+│
+├── public/                         # Document root del servidor web
+│   ├── index.php                   # Punto de entrada único
+│   └── build/                      # Assets compilados por Vite
+│
+├── src/                            # Código fuente frontend
+│   ├── main.js                     # Entrada principal de Vite
+│   └── Ui/                         # Componentes de UI por página
+│
+├── scripts/                        # Scripts de instalación
+│   ├── install.sh                  # ★ Instalador maestro
+│   ├── instalerComposer.sh         # Instalador PHP/Composer
+│   ├── instalerNpm.sh              # Instalador Node.js/Vite
+│   └── startEnv.sh                 # Configurador de .env
+│
+├── docs/                           # Documentación completa
+├── vite.config.js                  # Configuración de Vite
+├── composer.json                   # Dependencias PHP (PSR-4)
+├── package.json                    # Dependencias Node.js
+└── .env                            # Variables de entorno (no commitar)
 ```
 
-## ✅ Características Principales
+---
 
-### 🔐 Sistema de Autenticación
+## ⚡ Inicio Rápido
 
-- **JWT (JSON Web Tokens)** para autenticación segura
-- **JWTAuth** y **PHPAuth** para gestión de tokens y sesiones
-- **Roles de usuario** con control de acceso
-
-### 🚀 Sistema de Caché Inteligente
-
-- **Caché automático** para consultas `find()` frecuentes
-- **Limpieza automática** en operaciones CRUD
-- **Gestión flexible** con métodos `enableCache()`, `disableCache()`, `clearCache()`
-- **Mejora del 99%** en consultas repetidas
-
-### 🖼️ Procesamiento de Imágenes Optimizado(npm)
-
-- **Redimensionamiento inteligente**: solo procesa si es necesario
-- **Conversión a WebP** para mejor compresión
-- **Optimización automática** con gulp-imagemin
-- **Reducción del 60%** en tiempo de procesamiento
-
-### 📧 Sistema de Email
-
-- **EmailModel** para envío de correos
-- **Configuración SMTP** soportada
-- **Plantillas de email** personalizables
-
-### 📁 Gestión de Archivos Segura
-
-- **FileManagerModel** para manejo avanzado de archivos
-- **Procesamiento de imágenes** con redimensionamiento automático (800x600px)
-- **Validaciones de seguridad** contra webshells y contenido malicioso
-- **Soporte múltiple**: PDF, DOCX, ZIP, imágenes y más
-- **Nombres aleatorios** para evitar colisiones y ataques
-- **Control de tamaño** y tipos de archivo configurables
-
-### 📄 Sistema de Paginación
-
-- **PaginationModel** para navegación eficiente
-- **HTML semántico** y accesible
-- **Configuración flexible** de registros por página
-- **Estado actual** resaltado
-
-### 🧩 Sistema de Componentes
-
-- **ComponentManager** para componentes reutilizables
-- **Estructura modular** de vistas
-- **Input components** especializados
-- **Renderizado dinámico** con datos
-
-### 🗃️ Manejo de Estado Global (Store — v8.1.0)
-
-- **Patrón Store** reactivo en JavaScript puro, sin dependencias externas
-- **Persistencia automática** en `localStorage` — el estado sobrevive al cambiar de página
-- **ThemeStore**: controla el tema Claro/Oscuro en toda la aplicación
-- **CartStore**: gestiona el carrito de compras entre páginas
-- **Patrón Observer**: cualquier script puede suscribirse a los cambios de estado
-- **Extensible**: crea nuevos Stores en `src/core/provider/` siguiendo el mismo patrón
-
-### 🌙 Dark Mode Minimalista (v8.1.0)
-
-- **Sin bordes**: separación visual mediante diferenciación de tonos de fondo
-- **Transiciones suaves**: cambio de tema con `transition: 0.3s ease`
-- **Variables CSS**: paleta completa de colores configurables
-- **Logo adaptable**: el SVG inline cambia de color según el tema usando `fill` en CSS
-- **Scrollbar personalizado**: estilo oscuro nativo en navegadores webkit
-
-### 🎨 Frontend Moderno
-
-- **Sass/SCSS** para estilos organizados
-- **Gulp** para automatización de tareas
-- **Autoprefixer** para compatibilidad cross-browser
-- **Source maps** para depuración
-- **Minificación** de CSS y JS
-
-## 📊 Métricas de Rendimiento
-
-| Métrica                | Antes  | Después    | Mejora   |
-| ---------------------- | ------ | ---------- | -------- |
-| Consultas repetidas    | 100ms  | 1ms        | **99%**  |
-| Procesamiento imágenes | 500ms  | 200ms      | **60%**  |
-| Uso de memoria         | Alto   | Optimizado | **40%**  |
-| Seguridad              | Básica | Mejorada   | **+50%** |
-
-## � Documentación Completa
-
-El proyecto incluye documentación detallada para todos los componentes:
-
-### 📖 Documentación Principal
-
-- **[📁 Docs](docs/)** - Documentación completa del sistema
-- **[📋 Guía Rápida](docs/README.md)** - Índice de toda la documentación
-- **[🗃️ Store & Estado](docs/STORE_DOCUMENTATION.md)** - ⭐ **NUEVO** — Sistema de estado global en Vanilla JS
-- **[🗄️ Main Model](docs/MAIN_MODEL_DOCUMENTATION.md)** - Modelo base con caché
-- **[📁 FileManager](docs/FILE_MANAGER_DOCUMENTATION.md)** - Gestión de archivos
-- **[📧 Email System](docs/EMAIL_DOCUMENTATION.md)** - Sistema de correos
-- **[📄 Pagination](docs/PAGINATION_DOCUMENTATION.md)** - Sistema de paginación
-- **[🧩 Componentes](docs/COMPONENT_MANAGER_DOCUMENTATION.md)** - Sistema de componentes
-- **[👤 User Models](docs/USER_DOCUMENTATION.md)** - Modelos de usuario
-- **[🔐 JWT Auth](docs/JWT_DOCUMENTATION.md)** - Autenticación JWT
-- [**🛣️ Router & Request**](docs/ROUTER_DOCUMENTATION.md) - Sistema de rutas RESTful
-- [**🎓 Escuela de Lógica**](docs/logic/ROUTING_AND_REQUEST.md) - Lecciones técnicas de arquitectura
-
-### 🎨 UI Components
-
-- **[🚨 SweetAlert2](docs/SWEETALERT2_DOCUMENTATION.md)** - Alertas modernas
-- **[💡 SweetAlert2 Examples](docs/SWEETALERT2_EXAMPLES.md)** - Ejemplos prácticos
-
-### 📄 Licencias
-
-- **[🏷️ License Badge](docs/LICENSE_BADGE.md)** - Insignia MIT
-- **[📋 License Detailed](docs/LICENSE_DETAILED.md)** - Términos completos
-
-## �🛠️ Instalación y Configuración
-
-### Requisitos Previos
-
-- PHP 8.0 o superior
-- Composer
-- Node.js y npm
-- Servidor web (Apache/Nginx)
-- Base de datos MySQL/MariaDB
-
-### 1. Clonar el Proyecto
+### Instalación en un solo comando
 
 ```bash
-
-git clone <repositorio-url>
+# Clonar el repositorio
+git clone https://github.com/tu-usuario/MVC-WEB.git
 cd MVC-WEB
+
+# Instalar todo con el script maestro
+bash scripts/install.sh
 ```
 
-### 2. Instalación Automática (Recomendado)
+El instalador maestro ejecuta automáticamente:
+1. **Configuración del `.env`** — DB, JWT, APP_URL, etc.
+2. **Composer install** — Dependencias PHP + autoload PSR-4
+3. **npm install** — Dependencias Node.js + Vite
 
-Usa el script de instalación automática que configura todo:
+---
 
-```bash
-# Dar permisos y ejecutar instalación completa
-chmod +x start.sh
-./start.sh
+## 🛣️ Sistema de Rutas
+
+### Rutas Web (`routes/web.php`)
+
+```php
+use app\Core\Router;
+use controllers\PagesController;
+
+$router->get('/', [PagesController::class, 'index']);
+$router->get('/about', [PagesController::class, 'about']);
 ```
 
-Este script realiza automáticamente:
+### Rutas API con prefijo de versión (`routes/api.php`)
 
-- ✅ Instalación de dependencias Composer
-- ✅ Instalación de dependencias NPM
-- ✅ Configuración interactiva de variables de entorno
-- ✅ Generación de autoloader
-- ✅ Inicio del servidor de desarrollo
+```php
+// Grupo API v1
+$router->group(['prefix' => '/api/v1', 'middleware' => ['auth']], function($router) {
+    $router->get('/users',    [UserController::class, 'index']);
+    $router->post('/users',   [UserController::class, 'store']);
+    $router->get('/users/{id}', [UserController::class, 'show']);
+});
 
-### 2. Instalación Manual Paso a Paso
+// Grupo API v2 (en paralelo, sin romper v1)
+$router->group(['prefix' => '/api/v2', 'middleware' => ['auth']], function($router) {
+    $router->get('/users', [UserV2Controller::class, 'index']);
+});
+```
+
+### Rutas de Módulos (`modules/Blog/routes.php`)
+
+```php
+// Cargado automáticamente desde Application.php
+$router->group(['prefix' => '/blog'], function($router) {
+    $router->get('/',         [BlogController::class, 'index']);
+    $router->get('/{slug}',   [BlogController::class, 'show']);
+    $router->post('/create',  [BlogController::class, 'store'])
+           ->middleware('auth');
+});
+```
+
+### Rutas Admin con protección (`routes/admin.php`)
+
+```php
+$router->group(['prefix' => '/admin', 'middleware' => ['auth', 'permission:admin']], function($router) {
+    $router->get('/dashboard', [AdminController::class, 'dashboard']);
+});
+```
+
+---
+
+## 🔐 Sistema Auth & Middleware
+
+### Autenticación
+
+```php
+use app\Core\Auth\Authentication;
+
+// Login
+Authentication::login($userId, $userData);
+
+// Verificar sesión
+if (Authentication::check()) {
+    $user = Authentication::user();
+}
+
+// Logout
+Authentication::logout();
+```
+
+### Autorización y Permisos
+
+```php
+use app\Core\Auth\Authorization;
+use app\Core\Auth\Permission;
+
+// Verificar rol
+if (Authorization::hasRole('admin')) {
+    // ...
+}
+
+// Verificar permiso específico
+if (Permission::can('edit_posts')) {
+    // ...
+}
+```
+
+### Middleware en Rutas
+
+```php
+// Middleware individual
+$router->get('/perfil', [UserController::class, 'profile'])
+       ->middleware('auth');
+
+// Múltiples middlewares
+$router->post('/posts', [PostController::class, 'store'])
+       ->middleware(['auth', 'permission:create_posts']);
+
+// Middleware en grupo
+$router->group(['middleware' => ['auth']], function($router) {
+    $router->get('/dashboard', [DashboardController::class, 'index']);
+    $router->get('/settings',  [SettingsController::class, 'index']);
+});
+```
+
+---
+
+## 🧩 Módulos
+
+Cada módulo es un directorio autocontenido bajo `modules/`. El framework carga automáticamente su archivo `routes.php`.
 
 ```bash
+# Estructura de un módulo
+modules/
+└── MiModulo/
+    ├── routes.php              # Rutas del módulo
+    ├── controllers/
+    │   └── MiModuloController.php
+    ├── models/
+    │   └── MiModuloModel.php
+    └── views/
+        └── index.php
+```
 
-composer init
+Para registrar un módulo, agrégalo en `app/Core/Application.php`:
 
- "require": {
-        "phpmailer/phpmailer": "*",
-        "firebase/php-jwt": "*"
-    },
-    "psr-4": {
-        "models\\": "./app/models",
-        "services\\": "./app/services",
-        "MVC\\": "./router",
-        "controllers/API\\": "./app/controllers/API",
-        "controllers\\": "./app/controllers",
-        "components\\": "./app/components",
-        "validator\\": "./app/validator",
-        "errors\\": "./app/errors",
-        "services\\auth\\": "./app/services/auth"
+```php
+protected array $modules = [
+    'Blog',
+    'Events',
+    'Donations',
+    'MiModulo',   // ← Agregar aquí
+];
+```
+
+---
+
+## 🔌 Plugins
+
+Los plugins extienden el framework sin modificar el núcleo:
+
+```php
+// plugins/MiPlugin/MiPlugin.php
+namespace plugins\MiPlugin;
+
+use app\Core\Plugin;
+
+class MiPlugin extends Plugin
+{
+    public function boot(): void
+    {
+        // Se ejecuta en cada petición
+        $this->on('request.before', function($event) {
+            // Lógica del plugin
+        });
     }
-
-composer update
+}
 ```
 
-### 3. Configurar Variables de Entorno
+Registrar en `app/Core/Application.php`:
+
+```php
+protected array $plugins = [
+    \plugins\AnalyticsPlugin\AnalyticsPlugin::class,
+    \plugins\MiPlugin\MiPlugin::class,
+];
+```
+
+---
+
+## 🎨 Frontend con Vite
+
+### Servidor de Desarrollo
 
 ```bash
-cp env.ejemplo .env
+npm run dev       # Inicia Vite con HMR en http://localhost:5173
 ```
 
-Editar el archivo `.env` con tus configuraciones:
+### Build de Producción
+
+```bash
+npm run build     # Genera assets en public/build/
+```
+
+### Helper en PHP
+
+```php
+// En tus vistas — carga el asset correcto según entorno
+<link rel="stylesheet" href="<?= asset_vite('src/main.css') ?>">
+<script type="module" src="<?= asset_vite('src/main.js') ?>"></script>
+```
+
+---
+
+## 🔧 Requisitos
+
+| Software      | Versión Mínima |
+|---------------|----------------|
+| PHP           | 8.0+           |
+| Composer      | 2.0+           |
+| Node.js       | 16.0+          |
+| npm           | 8.0+           |
+| MySQL/MariaDB | 5.7+           |
+
+### Extensiones PHP requeridas
+
+```bash
+php -m | grep -E "(mysqli|pdo|mbstring|json|curl|gd|zip)"
+```
+
+---
+
+## 🌱 Variables de Entorno
+
+Copia `env.ejemplo` a `.env` y configura:
 
 ```env
+# Base de datos
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=tu_password
-DB_NAME=nombre_db
+DB_NAME=mvc_web_db
 
-# Clave para JWT(opcional)
-JWT_KEY=tu_clave_secreta_jwt
-
-# Configuración de la Aplicación
-APP_NAME="Web MVC"
-APP_ENV=development
-APP_DEBUG=true
+# Aplicación
+APP_NAME="Mi Aplicación"
 APP_URL=http://localhost
 
-# Configuración de Email (opcional)
-MAIL_HOST=smtp.gmail.com
-MAIL_PORT=587
-MAIL_USERNAME=tu_email@gmail.com
-MAIL_PASSWORD=tu_password_email
-MAIL_ENCRYPTION=tls
-```
+# Seguridad
+JWT_KEY=clave_super_secreta_generada_automáticamente
 
-### 4. Instalar Dependencias de Frontend
-
-```bash
-npm install
-```
-
-### 5. Compilar Assets
-
-```bash
-# Para desarrollo (con watch)
-npm run dev
-
-# O manualmente
-gulp
-```
-
-## �️ Scripts de Instalación
-
-El proyecto incluye scripts automatizados para facilitar la configuración:
-
-### 📁 Scripts Disponibles
-
-| Script                        | Propósito                            | Uso                             |
-| ----------------------------- | ------------------------------------ | ------------------------------- |
-| `start.sh`                    | Instalación completa automatizada    | `./start.sh`                    |
-| `scripts/instalerComposer.sh` | Instalación de dependencias PHP      | `./scripts/instalerComposer.sh` |
-| `scripts/instalerNpm.sh`      | Instalación de dependencias frontend | `./scripts/instalerNpm.sh`      |
-| `scripts/startEnv.sh`         | Configuración interactiva de entorno | `./scripts/startEnv.sh`         |
-| `startServer.sh`              | Iniciar servidor de desarrollo       | `./startServer.sh`              |
-
-### 🚀 Instalación Completa (start.sh)
-
-```bash
-chmod +x start.sh
-./start.sh
-```
-
-**Proceso automático:**
-
-1. **Composer**: Instala phpmailer, firebase/jwt, intervention/image
-2. **NPM**: Instala dependencias de frontend
-3. **Entorno**: Configura variables interactivamente
-4. **Autoload**: Genera PSR-4 autoloader
-5. **Servidor**: Inicia servidor en localhost:3000(tines que manualmente activar npm run dev)
-
-### ⚙️ Scripts Individuales
-
-#### Composer Dependencies
-
-```bash
-chmod +x scripts/instalerComposer.sh
-./scripts/instalerComposer.sh
-```
-
-Instala automáticamente:
-
-- `phpmailer/phpmailer: ^7.0`
-- `firebase/php-jwt: ^7.0`
-- `intervention/image: ^3.11`
-- Configura PSR-4 autoloader
-
-#### NPM Dependencies
-
-```bash
-chmod +x scripts/instalerNpm.sh
-./scripts/instalerNpm.sh
-```
-
-Instala dependencias de frontend para compilación de assets.
-
-#### Environment Configuration
-
-```bash
-chmod +x scripts/startEnv.sh
-./scripts/startEnv.sh
-```
-
-**Configura interactivamente:**
-
-- 🗄️ **Base de datos**: Host, usuario, contraseña, nombre
-- 🔐 **JWT**: Genera clave segura automáticamente
-- 🏷️ **Aplicación**: Nombre y URL
-- 💾 **Backup**: Guarda .env.backup automáticamente
-
-**Campos configurados:**
-
-```
-=== CONFIGURACIÓN DE BASE DE DATOS ===
-HOST: [localhost]
-USUARIO: [dev]
-CONTRASEÑA: [****]
-NOMBRE DE LA BASE DE DATOS: [mvc_web]
-
-=== CONFIGURACIÓN DE APLICACIÓN ===
-CLAVE JWT: [generada_automáticamente]
-NOMBRE DE LA APLICACIÓN: [Web MVC]
-URL DE LA APLICACIÓN: [http://localhost:3000]
-```
-
-#### Development Server
-
-```bash
-chmod +x startServer.sh
-./startServer.sh
-```
-
-Inicia servidor PHP en `http://localhost:3000`
-
-### 🔧 Troubleshooting de Scripts
-
-#### Permisos Denegados
-
-```bash
-# Dar permisos a todos los scripts
-chmod +x start.sh
-chmod +x scripts/*.sh
-chmod +x startServer.sh
-```
-
-#### Error de Autoloader
-
-```bash
-# Regenerar autoloader manualmente
-composer dump-autoload
-
-# O reinstalar completamente
-rm -rf vendor/
-composer install
-```
-
-#### Variables de Entorno
-
-```bash
-# Verificar configuración actual
-cat .env
-
-# Restaurar desde backup
-cp .env.backup .env
-
-# Reconfigurar
-./scripts/startEnv.sh
-```
-
-### 📋 Estructura de Scripts
-
-```
-MVC-WEB/
-├── start.sh                    # Instalación completa
-├── startServer.sh              # Servidor de desarrollo
-├── scripts/
-│   ├── instalerComposer.sh     # Dependencias PHP
-│   ├── instalerNpm.sh          # Dependencias NPM
-│   └── startEnv.sh             # Configuración entorno
-├── .env                        # Variables de entorno
-├── .env.backup                 # Backup de configuración
-└── composer.json               # Configuración Composer
+# Entorno: development | production
+APP_ENV=development
 ```
 
 ---
 
-## 🚀 Uso del Sistema
+## 📚 Documentación
 
-### Gestión de Caché
+| Documento | Descripción |
+|-----------|-------------|
+| [Instalación](docs/INSTALLATION_DOCUMENTATION.md) | Guía completa de instalación y configuración |
+| [Router & Middleware](docs/ROUTER_DOCUMENTATION.md) | Sistema de rutas, grupos, middleware y prefijos |
+| [Modelo Principal](docs/MAIN_MODEL_DOCUMENTATION.md) | ORM base, consultas, caché, CRUD |
+| [Autenticación JWT](docs/JWT_DOCUMENTATION.md) | Generación, verificación y renovación de tokens |
+| [Usuarios](docs/USER_DOCUMENTATION.md) | Manejo de usuarios, roles y permisos |
+| [Email](docs/EMAIL_DOCUMENTATION.md) | Envío de emails con plantillas |
+| [Componentes](docs/COMPONENT_MANAGER_DOCUMENTATION.md) | Sistema de componentes reutilizables |
+| [Paginación](docs/PAGINATION_DOCUMENTATION.md) | Paginación automática de resultados |
+| [Archivos](docs/FILE_MANAGER_DOCUMENTATION.md) | Gestión y subida de archivos |
+| [Logger](docs/LOGGER_DOCUMENTATION.md) | Sistema de logging |
+| [SweetAlert2](docs/SWEETALERT2_DOCUMENTATION.md) | Alertas y notificaciones UI |
 
-```php
-// Ver estadísticas del cache
-$stats = Main::getCacheStats();
+---
 
-// Deshabilitar cache si es necesario
-Main::disableCache();
+## 🗂️ Changelog
 
-// Limpiar cache manualmente
-Main::clearCache();
+### v9.0.0 — Arquitectura Modular
+- ✅ Sistema de módulos independientes (`modules/`)
+- ✅ Sistema de plugins extensible (`plugins/`)
+- ✅ Router con grupos, prefijos y middleware pipeline
+- ✅ Routes separadas: `web.php`, `api.php`, `admin.php`
+- ✅ Prefijos de versión en API (`/api/v1`, `/api/v2`)
+- ✅ Sistema de Auth completo: Authentication, Authorization, Permission
+- ✅ Middleware: AuthMiddleware, PermissionMiddleware
+- ✅ Migración de Gulp → **Vite** (HMR, build optimizado)
+- ✅ PSR-4 completo para Core, modules y plugins
+- ✅ Scripts de instalación mejorados con instalador maestro
 
-// Habilitar cache
-Main::enableCache();
-```
+### v8.1.0 — Estado Global
+- ✅ Store Pattern para Vanilla JS (ThemeStore, CartStore)
+- ✅ Persistencia automática entre páginas
 
-### Consultas Optimizadas
+### v6.0.0 — Docker
+- ✅ Soporte completo para Docker y MySQL
 
-```php
-// Solo traer columnas específicas
-$usuarios = UserPHP::all(['id', 'nombre', 'email']);
-
-// Buscar con columnas específicas
-$usuarios = UserPHP::findAllBy('activo', 1, ['id', 'nombre']);
-
-// Buscar por ID con caché
-$usuario = UserPHP::find(1);
-```
-
-### Autenticación JWT
-
-```php
-use services\auth\JWTAuth;
-
-// Instanciar el servicio
-$jwtAuth = new JWTAuth();
-
-// Generar token (establece la cookie)
-$jwtAuth->TokenJWT($payload);
-
-// Validar y descifrar token (retorna el usuario o false)
-$user = $jwtAuth->desifrartoken();
-```
-
-### Envío de Emails
-
-```php
-use services\EmailModel;
-
-$email = new EmailModel();
-$email->send(
-    'destinatario@example.com',
-    'Asunto del correo',
-    'contenido del email',
-    ['ruta_a_plantilla' => ['variable' => 'valor']]
-);
-```
-
-### Gestión de Archivos
-
-```php
-use services\FileManagerModel;
-
-// Procesar imágenes con redimensionamiento automático
-$result = FileManagerModel::processImage($_FILES['imagen'], 'perfil', '.jpg');
-if (is_array($result)) {
-    $nombreArchivo = $result[0]; // Nombre del archivo guardado
-    // La imagen se redimensiona automáticamente a 800x600px
-} else {
-    // Manejar errores
-    $errores = $result;
-}
-
-// Procesar archivos genéricos (PDF, DOCX, ZIP, etc.)
-$result = FileManagerModel::processFile(
-    $_FILES['documento'],
-    'documentos',
-    ['pdf', 'docx'], // Extensiones permitidas
-    5 * 1024 * 1024  // 5MB máximo
-);
-
-// Eliminar imágenes
-FileManagerModel::deleteImage('perfil', 'nombre_archivo.jpg');
-
-// Eliminar archivos genéricos
-FileManagerModel::deleteFile('documentos', 'nombre_archivo.pdf');
-```
-
-#### Características de Seguridad
-
-- **Validación MIME real**: Verifica el tipo de archivo real
-- **Protección contra webshells**: Escaneo de contenido sospechoso
-- **Extensiones permitidas**: Control estricto de tipos de archivo
-- **Tamaño máximo**: Límites configurables por archivo
-- **Nombres aleatorios**: Generación de nombres únicos con MD5
-
-#### Procesamiento de Imágenes
-
-- **Redimensionamiento automático**: 800x600px por defecto
-- **Formatos soportados**: JPEG, PNG, GIF
-- **Validación de dimensiones**: Máximo 2000x2000px
-- **Optimización de tamaño**: Máximo 3MB por archivo
-- **Directorio automático**: Creación de carpetas si no existen
-
-## 🎯 Estructura MVC
-
-### Modelos
-
-- **Main.php**: Modelo base con sistema de caché
-- **User.php**: Gestión de usuarios
-
-### Servicios
-
-- **auth/JWTAuth.php**: Servicio de autenticación por tokens JWT
-- **auth/PHPAuth.php**: Servicio de autenticación por sesiones PHP
-- **EmailModel.php**: Sistema de envío de correos
-- **FileManagerModel.php**: Gestión de archivos
-
-### Validadores y Errores
-
-- **ValidatorModels.php**: Sistema de validación de entradas
-- **Errors.php**: Manejador de errores centralizado
-
-### Controladores
-
-- **PagesController.php**: Controlador de páginas principales
-- **LoginController.php**: Autenticación y sesiones
-- **API/**: Controladores para endpoints de API
-
-### Vistas
-
-- Organizadas por módulos en `app/views/`
-- Soporte para layouts y plantillas
-- Componentes reutilizables como input-file.php
-- Integración con assets compilados
-
-## 🔧 Tareas de Gulp Disponibles(solo para desarrollo no funciona en produccion)
-
-```bash
-# Compilar CSS
-gulp css
-
-# Compilar JavaScript
-gulp javascript
-
-# Optimizar imágenes
-gulp imagenes
-
-# Convertir a WebP
-gulp versionWebp
-
-# Modo desarrollo (watch)
-gulp watchArchivos
-
-# Tarea por defecto
-gulp
-```
-
-## 📦 Dependencias Principales
-
-### PHP (Composer)
-
-- `firebase/php-jwt`: Autenticación JWT
-- `intervention/image`: Procesamiento de imágenes
-- `phpmailer/phpmailer`: Envío de correos
-
-### Node.js (npm)
-
-- `gulp`: Sistema de automatización
-- `gulp-sass`: Compilación Sass
-- `gulp-imagemin`: Optimización de imágenes
-- `gulp-webp`: Conversión a WebP
-- `autoprefixer`: Prefijos CSS automáticos
-
-## 🔒 Seguridad
-
-- **Validación de columnas** en consultas para prevenir SQL injection
-- **Sanitización automática** de datos de entrada
-- **Tokens JWT** seguros con expiración
-- **Validación de archivos** con tipos permitidos
-- **Protección contra XSS** en vistas
-
-## 🌐 Configuración del Servidor
-
-### Apache (.htaccess)
-
-```apache
-RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php [QSA,L]
-```
-
-### Nginx
-
-```nginx
-location / {
-    try_files $uri $uri/ /index.php?$query_string;
-}
-```
-
-## 📈 Monitoreo y Depuración
-
-- **Modo debug** configurable en `.env`
-- **Logging de errores** PHP
-- **Source maps** para depuración frontend
-- **Estadísticas de caché** disponibles
-
-## 🤝 Contribuciones
-
-Las contribuciones son bienvenidas. Por favor:
-
-1. Fork del proyecto
-2. Crear una rama (`git checkout -b feature/nueva-funcionalidad`)
-3. Commit de cambios (`git commit -am 'Agregar nueva funcionalidad'`)
-4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
-5. Pull Request
+---
 
 ## 📄 Licencia
 
-Este proyecto está bajo la **Licencia MIT**.
-
-### ¿Qué permite la licencia MIT?
-
-✅ **Uso libre** para proyectos personales y comerciales
-✅ **Modificación** del código según tus necesidades
-✅ **Distribución** y venta del software
-✅ **Sin restricciones** de uso
-
-### Requisitos:
-
-- Mantener el aviso de copyright original
-- Incluir la licencia MIT en las distribuciones
-
-**Ver el archivo [LICENSE](LICENSE) para el texto completo de la licencia.**
-
-## 🐛 Issues y Soporte
-
-Si encuentras algún bug o necesitas ayuda:
-
-1. Revisa la documentación existente
-2. Busca issues similares
-3. Crea un nuevo issue con detalles del problema
-4. Incluye versión de PHP, entorno y pasos para reproducir
-
-## 🚀 Próximas Mejoras
-
-- [x] Logging avanzado para monitoreo de rendimiento
-- [x] Sistema de logs centralizado
-- [ ] Sistema de caché distribuido
-- [ ] Testing automatizado
-- [x] Dockerización del proyecto
-
----
-
-**Desarrollado con ❤️ para la comunidad de desarrollo PHP**
+[Ver licencia](LICENSE) — Uso libre para proyectos personales y comerciales.
