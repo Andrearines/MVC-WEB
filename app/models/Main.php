@@ -8,8 +8,7 @@ class Main
     public static $db;
     static $columnDB = [];
 
-    /** @var \errors\Errors */
-    public static $errorManager = null;
+    public static $errorManager;
 
     public static function getErrorManager(): Errors
     {
