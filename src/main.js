@@ -1,6 +1,3 @@
-// Main CSS entry point
-import './app.scss';
-
 // Global store and state management
 import './core/provider/Store.js';
 
