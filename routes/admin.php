@@ -1,5 +1,5 @@
 <?php
 
-use controllers\PagesController;
+use app\controllers\PagesController;
 
 $router->get("/index", [PagesController::class, 'indexView']);

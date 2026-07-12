@@ -68,16 +68,14 @@ ${COMPOSER_CMD} dump-autoload --optimize
 
 echo ""
 echo -e "${GREEN}✔ Autoload generado para los siguientes namespaces:${NC}"
-echo "    • app\\Core\\        → app/Core/"
-echo "    • app\\controllers\\ → app/controllers/"
-echo "    • app\\models\\      → app/models/"
-echo "    • app\\services\\    → app/services/"
-echo "    • app\\services\\storage\\ → app/services/storage/"
-echo "    • app\\components\\      → app/components/"
-echo "    • app\\validator\\   → app/validator/"
-echo "    • app\\errors\\         → app/errors/"
-#echo "    • modules\\         → modules/"
-#echo "    • plugins\\         → plugins/"
+echo "    • app\\Core\\": "./app/Core/",\
+echo "    • app\\controllers\\": "./app/controllers/",\
+echo "    • app\\models\\": "./app/models/",\
+echo "    • app\\services\\": "./app/services/",\
+echo "    • app\\services\\storage\\": "./app/services/storage/",\
+echo "    • app\\components\\": "./app/components/",\
+echo "    • app\\validator\\": "./app/validator/",\
+echo "    • app\\errors\\": "./app/errors/"   
 
 echo ""
 echo -e "${GREEN}╔══════════════════════════════════════════╗${NC}"

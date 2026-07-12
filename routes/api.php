@@ -1,6 +1,6 @@
 <?php
 
-use controllers\API\API;
+use app\controllers\API\API;
 
 // API Version 1 routes (automatically prefixed with /api/v1)
 $router->group(['prefix' => 'v1'], function ($router) {

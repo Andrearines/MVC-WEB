@@ -8,3 +8,4 @@
 /.env.local
 /public/build/
 /composer
+/db/docker/mysql_data

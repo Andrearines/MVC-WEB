@@ -7,6 +7,6 @@ require __DIR__ . "/../vendor/autoload.php";
 // Cargar variables de entorno al inicio
 Environment::load();
 
-use models\Main;
+use app\models\Main;
 
 Main::setDb(conectaDB());

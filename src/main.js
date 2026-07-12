@@ -13,3 +13,5 @@ import './core/js/sweetalert-config.js';
 
 // Modernizr browser capability detection
 import './core/js/modernizr.js';
+
+console.log("hola")
