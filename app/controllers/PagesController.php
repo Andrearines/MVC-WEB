@@ -1,6 +1,6 @@
 <?php
 
-namespace controllers;
+namespace app\controllers;
 
 use app\Core\Router;
 

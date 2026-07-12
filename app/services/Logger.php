@@ -1,6 +1,6 @@
 <?php
 
-namespace services;
+namespace app\services;
 
 use Monolog\Logger as MonologLogger;
 use Monolog\Handler\StreamHandler;
@@ -37,8 +37,8 @@ class Logger
             // Esto creará un archivo nuevo cada día: app-YYYY-MM-DD.log
             // Manteniendo los archivos de los últimos 30 días para evitar saturar el disco.
             $rotatingHandler = new RotatingFileHandler(
-                $logPath, 
-                30, 
+                $logPath,
+                30,
                 MonologLogger::DEBUG // nivel mínimo esperado
             );
             $rotatingHandler->setFormatter($formatter);

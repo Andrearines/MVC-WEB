@@ -1,7 +1,7 @@
 <?php
 
-namespace models;
-use errors\Errors;
+namespace app\models;
+use app\errors\Errors;
 class Main
 {
     public static $table;

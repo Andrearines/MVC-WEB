@@ -18,7 +18,7 @@
 
 
 
-namespace components;
+namespace app\components;
 
 class ComponentManager
 {

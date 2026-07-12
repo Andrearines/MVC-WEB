@@ -1,7 +1,7 @@
 <?php
 
-namespace validator;
-use errors\Errors;
+namespace app\validator;
+use app\errors\Errors;
 
 class ValidatorModels
 {

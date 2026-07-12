@@ -55,20 +55,20 @@ function asset_vite($entry)
         if (isset($manifest[$entry])) {
             $file = $manifest[$entry]['file'];
             $url = "/build/{$file}";
-            
+
             if (str_ends_with($file, '.css')) {
                 return "<link rel='stylesheet' href='{$url}'>";
             }
-            
+
             $html = "<script type='module' src='{$url}'></script>";
-            
+
             // If the script imports CSS, load that too
             if (isset($manifest[$entry]['css'])) {
                 foreach ($manifest[$entry]['css'] as $cssFile) {
                     $html .= "\n    <link rel='stylesheet' href='/build/{$cssFile}'>";
                 }
             }
-            
+
             return $html;
         }
     }

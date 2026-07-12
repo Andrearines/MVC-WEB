@@ -1,6 +1,6 @@
 <?php
 
-namespace services;
+namespace app\services\Storage;
 
 use Intervention\Image\ImageManager;
 use services\Logger;
