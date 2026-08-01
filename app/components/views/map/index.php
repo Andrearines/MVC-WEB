@@ -22,6 +22,5 @@ $tile ?? "Ubicación del Evento";
 
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="/build/js/map.js"></script>
 
 </div>

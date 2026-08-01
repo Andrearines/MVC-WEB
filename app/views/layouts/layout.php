@@ -21,6 +21,8 @@ require_once __DIR__ . '../../../../config/Environment.php';
     <?php echo $container ?? "" ?>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="build/js/app.js"></script>
+
     <?php
     if (isset($script) && is_array($script)) {
         foreach ($script as $s) {

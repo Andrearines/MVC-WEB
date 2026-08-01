@@ -47,7 +47,7 @@
  */
 $filters = $filters ?? [];
 ?>
-<link rel="stylesheet" href="/build/components/views/filters/scss/_filters.scss">
+
 <div class="filters-panel" id="filtersPanel" style="display: none;">
     <div class="filters-grid">
         <?php foreach ($filters as $filter): ?>

@@ -1,5 +1,5 @@
-@use '../base/scss/variables' as v;
-@use '../base/scss/mixins' as m;
+@use '../../scss/variables' as v;
+@use '../../scss/mixins' as m;
 
 // Unified Filter Button
 .btn-filter {
@@ -25,11 +25,11 @@
 
     &:hover {
         background: v.$gray-50;
-        border-color: v.$primary;
-        color: v.$primary;
+        border-color: v.$black;
+        color: v.$black;
 
         i {
-            color: v.$primary;
+            color: v.$black;
         }
     }
 
@@ -82,9 +82,9 @@
 
                 &:focus {
                     outline: none;
-                    border-color: v.$primary;
+                    border-color: v.$black;
                     background: v.$white;
-                    box-shadow: 0 0 0 4px rgba(v.$primary, 0.1);
+                    box-shadow: 0 0 0 4px rgba(v.$black, 0.1);
                 }
 
                 &::placeholder {

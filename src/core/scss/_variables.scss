@@ -6,13 +6,60 @@ $telefono: 480px;
 $tablet: 768px;
 $desktop: 1024px;
 
-// Colores
+// Colores - Paleta Blanco y Negro (escala de grises neutros)
+$white: #ffffff; // Blanco puro
+$gray-50: #f9fafb; // Blanco muy sutil (hover / fondo)
+$gray-100: #f3f4f6; // Fondo de paneles
+$gray-200: #e5e7eb; // Bordes
+$gray-300: #d1d5db;
+$gray-400: #9ca3af; // Iconos / placeholders
+$gray-500: #6b7280; // Texto secundario (labels)
+$gray-600: #4b5563;
+$gray-700: #374151; // Texto de botones
+$gray-800: #1f2937;
+$gray-900: #111827; // Texto principal en inputs
+$black: #000000; // Negro puro
 
+// Color de acento (B/N)
+$primary: $black;
+
+// Espaciado (base 4px, html 62.5% => 1rem = 10px)
+$s-1: 0.4rem;
+$s-1-5: 0.6rem;
+$s-2: 0.8rem;
+$s-2-5: 1rem;
+$s-3: 1.2rem;
+$s-4: 1.6rem;
+$s-5: 2rem;
+$s-6: 2.4rem;
+$s-8: 3.2rem;
+$s-10: 4rem;
+$s-12: 4.8rem;
+$s-16: 6.4rem;
+
+// Radios de borde
+$radius-sm: 0.4rem;
+$radius-md: 0.6rem;
+$radius-lg: 0.8rem;
+$radius-xl: 1.2rem;
+$radius-2xl: 1.6rem;
+$radius-full: 999rem;
+
+// Tipografía
+$text-xs: 1.2rem;
+$text-sm: 1.4rem;
+$text-base: 1.6rem;
+$text-lg: 1.8rem;
+$text-xl: 2rem;
+
+// Sombras
+$shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
 
 $space: 5rem;
 
-// Fuentes
+// Pesos de fuente
 $delgada: 300;
 $regular : 400;
 $bold: 700;
-$black: 900
+$weight-black: 900;
